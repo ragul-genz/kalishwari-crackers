@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Sparkles, ArrowRight, ShieldCheck, Truck, Clock } from 'lucide-react';
+import { Fireworks } from '@fireworks-js/react';
+import logoImg from '../assets/logo.jpg';
 
 const HomeWrapper = styled.div`
   display: flex;
@@ -10,13 +12,13 @@ const HomeWrapper = styled.div`
 
 const HeroSection = styled.section`
   position: relative;
-  min-height: 500px;
+  min-height: 550px;
   display: flex;
   align-items: center;
-  background-color: #6a040f; /* Dark red */
+  background-color: #050505;
   background-image: 
-    radial-gradient(circle at 100% 50%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 0% 0%, rgba(255, 215, 0, 0.1) 0%, transparent 30%);
+    radial-gradient(circle at 100% 50%, rgba(198, 40, 40, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 30%);
   overflow: hidden;
 `;
 
@@ -26,7 +28,19 @@ const HeroOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 1;
   background-image: url('data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><path d="M20 0C8.954 0 0 8.954 0 20s8.954 20 20 20 20-8.954 20-20S31.046 0 20 0zm0 38c-9.941 0-18-8.059-18-18S10.059 2 20 2s18 8.059 18 18-8.059 18-18 18z" fill="rgba(0,0,0,0.05)"/></svg>');
+  pointer-events: none;
+`;
+
+const FireworksBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.8;
   pointer-events: none;
 `;
 
@@ -53,15 +67,18 @@ const HeroTitle = styled.h1`
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.2;
   margin-bottom: 1.5rem;
-  color: #d32f2f;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  background: linear-gradient(to right, var(--gold-light), var(--gold-primary), var(--gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 1px 1px 20px rgba(212,175,55,0.2);
   font-weight: 700;
   text-transform: uppercase;
 `;
 
 const HeroSubtitle = styled.p`
   font-size: 1rem;
-  color: white;
+  color: #e0e0e0;
   margin-bottom: 2.5rem;
   line-height: 1.8;
   font-weight: 400;
@@ -69,8 +86,8 @@ const HeroSubtitle = styled.p`
 
 const YellowButton = styled(Link)`
   display: inline-block;
-  background-color: #ffc107;
-  color: #000;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
+  color: #050505;
   padding: 12px 24px;
   border-radius: 25px;
   font-weight: 700;
@@ -81,9 +98,8 @@ const YellowButton = styled(Link)`
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: #ffb300;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.4);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
   }
 `;
 
@@ -98,21 +114,15 @@ const HeroImageContainer = styled.div`
   }
 `;
 
-const CrackersImage = styled.div`
+const CrackersImage = styled.img`
   width: 300px;
   height: 300px;
-  background-color: transparent;
+  object-fit: contain;
+  border-radius: 12px;
   position: relative;
-  /* Placeholder for the crackers image from reference */
-  &::before {
-    content: '🎇';
-    font-size: 10rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
-  }
+  z-index: 2;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
 `;
 
 const FeaturesSection = styled.section`
@@ -235,6 +245,35 @@ const Home = () => {
   return (
     <HomeWrapper>
       <HeroSection>
+        <FireworksBackground>
+          <Fireworks
+            options={{
+              rocketsPoint: { min: 0, max: 100 },
+              hue: { min: 0, max: 360 },
+              delay: { min: 15, max: 30 },
+              speed: 2,
+              acceleration: 1.05,
+              friction: 0.95,
+              gravity: 1.5,
+              particles: 50,
+              trace: 3,
+              explosion: 5,
+              intensity: 30,
+              flickering: 50,
+              lineStyle: 'round',
+              lineWidth: { explosion: { min: 1, max: 3 }, trace: { min: 1, max: 2 } },
+              brightness: { min: 50, max: 80 },
+              decay: { min: 0.015, max: 0.03 }
+            }}
+            style={{
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              position: 'absolute'
+            }}
+          />
+        </FireworksBackground>
         <HeroOverlay />
         <HeroContent className="container">
           <HeroTextContainer>
@@ -242,14 +281,14 @@ const Home = () => {
               ONLINE CRACKERS IN SIVAKASI
             </HeroTitle>
             <HeroSubtitle>
-              <span style={{color: '#ffc107', fontWeight: 'bold'}}>Kalishwary Crackers</span> is a leading Online Crackers shop in Sivakasi. We are top Online Crackers in Sivakasi for more than 25 years of experience in Online crackers in sivakasi. With our Top-Rated Customer service, good packaging and proper delivery of online crackers we now have more than 25,000+ happy customers.
+              <span style={{color: 'var(--gold-primary)', fontWeight: 'bold'}}>Kalishwary Crackers</span> is a leading Online Crackers shop in Sivakasi. We are top Online Crackers in Sivakasi for more than 25 years of experience in Online crackers in sivakasi. With our Top-Rated Customer service, good packaging and proper delivery of online crackers we now have more than 25,000+ happy customers.
             </HeroSubtitle>
             <YellowButton to="/about">
               KNOW MORE ABOUT US
             </YellowButton>
           </HeroTextContainer>
           <HeroImageContainer>
-            <CrackersImage />
+            <CrackersImage src={logoImg} alt="Kalishwary Crackers Logo" />
           </HeroImageContainer>
         </HeroContent>
       </HeroSection>

@@ -53,18 +53,11 @@ const CartItem = styled.div`
   }
 `;
 
-const CartItemImage = styled.div`
+const CartItemImage = styled.img`
   width: 60px;
   height: 60px;
-  background: rgba(0, 0, 0, 0.5);
+  object-fit: cover;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const EmojiIconSmall = styled.span`
-  font-size: 2rem;
 `;
 
 const CartItemInfo = styled.div`
@@ -111,7 +104,7 @@ const CartSummary = styled.div`
   
   h3 {
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding-bottom: 0.5rem;
   }
 `;
@@ -125,7 +118,7 @@ const SummaryRow = styled.div`
 
 const SummaryDivider = styled.div`
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   margin: 1.5rem 0;
 `;
 
@@ -135,7 +128,7 @@ const TotalRow = styled.div`
   margin-bottom: 1rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-light);
+  color: var(--text-main);
 `;
 
 const WhatsAppBtn = styled.button`
@@ -213,9 +206,7 @@ const Cart = ({ cartItems, removeFromCart }) => {
         <CartItems>
           {cartItems.map((item) => (
             <CartItem key={item.id} className="glass-card">
-              <CartItemImage>
-                <EmojiIconSmall>{item.image}</EmojiIconSmall>
-              </CartItemImage>
+              <CartItemImage src={item.image} alt={item.name} />
               <CartItemInfo>
                 <h3>{item.name}</h3>
                 <CartItemPrice>₹{item.price}</CartItemPrice>

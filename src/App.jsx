@@ -6,16 +6,23 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import Cart from './pages/Cart';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Blogs from './pages/Blogs';
+import Offers from './pages/Offers';
+import FloatingWhatsApp from './components/FloatingWhatsApp';
 
 const GlobalStyle = createGlobalStyle`
   :root {
-    --gold-primary: #d4af37;
-    --gold-light: #f3e5ab;
-    --gold-dark: #aa8222;
-    --bg-dark: #0a0a0a;
-    --bg-card: #1a1a1a;
-    --text-light: #ffffff;
-    --text-muted: #a3a3a3;
+    --gold-primary: #D4AF37;
+    --gold-light: #F3E5AB;
+    --gold-dark: #AA8222;
+    --bg-main: #ffffff;
+    --bg-card: #f9f9f9;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --brand-red: #c62828;
+    --brand-red-dark: #8e0000;
     
     --font-serif: 'Cinzel', serif;
     --font-sans: 'Outfit', system-ui, sans-serif;
@@ -31,8 +38,8 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: var(--font-sans);
-    background-color: var(--bg-dark);
-    color: var(--text-light);
+    background-color: var(--bg-main);
+    color: var(--text-main);
     line-height: 1.6;
     min-height: 100vh;
     display: flex;
@@ -73,7 +80,7 @@ const GlobalStyle = createGlobalStyle`
 
   .btn-primary {
     background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
-    color: #000;
+    color: #ffffff;
     padding: 12px 24px;
     border-radius: 4px;
     font-weight: 600;
@@ -106,12 +113,13 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .glass-card {
-    background: rgba(26, 26, 26, 0.7);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
     border-radius: 8px;
     padding: 20px;
     transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   }
 
   .glass-card:hover {
@@ -148,6 +156,16 @@ function App() {
     setCartItems(cartItems.filter(item => item.id !== productId));
   };
 
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+    setCartItems(cartItems.map(item => 
+      item.id === productId ? { ...item, quantity: newQuantity } : item
+    ));
+  };
+
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
@@ -157,11 +175,16 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop addToCart={addToCart} />} />
-          <Route path="/cart" element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} />} />
+          <Route path="/shop" element={<Shop cartItems={cartItems} addToCart={addToCart} updateQuantity={updateQuantity} />} />
+          <Route path="/cart" element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/offers" element={<Offers />} />
         </Routes>
       </main>
       <Footer />
+      <FloatingWhatsApp />
     </Router>
   );
 }

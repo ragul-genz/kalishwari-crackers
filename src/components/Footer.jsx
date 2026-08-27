@@ -3,10 +3,11 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const FooterWrapper = styled.footer`
-  background-color: #2c3e50; /* Dark blue from reference */
+  background-color: var(--bg-dark);
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
   padding: 4rem 0 0 0;
   margin-top: auto;
-  color: white;
+  color: var(--text-main);
   font-family: var(--font-sans);
 `;
 
@@ -27,7 +28,7 @@ const FooterSection = styled.div`
   
   h4 {
     margin-bottom: 1.5rem;
-    color: white;
+    color: var(--text-main);
     font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -44,14 +45,14 @@ const FooterSection = styled.div`
     margin-bottom: 0.8rem;
   }
   
-  a, p {
-    color: #e0e0e0;
+    a, p {
+    color: var(--text-muted);
     font-size: 0.9rem;
     transition: var(--transition);
     text-decoration: none;
     
     &:hover {
-      color: white;
+      color: var(--gold-primary);
     }
   }
 `;
@@ -62,12 +63,12 @@ const NewsletterForm = styled.div`
   gap: 10px;
   margin-top: 1rem;
   
-  input {
+    input {
     padding: 12px 15px;
     background-color: transparent;
-    border: 1px solid #455a64;
+    border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 25px;
-    color: white;
+    color: var(--text-main);
     font-size: 0.9rem;
     outline: none;
     
@@ -76,7 +77,7 @@ const NewsletterForm = styled.div`
     }
     
     &:focus {
-      border-color: #90a4ae;
+      border-color: var(--gold-primary);
     }
   }
 `;
@@ -92,8 +93,8 @@ const FooterTagline = styled.p`
 const FooterBottom = styled.div`
   text-align: center;
   padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.5);
   color: var(--text-muted);
   font-size: 0.8rem;
 `;
@@ -139,7 +140,7 @@ const Footer = () => {
         <FooterSection style={{flex: 1.5}}>
           <h4>JOIN OUR<br/>NEWSLETTER!</h4>
           <p style={{fontSize: '0.85rem', marginBottom: '1rem', lineHeight: '1.4'}}>
-            Will be used in accordance with our<br/><a href="#" style={{color: '#d32f2f'}}>Privacy Policy</a>
+            Will be used in accordance with our<br/><a href="#" style={{color: 'var(--brand-red)'}}>Privacy Policy</a>
           </p>
           <NewsletterForm>
             <input type="email" placeholder="Your email address" />
