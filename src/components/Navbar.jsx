@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Download, Star, Zap } from 'lucide-react';
 import styled from 'styled-components';
 import logoImg from '../assets/logo.jpg';
@@ -180,6 +180,7 @@ const CartBadge = styled.span`
 
 const Navbar = ({ cartCount }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -207,22 +208,22 @@ const Navbar = ({ cartCount }) => {
 
           <NavMenu $isOpen={isOpen}>
             <NavItem>
-              <NavLink to="/" $active={true} onClick={toggleMenu}>Home</NavLink>
+              <NavLink to="/" $active={location.pathname === '/'} onClick={toggleMenu}>Home</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/shop" onClick={toggleMenu}>Shop</NavLink>
+              <NavLink to="/shop" $active={location.pathname === '/shop'} onClick={toggleMenu}>Shop</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/offers" onClick={toggleMenu}><Star size={16} fill="#ffc107" color="#ffc107"/> Offers</NavLink>
+              <NavLink to="/offers" $active={location.pathname === '/offers'} onClick={toggleMenu}><Star size={16} fill="#ffc107" color="#ffc107"/> Offers</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/blogs" onClick={toggleMenu}>Blogs</NavLink>
+              <NavLink to="/blogs" $active={location.pathname === '/blogs'} onClick={toggleMenu}>Blog</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/about" onClick={toggleMenu}>About Us</NavLink>
+              <NavLink to="/about" $active={location.pathname === '/about'} onClick={toggleMenu}>About Us</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/contact" onClick={toggleMenu}>Contact</NavLink>
+              <NavLink to="/contact" $active={location.pathname === '/contact'} onClick={toggleMenu}>Contact</NavLink>
             </NavItem>
           </NavMenu>
 
