@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle, Heart, Star } from 'lucide-react';
 import styled from 'styled-components';
 import sparklersImg from '../assets/images/sparklers.jpg';
 import fountainsImg from '../assets/images/fountains.jpg';
@@ -107,138 +107,187 @@ const CategoryHeader = styled.div`
 `;
 
 const ProductsGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
 `;
 
 const ProductCard = styled.div`
   display: flex;
+  flex-direction: column;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  border: 1px solid #eaeaea;
-  height: 120px;
-  align-items: center;
-  transition: box-shadow 0.2s;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
 
   &:hover {
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    transform: translateY(-5px);
   }
 `;
 
 const ImageContainer = styled.div`
-  width: 120px;
-  height: 120px;
-  background-color: #2e7d32;
+  width: 100%;
+  height: 240px;
+  background-color: #f9f9f9;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 20px;
 
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+`;
+
+const WishlistBtn = styled.button`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: #888;
+  z-index: 10;
+  transition: all 0.2s;
+  
+  &:hover {
+    color: #e74c3c;
+    transform: scale(1.1);
   }
 `;
 
 const DiscountBadge = styled.div`
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
   background-color: #d32f2f;
   color: white;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
   z-index: 10;
 `;
 
 const ProductDetails = styled.div`
-  flex: 1;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const InfoCol = styled.div`
+  padding: 20px;
   display: flex;
   flex-direction: column;
   flex: 1;
 `;
 
+const TitlePriceRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 10px;
+`;
+
 const ProductName = styled.h3`
   font-size: 1.1rem;
-  margin-bottom: 0.25rem;
   font-weight: 700;
+  color: #222;
+  margin: 0;
+  line-height: 1.3;
+  flex: 1;
 `;
 
 const PriceContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-right: 30px;
-  min-width: 120px;
-`;
-
-const RegularPrice = styled.span`
-  color: #ef9a9a;
-  text-decoration: line-through;
-  font-size: 0.85rem;
 `;
 
 const CurrentPrice = styled.span`
   font-weight: 700;
-  font-size: 1.2rem;
-  color: #d32f2f;
+  font-size: 1.15rem;
+  color: #222;
+`;
+
+const RegularPrice = styled.span`
+  color: #999;
+  text-decoration: line-through;
+  font-size: 0.85rem;
+`;
+
+const ProductDesc = styled.p`
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+`;
+
+const RatingRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+`;
+
+const ReviewCount = styled.span`
+  font-size: 0.8rem;
+  color: #888;
+  margin-left: 4px;
 `;
 
 const ActionRow = styled.div`
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  margin-top: auto;
 `;
 
 const QtyControl = styled.div`
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 20px;
   overflow: hidden;
 
   button {
-    padding: 5px 12px;
-    background: #f5f5f5;
+    padding: 6px 12px;
+    background: transparent;
     font-weight: bold;
-    &:hover { background: #e0e0e0; }
+    color: #222;
+    &:hover { background: #f5f5f5; }
   }
 
   span {
-    padding: 0 15px;
+    padding: 0 10px;
     font-weight: 600;
-    min-width: 40px;
+    min-width: 30px;
     text-align: center;
   }
 `;
 
 const OrderBtn = styled.button`
-  background-color: #d32f2f;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-transform: uppercase;
+  background-color: transparent;
+  color: #222;
+  border: 1px solid #222;
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
   transition: all 0.2s;
 
   &:hover {
-    background-color: #b71c1c;
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+    color: white;
   }
 `;
 
@@ -491,18 +540,28 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                     <ProductCard key={product.id}>
                       <ImageContainer>
                         <DiscountBadge>{discount}%</DiscountBadge>
+                        <WishlistBtn><Heart size={16} /></WishlistBtn>
                         <img src={product.image} alt={product.name} />
                       </ImageContainer>
                       <ProductDetails>
-                        <InfoCol>
+                        <TitlePriceRow>
                           <ProductName>{product.name}</ProductName>
-                          <span style={{ fontSize: '0.85rem', color: '#666' }}>1 packet</span>
-                        </InfoCol>
+                          <PriceContainer>
+                            <CurrentPrice>₹{product.price}</CurrentPrice>
+                            {/* <RegularPrice>₹{product.regularPrice}</RegularPrice> */}
+                          </PriceContainer>
+                        </TitlePriceRow>
                         
-                        <PriceContainer>
-                          <CurrentPrice>₹{product.price}</CurrentPrice>
-                          <RegularPrice>₹{product.regularPrice}</RegularPrice>
-                        </PriceContainer>
+                        <ProductDesc>
+                          Premium quality crackers from Sivakasi. Safe & Sound.
+                        </ProductDesc>
+
+                        <RatingRow>
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} size={14} fill="#2ecc71" color="#2ecc71" />
+                          ))}
+                          <ReviewCount>(121)</ReviewCount>
+                        </RatingRow>
                         
                         <ActionRow>
                           {qty > 0 ? (
