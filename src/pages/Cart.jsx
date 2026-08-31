@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, ArrowLeft, MessageCircle } from 'lucide-react';
 import styled from 'styled-components';
+import CheckoutModal from '../components/CheckoutModal';
 
 const CartPage = styled.div`
   padding: 4rem 20px;
@@ -170,20 +171,13 @@ const ContinueShopping = styled(Link)`
 `;
 
 const Cart = ({ cartItems, removeFromCart }) => {
+  const [showCheckout, setShowCheckout] = useState(false);
+  
   const totalAmount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   const handleWhatsAppOrder = () => {
     if (cartItems.length === 0) return;
-
-    let message = "Hello Kalishwary Crackers! I would like to place an order:%0A%0A";
-    cartItems.forEach((item, index) => {
-      message += `${index + 1}. ${item.name} - ${item.quantity} x ₹${item.price} = ₹${item.quantity * item.price}%0A`;
-    });
-    message += `%0A*Total Amount: ₹${totalAmount}*`;
-    
-    // Replace with actual WhatsApp number
-    const whatsappNumber = "916380116372"; 
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    setShowCheckout(true);
   };
 
   if (cartItems.length === 0) {
@@ -249,6 +243,14 @@ const Cart = ({ cartItems, removeFromCart }) => {
           </ContinueShopping>
         </CartSummary>
       </CartContent>
+
+      {showCheckout && (
+        <CheckoutModal 
+          cartItems={cartItems} 
+          totalAmount={totalAmount} 
+          onClose={() => setShowCheckout(false)} 
+        />
+      )}
     </CartPage>
   );
 };

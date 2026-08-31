@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import sparklersImg from '../assets/images/sparklers.jpg';
 import fountainsImg from '../assets/images/fountains.jpg';
 import rocketsImg from '../assets/images/rockets.jpg';
+import CheckoutModal from '../components/CheckoutModal';
 
 const ShopWrapper = styled.div`
   background-color: #f5f5f5;
@@ -445,6 +446,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [sortBy, setSortBy] = useState('default');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCheckout, setShowCheckout] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -481,18 +483,11 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
 
   const handleWhatsAppOrder = (e) => {
     if (!isOrderValid) {
-      e.preventDefault();
+      if (e) e.preventDefault();
       alert(`Minimum order value is ₹${minOrderValue}`);
       return;
     }
-
-    let message = "Hello Kalishwary Crackers! I would like to place an order:%0A%0A";
-    cartItems.forEach((item, index) => {
-      message += `${index + 1}. ${item.name} - ${item.quantity} x ₹${item.price} = ₹${item.quantity * item.price}%0A`;
-    });
-    message += `%0A*Total Amount: ₹${totalAmount}*`;
-    
-    window.open(`https://wa.me/916380116372?text=${message}`, '_blank');
+    setShowCheckout(true);
   };
 
   return (
@@ -653,6 +648,14 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
           </BottomBarContent>
         </div>
       </StickyBottomBar>
+
+      {showCheckout && (
+        <CheckoutModal 
+          cartItems={cartItems} 
+          totalAmount={totalAmount} 
+          onClose={() => setShowCheckout(false)} 
+        />
+      )}
     </ShopWrapper>
   );
 };
