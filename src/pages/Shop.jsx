@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle } from 'lucide-react';
 import styled from 'styled-components';
 import sparklersImg from '../assets/images/sparklers.jpg';
@@ -414,11 +415,11 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
       </div>
 
       <SideFloatingIcons>
-        <a href="#" style={{ background: '#9b59b6' }}><FileText size={20} /></a>
-        <a href="#" style={{ background: '#f1c40f' }}><Gift size={20} /></a>
-        <a href="#" style={{ background: '#3498db' }}><MapPin size={20} /></a>
-        <a href="#" style={{ background: '#e74c3c' }}><Phone size={20} /></a>
-        <a href="#" style={{ background: '#2ecc71' }}><MessageCircle size={20} /></a>
+        <a href="/pricelist.pdf" target="_blank" title="Pricelist" rel="noreferrer" style={{ background: '#9b59b6' }}><FileText size={20} /></a>
+        <Link to="/offers" title="Offers" style={{ background: '#f1c40f' }}><Gift size={20} /></Link>
+        <Link to="/contact" title="Location" style={{ background: '#3498db' }}><MapPin size={20} /></Link>
+        <a href="tel:+916380116372" title="Call Us" style={{ background: '#e74c3c' }}><Phone size={20} /></a>
+        <a href="https://wa.me/916380116372" target="_blank" rel="noopener noreferrer" title="WhatsApp" style={{ background: '#2ecc71' }}><MessageCircle size={20} /></a>
       </SideFloatingIcons>
 
       <StickyBottomBar>
