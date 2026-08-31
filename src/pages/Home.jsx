@@ -136,6 +136,15 @@ const CrackersImageWrapper = styled.div`
     box-shadow: inset 0 0 40px 20px #050505;
     pointer-events: none;
   }
+
+  @media (max-width: 768px) {
+    width: 200px;
+    height: 200px;
+    
+    &::after {
+      box-shadow: inset 0 0 25px 12px #050505;
+    }
+  }
 `;
 
 const CrackersImage = styled.img`

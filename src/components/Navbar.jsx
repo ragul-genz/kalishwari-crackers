@@ -83,6 +83,15 @@ const LogoWrapper = styled.div`
     box-shadow: inset 0 0 10px 5px #050505;
     pointer-events: none;
   }
+
+  @media (max-width: 768px) {
+    width: 45px;
+    height: 45px;
+
+    &::after {
+      box-shadow: inset 0 0 8px 4px #050505;
+    }
+  }
 `;
 
 const LogoImage = styled.img`

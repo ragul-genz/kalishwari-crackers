@@ -304,6 +304,19 @@ const SideFloatingIcons = styled.div`
       transform: scale(1.1);
     }
   }
+
+  @media (max-width: 768px) {
+    right: 10px;
+    gap: 8px;
+    a {
+      width: 35px;
+      height: 35px;
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
 `;
 
 const DUMMY_PRODUCTS = [
