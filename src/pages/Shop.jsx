@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle } from 'lucide-react';
 import styled from 'styled-components';
@@ -59,6 +59,35 @@ const SelectBox = styled.select`
   border: 1px solid #ddd;
   background: white;
   outline: none;
+`;
+
+const FilterContainer = styled.div`
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #eaeaea;
+  z-index: 100;
+  min-width: 200px;
+  overflow: hidden;
+`;
+
+const DropdownItem = styled.div`
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  
+  &:hover {
+    background: #f5f5f5;
+    color: #d32f2f;
+  }
 `;
 
 const CategorySection = styled.div`
@@ -333,6 +362,36 @@ const DUMMY_PRODUCTS = [
 const CATEGORIES = ["Sparklers", "Fountains", "Rockets", "Night Sky", "Gift Boxes"];
 
 const Shop = ({ cartItems, addToCart, updateQuantity }) => {
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [sortBy, setSortBy] = useState('default');
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsCategoryOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const scrollToCategory = (category) => {
+    const element = document.getElementById(`category-${category.replace(/\\s+/g, '-')}`);
+    if (element) {
+      const offset = 80;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const totalQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const totalAmount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   
@@ -366,10 +425,27 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
           </Breadcrumbs>
           
           <div style={{ display: 'flex', gap: '10px' }}>
-            <FilterSelect>
-              <CheckCircle size={16} color="#f5b041" /> Browse Categories <ChevronDown size={16} />
-            </FilterSelect>
-            <SelectBox defaultValue="default">
+            <FilterContainer ref={dropdownRef}>
+              <FilterSelect onClick={() => setIsCategoryOpen(!isCategoryOpen)}>
+                <CheckCircle size={16} color="#f5b041" /> Browse Categories <ChevronDown size={16} />
+              </FilterSelect>
+              {isCategoryOpen && (
+                <DropdownMenu>
+                  {CATEGORIES.map(category => (
+                    <DropdownItem 
+                      key={category} 
+                      onClick={() => {
+                        scrollToCategory(category);
+                        setIsCategoryOpen(false);
+                      }}
+                    >
+                      {category}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              )}
+            </FilterContainer>
+            <SelectBox value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="default">Default sorting</option>
               <option value="price_low">Price: Low to High</option>
               <option value="price_high">Price: High to Low</option>
@@ -378,11 +454,17 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
         </Toolbar>
 
         {CATEGORIES.map(category => {
-          const categoryProducts = DUMMY_PRODUCTS.filter(p => p.category === category);
+          let categoryProducts = DUMMY_PRODUCTS.filter(p => p.category === category);
           if (categoryProducts.length === 0) return null;
 
+          if (sortBy === 'price_low') {
+            categoryProducts.sort((a, b) => a.price - b.price);
+          } else if (sortBy === 'price_high') {
+            categoryProducts.sort((a, b) => b.price - a.price);
+          }
+
           return (
-            <CategorySection key={category}>
+            <CategorySection key={category} id={`category-${category.replace(/\\s+/g, '-')}`}>
               <CategoryHeader>{category}</CategoryHeader>
               <ProductsGrid>
                 {categoryProducts.map(product => {
