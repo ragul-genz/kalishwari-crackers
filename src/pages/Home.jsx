@@ -124,33 +124,22 @@ const CrackersImageWrapper = styled.div`
   align-items: center;
   position: relative;
   z-index: 2;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8);
   overflow: hidden;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    box-shadow: inset 0 0 40px 20px #000;
-    pointer-events: none;
-  }
+  border: 1px solid rgba(212, 175, 55, 0.15);
 
   @media (max-width: 768px) {
-    width: 200px;
-    height: 200px;
-    
-    &::after {
-      box-shadow: inset 0 0 25px 12px #000;
-    }
+    width: 220px;
+    height: 220px;
   }
 `;
 
 const CrackersImage = styled.img`
-  width: 85%;
-  height: 85%;
+  width: 88%;
+  height: 88%;
   object-fit: contain;
+  filter: contrast(1.4) brightness(0.85);
+  mix-blend-mode: lighten;
 `;
 
 const FeaturesSection = styled.section`

@@ -74,23 +74,11 @@ const LogoWrapper = styled.div`
   align-items: center;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.15);
   
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    box-shadow: inset 0 0 10px 5px #000;
-    pointer-events: none;
-  }
-
   @media (max-width: 768px) {
     width: 45px;
     height: 45px;
-
-    &::after {
-      box-shadow: inset 0 0 8px 4px #000;
-    }
   }
 `;
 
@@ -98,6 +86,8 @@ const LogoImage = styled.img`
   width: 90%;
   height: 90%;
   object-fit: contain;
+  filter: contrast(1.4) brightness(0.85);
+  mix-blend-mode: lighten;
 `;
 
 const MenuIcon = styled.div`
