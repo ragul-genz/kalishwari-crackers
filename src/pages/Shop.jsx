@@ -61,6 +61,24 @@ const SelectBox = styled.select`
   outline: none;
 `;
 
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 5px 15px;
+  min-width: 250px;
+  
+  input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+`;
+
 const FilterContainer = styled.div`
   position: relative;
 `;
@@ -426,6 +444,7 @@ const CATEGORIES = ["Sparklers", "Fountains", "Rockets", "Night Sky", "Gift Boxe
 const Shop = ({ cartItems, addToCart, updateQuantity }) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [sortBy, setSortBy] = useState('default');
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -486,7 +505,16 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
             Home / <span>Shop</span>
           </Breadcrumbs>
           
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <SearchContainer>
+              <Search size={18} color="#888" />
+              <input 
+                type="text" 
+                placeholder="Search products..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </SearchContainer>
             <FilterContainer ref={dropdownRef}>
               <FilterSelect onClick={() => setIsCategoryOpen(!isCategoryOpen)}>
                 <CheckCircle size={16} color="#f5b041" /> Browse Categories <ChevronDown size={16} />
@@ -516,7 +544,9 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
         </Toolbar>
 
         {CATEGORIES.map(category => {
-          let categoryProducts = DUMMY_PRODUCTS.filter(p => p.category === category);
+          let categoryProducts = DUMMY_PRODUCTS.filter(p => 
+            p.category === category && p.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
           if (categoryProducts.length === 0) return null;
 
           if (sortBy === 'price_low') {
