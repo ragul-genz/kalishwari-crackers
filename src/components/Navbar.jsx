@@ -67,8 +67,11 @@ const NavLogo = styled(Link)`
 const LogoImage = styled.img`
   width: 60px;
   height: 60px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 50%;
+  background-color: #000;
+  padding: 4px;
+  box-sizing: border-box;
 `;
 
 const MenuIcon = styled.div`
