@@ -114,18 +114,34 @@ const HeroImageContainer = styled.div`
   }
 `;
 
-const CrackersImage = styled.img`
+const CrackersImageWrapper = styled.div`
   width: 300px;
   height: 300px;
-  object-fit: contain;
   border-radius: 50%;
-  background-color: #000;
-  padding: 20px;
-  box-sizing: border-box;
+  background-color: #050505;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   z-index: 2;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 40px 20px #050505;
+    pointer-events: none;
+  }
+`;
+
+const CrackersImage = styled.img`
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
 `;
 
 const FeaturesSection = styled.section`
@@ -291,7 +307,9 @@ const Home = () => {
             </YellowButton>
           </HeroTextContainer>
           <HeroImageContainer>
-            <CrackersImage src={logoImg} alt="Kalishwary Crackers Logo" />
+            <CrackersImageWrapper>
+              <CrackersImage src={logoImg} alt="Kalishwary Crackers Logo" />
+            </CrackersImageWrapper>
           </HeroImageContainer>
         </HeroContent>
       </HeroSection>

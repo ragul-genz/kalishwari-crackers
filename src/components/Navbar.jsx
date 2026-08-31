@@ -64,14 +64,31 @@ const NavLogo = styled(Link)`
   text-decoration: none;
 `;
 
-const LogoImage = styled.img`
+const LogoWrapper = styled.div`
   width: 60px;
   height: 60px;
-  object-fit: contain;
   border-radius: 50%;
-  background-color: #000;
-  padding: 4px;
-  box-sizing: border-box;
+  background-color: #050505;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 10px 5px #050505;
+    pointer-events: none;
+  }
+`;
+
+const LogoImage = styled.img`
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
 `;
 
 const MenuIcon = styled.div`
@@ -203,7 +220,9 @@ const Navbar = ({ cartCount }) => {
       <Nav>
         <NavContainer>
           <NavLogo to="/">
-            <LogoImage src={logoImg} alt="Kalishwary Crackers" />
+            <LogoWrapper>
+              <LogoImage src={logoImg} alt="Kalishwary Crackers" />
+            </LogoWrapper>
           </NavLogo>
 
           <MenuIcon onClick={toggleMenu}>
