@@ -107,9 +107,9 @@ const CategoryHeader = styled.div`
 `;
 
 const ProductsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 `;
 
 const ProductCard = styled.div`
@@ -119,12 +119,19 @@ const ProductCard = styled.div`
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   border: 1px solid #eaeaea;
-  height: 180px;
+  height: 120px;
+  align-items: center;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
 `;
 
 const ImageContainer = styled.div`
-  width: 140px;
-  background-color: #2e7d32; /* Green background */
+  width: 120px;
+  height: 120px;
+  background-color: #2e7d32;
   position: relative;
   display: flex;
   align-items: center;
@@ -154,23 +161,30 @@ const DiscountBadge = styled.div`
 
 const ProductDetails = styled.div`
   flex: 1;
-  padding: 15px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const InfoCol = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
 `;
 
 const ProductName = styled.h3`
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
   font-weight: 700;
 `;
 
 const PriceContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
-  margin-bottom: auto;
+  align-items: flex-end;
+  margin-right: 30px;
+  min-width: 120px;
 `;
 
 const RegularPrice = styled.span`
@@ -181,15 +195,14 @@ const RegularPrice = styled.span`
 
 const CurrentPrice = styled.span`
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  color: #d32f2f;
 `;
 
 const ActionRow = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
 `;
 
 const QtyControl = styled.div`
@@ -481,11 +494,14 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                         <img src={product.image} alt={product.name} />
                       </ImageContainer>
                       <ProductDetails>
-                        <ProductName>{product.name}</ProductName>
+                        <InfoCol>
+                          <ProductName>{product.name}</ProductName>
+                          <span style={{ fontSize: '0.85rem', color: '#666' }}>1 packet</span>
+                        </InfoCol>
                         
                         <PriceContainer>
-                          <RegularPrice>₹{product.regularPrice} / 1 packet</RegularPrice>
-                          <CurrentPrice>₹{product.price} / 1 packet</CurrentPrice>
+                          <CurrentPrice>₹{product.price}</CurrentPrice>
+                          <RegularPrice>₹{product.regularPrice}</RegularPrice>
                         </PriceContainer>
                         
                         <ActionRow>
@@ -496,7 +512,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                               <button onClick={() => updateQuantity(product.id, qty + 1)}>+</button>
                             </QtyControl>
                           ) : (
-                            <OrderBtn onClick={() => addToCart(product)}>Order Now</OrderBtn>
+                            <OrderBtn onClick={() => addToCart(product)}>Add to Cart</OrderBtn>
                           )}
                         </ActionRow>
                       </ProductDetails>
