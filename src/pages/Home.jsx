@@ -118,7 +118,7 @@ const CrackersImageWrapper = styled.div`
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  background-color: #050505;
+  background-color: #000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -133,7 +133,7 @@ const CrackersImageWrapper = styled.div`
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    box-shadow: inset 0 0 40px 20px #050505;
+    box-shadow: inset 0 0 40px 20px #000;
     pointer-events: none;
   }
 
@@ -142,7 +142,7 @@ const CrackersImageWrapper = styled.div`
     height: 200px;
     
     &::after {
-      box-shadow: inset 0 0 25px 12px #050505;
+      box-shadow: inset 0 0 25px 12px #000;
     }
   }
 `;

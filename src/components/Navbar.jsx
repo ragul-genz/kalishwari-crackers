@@ -68,7 +68,7 @@ const LogoWrapper = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: #050505;
+  background-color: #000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,7 +80,7 @@ const LogoWrapper = styled.div`
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    box-shadow: inset 0 0 10px 5px #050505;
+    box-shadow: inset 0 0 10px 5px #000;
     pointer-events: none;
   }
 
@@ -89,7 +89,7 @@ const LogoWrapper = styled.div`
     height: 45px;
 
     &::after {
-      box-shadow: inset 0 0 8px 4px #050505;
+      box-shadow: inset 0 0 8px 4px #000;
     }
   }
 `;
