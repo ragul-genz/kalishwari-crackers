@@ -338,7 +338,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
     });
     message += `%0A*Total Amount: ₹${totalAmount}*`;
     
-    window.open(`https://wa.me/919876543210?text=${message}`, '_blank');
+    window.open(`https://wa.me/916380116372?text=${message}`, '_blank');
   };
 
   return (

@@ -117,8 +117,8 @@ const HeroImageContainer = styled.div`
 const CrackersImage = styled.img`
   width: 300px;
   height: 300px;
-  object-fit: contain;
-  border-radius: 12px;
+  object-fit: cover;
+  border-radius: 50%;
   position: relative;
   z-index: 2;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);

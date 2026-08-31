@@ -249,7 +249,7 @@ const Contact = () => {
               </div>
               <div className="details">
                 <h4>Customer Service Number :</h4>
-                <p>+91 9384053616</p>
+                <p>+91 6380116372</p>
               </div>
             </InfoItem>
 
@@ -259,7 +259,7 @@ const Contact = () => {
               </div>
               <div className="details">
                 <h4>Mail :</h4>
-                <p><a href="mailto:akcrackers2.0@gmail.com">akcrackers2.0@gmail.com</a></p>
+                <p><a href="mailto:kalishwarycrackers@gmail.com">kalishwarycrackers@gmail.com</a></p>
               </div>
             </InfoItem>
 

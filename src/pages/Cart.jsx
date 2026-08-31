@@ -182,7 +182,7 @@ const Cart = ({ cartItems, removeFromCart }) => {
     message += `%0A*Total Amount: ₹${totalAmount}*`;
     
     // Replace with actual WhatsApp number
-    const whatsappNumber = "919876543210"; 
+    const whatsappNumber = "916380116372"; 
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
