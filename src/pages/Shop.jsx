@@ -285,11 +285,21 @@ const QtyControl = styled.div`
     &:hover { background: #f5f5f5; }
   }
 
-  span {
-    padding: 0 10px;
-    font-weight: 600;
-    min-width: 30px;
+  input {
+    width: 40px;
     text-align: center;
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    outline: none;
+    background: transparent;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 `;
 
@@ -592,7 +602,20 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                           {qty > 0 ? (
                             <QtyControl>
                               <button onClick={() => updateQuantity(product.id, qty - 1)}>-</button>
-                              <span>{qty}</span>
+                              <input 
+                                type="number" 
+                                min="0" 
+                                value={qty} 
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value);
+                                  if (!isNaN(val) && val >= 0) {
+                                    updateQuantity(product.id, val);
+                                  } else if (e.target.value === '') {
+                                    // if they clear it, temporarily set to 0 or leave empty visually
+                                    updateQuantity(product.id, 0);
+                                  }
+                                }} 
+                              />
                               <button onClick={() => updateQuantity(product.id, qty + 1)}>+</button>
                             </QtyControl>
                           ) : (
