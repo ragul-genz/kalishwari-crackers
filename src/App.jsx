@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,6 +13,7 @@ import Contact from './pages/Contact';
 import Blogs from './pages/Blogs';
 import Offers from './pages/Offers';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import ScrollToTop from './components/ScrollToTop';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -30,6 +31,13 @@ const GlobalStyle = createGlobalStyle`
     --font-sans: 'Outfit', system-ui, sans-serif;
     
     --transition: all 0.3s ease;
+  }
+
+  [data-theme='dark'] {
+    --bg-main: #121212;
+    --bg-card: #1e1e1e;
+    --text-main: #ffffff;
+    --text-muted: #aaaaaa;
   }
 
   * {
@@ -172,6 +180,11 @@ const AnimatedRoutes = ({ cartItems, addToCart, updateQuantity, removeFromCart }
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   const addToCart = (product) => {
     const existing = cartItems.find(item => item.id === product.id);
@@ -218,7 +231,7 @@ function App() {
     <Router>
       <GlobalStyle />
       <Toaster position="bottom-right" />
-      <Navbar cartCount={cartCount} />
+      <Navbar cartCount={cartCount} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
       <main>
         <AnimatedRoutes 
           cartItems={cartItems} 
@@ -229,6 +242,7 @@ function App() {
       </main>
       <Footer />
       <FloatingWhatsApp />
+      <ScrollToTop />
     </Router>
   );
 }

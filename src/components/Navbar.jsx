@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Download, Star, Zap } from 'lucide-react';
+import { ShoppingCart, Menu, X, Download, Star, Zap, Sun, Moon } from 'lucide-react';
 import styled from 'styled-components';
 import logoImg from '../assets/logo.jpg';
 
@@ -38,10 +38,12 @@ const HeaderWrapper = styled.div`
   top: 0;
   z-index: 1000;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: ${props => props.$isDarkMode ? 'rgba(18, 18, 18, 0.7)' : 'rgba(255, 255, 255, 0.7)'};
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 `;
 
 const Nav = styled.nav`
-  background-color: var(--bg-main);
   height: 80px;
   display: flex;
   align-items: center;
@@ -168,6 +170,19 @@ const DownloadBtn = styled.a`
   }
 `;
 
+const ThemeToggle = styled.button`
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    color: var(--gold-primary);
+  }
+`;
+
 const CartIconContainer = styled(Link)`
   position: relative;
   display: flex;
@@ -198,7 +213,7 @@ const CartBadge = styled.span`
   font-weight: 700;
 `;
 
-const Navbar = ({ cartCount }) => {
+const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const location = useLocation();
 
@@ -207,7 +222,7 @@ const Navbar = ({ cartCount }) => {
   };
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper $isDarkMode={isDarkMode}>
       <TopBar>
         <Marquee>
           <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> Diwali Special 50% for every purchase</MarqueeItem>
@@ -250,6 +265,9 @@ const Navbar = ({ cartCount }) => {
           </NavMenu>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <ThemeToggle onClick={() => setIsDarkMode(!isDarkMode)}>
+              {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+            </ThemeToggle>
             <DownloadBtn href="/pricelist.pdf" target="_blank">
               <Download size={18} /> Download Pricelist
             </DownloadBtn>
