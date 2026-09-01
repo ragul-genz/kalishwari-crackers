@@ -104,26 +104,20 @@ const Footer = () => {
     <FooterWrapper>
       <FooterContainer>
         <FooterSection>
-          <h4>DEMO PRODUCT 2</h4>
-          <ul>
-            <li><a href="#">product 1</a></li>
-            <li><a href="#">product 2</a></li>
-          </ul>
+          <h4>ABOUT US</h4>
+          <p style={{color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6'}}>
+            Kalishwary Crackers is a leading online shop in Sivakasi. We provide 100% genuine and safe fireworks for all your celebrations.
+          </p>
         </FooterSection>
         
         <FooterSection>
-          <h4>DEMO PRODUCT 1</h4>
+          <h4>CATEGORIES</h4>
           <ul>
-            <li><a href="#">Product 1</a></li>
-            <li><a href="#">product 2</a></li>
-          </ul>
-        </FooterSection>
-        
-        <FooterSection>
-          <h4>DEMO PRODUCT 3</h4>
-          <ul>
-            <li><a href="#">Product 1</a></li>
-            <li><a href="#">Product 2</a></li>
+            <li><Link to="/shop">Sparklers</Link></li>
+            <li><Link to="/shop">Fountains</Link></li>
+            <li><Link to="/shop">Rockets</Link></li>
+            <li><Link to="/shop">Night Sky</Link></li>
+            <li><Link to="/shop">Gift Boxes</Link></li>
           </ul>
         </FooterSection>
 
@@ -147,6 +141,10 @@ const Footer = () => {
           </NewsletterForm>
         </FooterSection>
       </FooterContainer>
+      <FooterBottom>
+        <p>&copy; {new Date().getFullYear()} Kalishwary Crackers. All rights reserved.</p>
+        <p style={{marginTop: '8px'}}>Developed by : <span style={{fontWeight: '700', color: 'var(--brand-red)'}}>GenZ Neural-X</span></p>
+      </FooterBottom>
     </FooterWrapper>
   );
 };
