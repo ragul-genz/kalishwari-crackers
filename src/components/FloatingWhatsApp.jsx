@@ -24,6 +24,10 @@ const FloatContainer = styled.a`
     transform: scale(1.1);
     color: #fff;
   }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const FloatingWhatsApp = () => {

@@ -32,6 +32,27 @@ const Toolbar = styled.div`
   padding: 20px 0;
   flex-wrap: wrap;
   gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+`;
+
+const ToolbarControls = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+  flex: 1;
+  justify-content: flex-end;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const Breadcrumbs = styled.div`
@@ -78,6 +99,11 @@ const SearchContainer = styled.div`
     margin-left: 10px;
     width: 100%;
     font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    width: 100%;
   }
 `;
 
@@ -532,7 +558,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
             Home / <span>Shop</span>
           </Breadcrumbs>
           
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', minWidth: 0, flex: 1, justifyContent: 'flex-end' }}>
+          <ToolbarControls>
             <SearchContainer>
               <Search size={18} color="#888" />
               <input 
@@ -564,7 +590,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
               <option value="price_low">Price: Low to High</option>
               <option value="price_high">Price: High to Low</option>
             </SelectBox>
-          </div>
+          </ToolbarControls>
         </Toolbar>
 
         {(selectedCategory === 'All' ? CATEGORIES : [selectedCategory]).map(category => {
