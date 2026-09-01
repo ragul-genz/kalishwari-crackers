@@ -364,25 +364,42 @@ const BottomBarContent = styled.div`
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+  }
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-around;
+    gap: 10px;
   }
 `;
 
 const StatItem = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   
   span:first-child {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     font-weight: 700;
     text-transform: uppercase;
   }
   
   span:last-child {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-main);
+    
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
   }
   
   .red-text {
@@ -393,10 +410,10 @@ const StatItem = styled.div`
 const WhatsAppOrderBtn = styled.a`
   background-color: #25D366;
   color: white;
-  padding: 12px 30px;
+  padding: 10px 24px;
   border-radius: 30px;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -406,6 +423,12 @@ const WhatsAppOrderBtn = styled.a`
   &:hover {
     transform: translateY(-2px);
     color: white;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
   }
 `;
 
@@ -650,18 +673,20 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
         )}
         <div className="container">
           <BottomBarContent>
-            <StatItem>
-              <span>Products</span>
-              <span>{cartItems.length}</span>
-            </StatItem>
-            <StatItem>
-              <span>Total Qty</span>
-              <span>{totalQty}</span>
-            </StatItem>
-            <StatItem>
-              <span>Est. Price</span>
-              <span className="red-text">₹{totalAmount}</span>
-            </StatItem>
+            <StatsContainer>
+              <StatItem>
+                <span>Products</span>
+                <span>{cartItems.length}</span>
+              </StatItem>
+              <StatItem>
+                <span>Total Qty</span>
+                <span>{totalQty}</span>
+              </StatItem>
+              <StatItem>
+                <span>Est. Price</span>
+                <span className="red-text">₹{totalAmount}</span>
+              </StatItem>
+            </StatsContainer>
             
             <WhatsAppOrderBtn 
               href="#" 
