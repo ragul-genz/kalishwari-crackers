@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
+import { AnimatePresence, motion } from 'framer-motion';
 import { createGlobalStyle } from 'styled-components';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -138,6 +140,36 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const PageWrapper = ({ children }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.3 }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const AnimatedRoutes = ({ cartItems, addToCart, updateQuantity, removeFromCart }) => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+        <Route path="/shop" element={<PageWrapper><Shop cartItems={cartItems} addToCart={addToCart} updateQuantity={updateQuantity} /></PageWrapper>} />
+        <Route path="/cart" element={<PageWrapper><Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} /></PageWrapper>} />
+        <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+        <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+        <Route path="/blogs" element={<PageWrapper><Blogs /></PageWrapper>} />
+        <Route path="/offers" element={<PageWrapper><Offers /></PageWrapper>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 function App() {
   const [cartItems, setCartItems] = useState([]);
 
@@ -150,10 +182,24 @@ function App() {
     } else {
       setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
+    toast.success(`${product.name} added to cart!`, {
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    });
   };
 
   const removeFromCart = (productId) => {
     setCartItems(cartItems.filter(item => item.id !== productId));
+    toast.error('Item removed from cart', {
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    });
   };
 
   const updateQuantity = (productId, newQuantity) => {
@@ -171,17 +217,15 @@ function App() {
   return (
     <Router>
       <GlobalStyle />
+      <Toaster position="bottom-right" />
       <Navbar cartCount={cartCount} />
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop cartItems={cartItems} addToCart={addToCart} updateQuantity={updateQuantity} />} />
-          <Route path="/cart" element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/blogs" element={<Blogs />} />
-          <Route path="/offers" element={<Offers />} />
-        </Routes>
+        <AnimatedRoutes 
+          cartItems={cartItems} 
+          addToCart={addToCart} 
+          updateQuantity={updateQuantity} 
+          removeFromCart={removeFromCart} 
+        />
       </main>
       <Footer />
       <FloatingWhatsApp />

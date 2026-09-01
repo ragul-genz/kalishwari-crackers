@@ -6,6 +6,7 @@ import sparklersImg from '../assets/images/sparklers.jpg';
 import fountainsImg from '../assets/images/fountains.jpg';
 import rocketsImg from '../assets/images/rockets.jpg';
 import CheckoutModal from '../components/CheckoutModal';
+import { motion } from 'framer-motion';
 
 const ShopWrapper = styled.div`
   background-color: #f5f5f5;
@@ -80,32 +81,35 @@ const SearchContainer = styled.div`
   }
 `;
 
-const FilterContainer = styled.div`
-  position: relative;
+const PillsContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  max-width: 100%;
+  
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 4px;
+  }
 `;
 
-const DropdownMenu = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 8px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border: 1px solid #eaeaea;
-  z-index: 100;
-  min-width: 200px;
-  overflow: hidden;
-`;
-
-const DropdownItem = styled.div`
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: background 0.2s;
+const Pill = styled.button`
+  padding: 8px 20px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid ${props => props.$active ? '#2ecc71' : '#ddd'};
+  background: ${props => props.$active ? '#2ecc71' : 'white'};
+  color: ${props => props.$active ? 'white' : '#555'};
+  transition: all 0.3s ease;
   
   &:hover {
-    background: #f5f5f5;
-    color: #d32f2f;
+    background: ${props => props.$active ? '#27ae60' : '#f5f5f5'};
   }
 `;
 
@@ -131,7 +135,7 @@ const ProductsGrid = styled.div`
   gap: 25px;
 `;
 
-const ProductCard = styled.div`
+const ProductCard = styled(motion.div)`
   display: flex;
   flex-direction: column;
   background: white;
@@ -453,21 +457,10 @@ const DUMMY_PRODUCTS = [
 const CATEGORIES = ["Sparklers", "Fountains", "Rockets", "Night Sky", "Gift Boxes"];
 
 const Shop = ({ cartItems, addToCart, updateQuantity }) => {
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('default');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsCategoryOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const scrollToCategory = (category) => {
     const element = document.getElementById(`category-${category.replace(/\\s+/g, '-')}`);
@@ -520,26 +513,23 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </SearchContainer>
-            <FilterContainer ref={dropdownRef}>
-              <FilterSelect onClick={() => setIsCategoryOpen(!isCategoryOpen)}>
-                <CheckCircle size={16} color="#f5b041" /> Browse Categories <ChevronDown size={16} />
-              </FilterSelect>
-              {isCategoryOpen && (
-                <DropdownMenu>
-                  {CATEGORIES.map(category => (
-                    <DropdownItem 
-                      key={category} 
-                      onClick={() => {
-                        scrollToCategory(category);
-                        setIsCategoryOpen(false);
-                      }}
-                    >
-                      {category}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              )}
-            </FilterContainer>
+            <PillsContainer>
+              <Pill 
+                $active={selectedCategory === 'All'} 
+                onClick={() => setSelectedCategory('All')}
+              >
+                All Categories
+              </Pill>
+              {CATEGORIES.map(category => (
+                <Pill 
+                  key={category}
+                  $active={selectedCategory === category}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </Pill>
+              ))}
+            </PillsContainer>
             <SelectBox value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="default">Default sorting</option>
               <option value="price_low">Price: Low to High</option>
@@ -548,7 +538,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
           </div>
         </Toolbar>
 
-        {CATEGORIES.map(category => {
+        {(selectedCategory === 'All' ? CATEGORIES : [selectedCategory]).map(category => {
           let categoryProducts = DUMMY_PRODUCTS.filter(p => 
             p.category === category && p.name.toLowerCase().includes(searchQuery.toLowerCase())
           );
@@ -572,7 +562,13 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                   const discount = Math.round(((product.regularPrice - product.price) / product.regularPrice) * 100);
 
                   return (
-                    <ProductCard key={product.id}>
+                    <ProductCard 
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-30px" }}
+                      transition={{ duration: 0.4 }}
+                    >
                       <ImageContainer>
                         <DiscountBadge>{discount}%</DiscountBadge>
                         <WishlistBtn><Heart size={16} /></WishlistBtn>
