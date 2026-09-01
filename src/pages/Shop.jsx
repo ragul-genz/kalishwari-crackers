@@ -339,18 +339,22 @@ const StickyBottomBar = styled.div`
 
 const WarningBanner = styled.div`
   position: absolute;
-  top: -30px;
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   background-color: #d32f2f;
   color: white;
-  padding: 5px 20px;
+  padding: 8px 20px;
   border-radius: 20px 20px 0 0;
   font-weight: 600;
   font-size: 0.85rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  text-align: center;
+  width: max-content;
+  max-width: 90%;
 `;
 
 const BottomBarContent = styled.div`
