@@ -87,6 +87,8 @@ const PillsContainer = styled.div`
   overflow-x: auto;
   padding-bottom: 5px;
   max-width: 100%;
+  min-width: 0;
+  flex: 1;
   
   &::-webkit-scrollbar {
     height: 4px;
@@ -503,7 +505,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
             Home / <span>Shop</span>
           </Breadcrumbs>
           
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', minWidth: 0, flex: 1, justifyContent: 'flex-end' }}>
             <SearchContainer>
               <Search size={18} color="#888" />
               <input 
