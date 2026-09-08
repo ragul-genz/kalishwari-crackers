@@ -683,6 +683,9 @@ const AdminCustomers = () => {
 
             {(selectedCustomer.cartItems || []).map((item, idx) => (
               <ProductItemRow key={idx}>
+                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#6c757d', minWidth: '24px' }}>
+                  {idx + 1}.
+                </span>
                 {item.image ? (
                   <img src={item.image} alt={item.name} className="product-thumb" />
                 ) : (
@@ -787,7 +790,7 @@ const AdminCustomers = () => {
               </div>
             ) : (
               <CustomersGrid>
-                {filteredCustomers.map(cust => (
+                {filteredCustomers.map((cust, index) => (
                   <CustomerCard
                     key={cust.id}
                     onClick={() => setSelectedCustomer(cust)}
@@ -796,6 +799,9 @@ const AdminCustomers = () => {
                     transition={{ duration: 0.2 }}
                   >
                     <CustomerMainInfo>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--brand-red, #c62828)', minWidth: '28px' }}>
+                        #{index + 1}
+                      </span>
                       <div className="avatar">
                         {(cust.name || 'C')[0].toUpperCase()}
                       </div>
