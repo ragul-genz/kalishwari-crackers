@@ -12,6 +12,47 @@ import {
   getStoredBlogs, addBlog, updateBlog, deleteBlog, PRESET_BLOG_IMAGES, BLOG_CATEGORIES 
 } from '../utils/blogManager';
 
+const PageCardContainer = styled.div`
+  background: #ffffff;
+  padding: 28px 28px 24px 28px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+`;
+
+const HeaderTitleBox = styled.div`
+  h3 {
+    color: var(--brand-red, #c62828);
+    font-size: 1.35rem;
+    font-family: var(--font-serif, 'Cinzel', serif);
+    font-weight: 700;
+    margin: 0;
+
+    @media (max-width: 600px) {
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 0.82rem;
+    margin-top: 2px;
+    margin-bottom: 0;
+
+    @media (max-width: 600px) {
+      font-size: 0.74rem;
+    }
+  }
+`;
+
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -695,12 +736,12 @@ const AdminBlogs = () => {
 
   return (
     <AdminLayout title="Blogs">
-      <div style={{ background: '#ffffff', padding: '28px 28px 24px 28px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <h3 style={{ color: 'var(--brand-red, #c62828)', fontSize: '1.35rem', fontFamily: "var(--font-serif, 'Cinzel', serif)", fontWeight: 700 }}>Blog Posts & Safety Guides</h3>
-            <p style={{ color: '#6c757d', fontSize: '0.84rem', marginTop: '4px' }}>Manage and publish articles for customer portal</p>
-          </div>
+      <PageCardContainer>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <HeaderTitleBox>
+            <h3>Blog Posts & Safety Guides</h3>
+            <p>Manage and publish articles for customer portal</p>
+          </HeaderTitleBox>
 
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <SearchContainer>
@@ -767,7 +808,7 @@ const AdminBlogs = () => {
             </BlogGrid>
           )}
         </PageContainer>
-      </div>
+      </PageCardContainer>
 
       {/* Add / Edit Blog Modal */}
       <AnimatePresence>

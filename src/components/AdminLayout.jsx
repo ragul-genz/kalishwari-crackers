@@ -207,20 +207,20 @@ const TopBar = styled.header`
   z-index: 10;
 
   @media (max-width: 600px) {
-    padding: 0 16px;
-    height: 64px;
-    min-height: 64px;
+    padding: 0 12px;
+    height: 58px;
+    min-height: 58px;
   }
 
   .left-section {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     flex: 1;
     min-width: 0;
 
     @media (max-width: 600px) {
-      gap: 10px;
+      gap: 8px;
     }
 
     h1 {
@@ -235,8 +235,8 @@ const TopBar = styled.header`
       text-overflow: ellipsis;
 
       @media (max-width: 600px) {
-        font-size: 1.1rem;
-        letter-spacing: 1px;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
       }
     }
   }
@@ -263,7 +263,7 @@ const TopBar = styled.header`
     white-space: nowrap;
 
     @media (max-width: 600px) {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
     }
 
     @media (max-width: 440px) {
@@ -273,7 +273,7 @@ const TopBar = styled.header`
 `;
 
 const ContentBody = styled.div`
-  padding: 28px 28px 36px 28px;
+  padding: 24px 24px 32px 24px;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -281,7 +281,7 @@ const ContentBody = styled.div`
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   &::-webkit-scrollbar-track {
     background: #f8f9fa;
@@ -295,7 +295,7 @@ const ContentBody = styled.div`
   }
 
   @media (max-width: 600px) {
-    padding: 16px 12px 24px 12px;
+    padding: 10px 8px 18px 8px;
   }
 `;
 

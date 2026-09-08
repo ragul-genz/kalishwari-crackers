@@ -13,6 +13,47 @@ import {
 } from '../utils/productManager';
 import sparklersImg from '../assets/images/sparklers.jpg';
 
+const PageCardContainer = styled.div`
+  background: #ffffff;
+  padding: 28px 28px 24px 28px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+`;
+
+const HeaderTitleBox = styled.div`
+  h3 {
+    color: var(--brand-red, #c62828);
+    font-size: 1.35rem;
+    font-family: var(--font-serif, 'Cinzel', serif);
+    font-weight: 700;
+    margin: 0;
+
+    @media (max-width: 600px) {
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 0.82rem;
+    margin-top: 2px;
+    margin-bottom: 0;
+
+    @media (max-width: 600px) {
+      font-size: 0.74rem;
+    }
+  }
+`;
+
 const ModalBackdrop = styled(motion.div)`
   position: fixed;
   inset: 0;
@@ -811,7 +852,7 @@ const AdminProducts = () => {
 
   return (
     <AdminLayout title="Products">
-      <div style={{ background: '#ffffff', padding: '28px 28px 24px 28px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+      <PageCardContainer>
         {/* Animated Success Notification */}
         <AnimatedNotification notification={notification} onClose={() => setNotification(null)} />
 
@@ -822,11 +863,11 @@ const AdminProducts = () => {
           onCancel={() => setConfirmData(null)} 
         />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-          <div>
-            <h3 style={{ color: 'var(--brand-red, #c62828)', fontSize: '1.35rem', fontFamily: "var(--font-serif, 'Cinzel', serif)", fontWeight: 700 }}>Product Inventory ({productsList.length})</h3>
-            <p style={{ color: '#6c757d', fontSize: '0.82rem', marginTop: '2px' }}>Manage all shop products, categories & store integrations</p>
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <HeaderTitleBox>
+            <h3>Product Inventory ({productsList.length})</h3>
+            <p>Manage all shop products, categories & store integrations</p>
+          </HeaderTitleBox>
           <div style={{ display: 'flex', gap: '8px' }}>
             <HeaderAddCategoryBtn onClick={() => setIsCategoryModalOpen(true)}>
               <FolderPlus size={16} /> Add Category
@@ -1179,7 +1220,7 @@ const AdminProducts = () => {
             </ModalBackdrop>
           )}
         </AnimatePresence>
-      </div>
+      </PageCardContainer>
     </AdminLayout>
   );
 };

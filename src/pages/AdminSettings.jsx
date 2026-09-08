@@ -12,14 +12,14 @@ import { getStoredSettings, saveStoredSettings, updateAdminCredentials, DEFAULT_
 
 const SettingsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
   width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 `;
 
@@ -28,34 +28,36 @@ const SettingsCard = styled(motion.div)`
   border-radius: 12px;
   border: 1px solid #e9ecef;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 600px) {
-    padding: 16px;
+    padding: 12px 10px;
     border-radius: 10px;
   }
 
   .card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 14px;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #f1f3f5;
 
     @media (max-width: 600px) {
-      gap: 10px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
     }
 
     .icon-wrapper {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
       background: rgba(198, 40, 40, 0.08);
       color: var(--brand-red, #c62828);
       display: flex;
@@ -64,34 +66,34 @@ const SettingsCard = styled(motion.div)`
       flex-shrink: 0;
 
       @media (max-width: 600px) {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
         svg {
-          width: 18px;
-          height: 18px;
+          width: 16px;
+          height: 16px;
         }
       }
     }
 
     h3 {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-family: var(--font-serif, 'Cinzel', serif);
       font-weight: 700;
       color: #212529;
       margin: 0;
 
       @media (max-width: 600px) {
-        font-size: 0.98rem;
+        font-size: 0.92rem;
       }
     }
     p {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: #6c757d;
       margin: 2px 0 0 0;
 
       @media (max-width: 600px) {
-        font-size: 0.73rem;
+        font-size: 0.72rem;
       }
     }
   }
@@ -100,39 +102,39 @@ const SettingsCard = styled(motion.div)`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 5px;
+  margin-bottom: 12px;
 
   @media (max-width: 600px) {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     gap: 4px;
   }
 
   label {
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #495057;
 
     @media (max-width: 600px) {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
     }
   }
 
   input, textarea {
     width: 100%;
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: #f8f9fa;
     border: 1px solid #ced4da;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    border-radius: 6px;
+    font-size: 0.88rem;
     color: #212529;
     outline: none;
     transition: all 0.2s ease;
     box-sizing: border-box;
 
     @media (max-width: 600px) {
-      padding: 8px 10px;
-      font-size: 0.82rem;
+      padding: 7px 10px;
+      font-size: 0.8rem;
       border-radius: 6px;
     }
 
@@ -145,14 +147,14 @@ const FormGroup = styled.div`
 
   textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 70px;
   }
 `;
 
 const TwoColResponsiveGroup = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
@@ -165,12 +167,12 @@ const PasswordInputWrapper = styled.div`
   width: 100%;
 
   input {
-    padding-right: 42px !important;
+    padding-right: 38px !important;
   }
 
   .toggle-eye {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: #6c757d;
@@ -193,18 +195,18 @@ const PasswordInputWrapper = styled.div`
 const SaveButton = styled(motion.button)`
   background: linear-gradient(135deg, var(--brand-red, #c62828), var(--brand-red-dark, #8e0000));
   color: #ffffff;
-  padding: 10px 20px;
+  padding: 9px 18px;
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   box-shadow: 0 4px 12px rgba(198, 40, 40, 0.2);
-  margin-top: 10px;
+  margin-top: 6px;
   align-self: flex-start;
   transition: all 0.2s ease;
 
@@ -215,8 +217,8 @@ const SaveButton = styled(motion.button)`
 
   @media (max-width: 600px) {
     width: 100%;
-    padding: 8px 14px;
-    font-size: 0.82rem;
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
 `;
 

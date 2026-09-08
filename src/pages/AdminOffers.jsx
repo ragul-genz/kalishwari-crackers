@@ -16,13 +16,32 @@ const HeaderActions = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+`;
+
+const HeaderControls = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    gap: 8px;
+  }
 `;
 
 const PageTitle = styled.h2`
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-family: var(--font-serif, 'Cinzel', serif);
   color: var(--brand-red, #c62828);
   font-weight: 700;
@@ -31,11 +50,16 @@ const PageTitle = styled.h2`
   align-items: center;
   gap: 10px;
 
+  @media (max-width: 600px) {
+    font-size: 1.05rem;
+    gap: 8px;
+  }
+
   span {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     background: #ffebee;
     color: var(--brand-red, #c62828);
-    padding: 3px 10px;
+    padding: 2px 8px;
     border-radius: 20px;
     font-family: var(--font-sans, sans-serif);
     font-weight: 600;
@@ -45,15 +69,24 @@ const PageTitle = styled.h2`
 const AddBtn = styled.button`
   background: linear-gradient(135deg, var(--brand-red, #c62828), var(--brand-red-dark, #8e0000));
   color: #ffffff;
-  padding: 10px 20px;
+  padding: 9px 18px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   box-shadow: 0 4px 12px rgba(198, 40, 40, 0.25);
   transition: all 0.2s ease;
+  white-space: nowrap;
+
+  @media (max-width: 600px) {
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    border-radius: 6px;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -65,15 +98,29 @@ const SearchBox = styled.div`
   position: relative;
   max-width: 320px;
   width: 100%;
+  flex: 1;
+  min-width: 160px;
+
+  @media (max-width: 600px) {
+    max-width: 100%;
+    min-width: 0;
+  }
 
   input {
     width: 100%;
-    padding: 10px 14px 10px 38px;
+    padding: 8px 12px 8px 34px;
     border-radius: 8px;
     border: 1px solid #ced4da;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     outline: none;
     transition: border-color 0.2s;
+    box-sizing: border-box;
+
+    @media (max-width: 600px) {
+      font-size: 0.8rem;
+      padding: 7px 10px 7px 30px;
+      border-radius: 6px;
+    }
 
     &:focus {
       border-color: var(--gold-primary, #D4AF37);
@@ -83,17 +130,30 @@ const SearchBox = styled.div`
 
   svg {
     position: absolute;
-    left: 12px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: #6c757d;
+
+    @media (max-width: 600px) {
+      width: 15px;
+      height: 15px;
+      left: 8px;
+    }
   }
 `;
 
 const OffersGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 `;
 
 const OfferCard = styled(motion.div)`
@@ -105,19 +165,29 @@ const OfferCard = styled(motion.div)`
   display: flex;
   flex-direction: column;
   transition: all 0.25s ease;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     border-color: rgba(212, 175, 55, 0.4);
   }
+
+  @media (max-width: 600px) {
+    border-radius: 10px;
+  }
 `;
 
 const OfferImageWrapper = styled.div`
   position: relative;
-  height: 170px;
+  height: 160px;
   width: 100%;
   background: #f8f9fa;
+
+  @media (max-width: 600px) {
+    height: 130px;
+  }
 
   img {
     width: 100%;
@@ -127,28 +197,42 @@ const OfferImageWrapper = styled.div`
 
   .discount-badge {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 10px;
+    left: 10px;
     background: linear-gradient(135deg, #d32f2f, #b71c1c);
     color: #ffffff;
     font-weight: 800;
-    font-size: 0.82rem;
-    padding: 5px 12px;
-    border-radius: 20px;
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+
+    @media (max-width: 600px) {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      top: 8px;
+      left: 8px;
+    }
   }
 
   .status-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     font-weight: 600;
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 12px;
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    border-radius: 10px;
     backdrop-filter: blur(4px);
+
+    @media (max-width: 600px) {
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      top: 8px;
+      right: 8px;
+    }
 
     &.Active {
       background: rgba(46, 125, 50, 0.9);
@@ -166,28 +250,41 @@ const OfferImageWrapper = styled.div`
 `;
 
 const OfferBody = styled.div`
-  padding: 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   flex: 1;
 
+  @media (max-width: 600px) {
+    padding: 12px;
+  }
+
   .title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #212529;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+
+    @media (max-width: 600px) {
+      font-size: 0.92rem;
+    }
   }
 
   .desc {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     color: #6c757d;
-    line-height: 1.5;
-    margin-bottom: 16px;
+    line-height: 1.45;
+    margin-bottom: 12px;
     flex: 1;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+
+    @media (max-width: 600px) {
+      font-size: 0.76rem;
+      margin-bottom: 8px;
+    }
   }
 `;
 
@@ -195,26 +292,44 @@ const CouponBox = styled.div`
   background: #f8f9fa;
   border: 1px dashed var(--gold-dark, #AA8222);
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 5px 8px;
+    margin-bottom: 8px;
+  }
 
   .code {
     font-family: monospace;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     color: var(--brand-red, #c62828);
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    word-break: break-all;
+
+    @media (max-width: 600px) {
+      font-size: 0.78rem;
+    }
   }
 
   .validity {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #6c757d;
     display: flex;
     align-items: center;
     gap: 4px;
+
+    @media (max-width: 600px) {
+      font-size: 0.68rem;
+    }
   }
 `;
 
@@ -223,17 +338,39 @@ const CardFooter = styled.div`
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid #f1f3f5;
-  padding-top: 12px;
+  padding-top: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  .portal-tag {
+    font-size: 0.76rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    @media (max-width: 600px) {
+      font-size: 0.7rem;
+    }
+  }
 
   .actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 
     button {
-      padding: 7px;
+      padding: 6px;
       border-radius: 6px;
       transition: background 0.2s;
       color: #495057;
+
+      @media (max-width: 600px) {
+        padding: 4px;
+        svg {
+          width: 15px;
+          height: 15px;
+        }
+      }
 
       &:hover {
         background: #e9ecef;
@@ -622,7 +759,7 @@ const AdminOffers = () => {
           Festival Offers <span>{offers.length} Offers</span>
         </PageTitle>
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <HeaderControls>
           <SearchBox>
             <Search size={18} />
             <input 
@@ -636,7 +773,7 @@ const AdminOffers = () => {
           <AddBtn onClick={handleOpenAddModal}>
             <Plus size={18} /> Add New Offer
           </AddBtn>
-        </div>
+        </HeaderControls>
       </HeaderActions>
 
       {filteredOffers.length === 0 ? (

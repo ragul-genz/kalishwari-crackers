@@ -17,30 +17,78 @@ const PageContainer = styled.div`
   width: 100%;
 `;
 
+const MainContentCard = styled.div`
+  background: #ffffff;
+  padding: 28px 24px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+`;
+
+const HeaderTitleBox = styled.div`
+  h3 {
+    color: var(--brand-red, #c62828);
+    font-size: 1.35rem;
+    font-family: var(--font-serif, 'Cinzel', serif);
+    font-weight: 700;
+    margin: 0;
+
+    @media (max-width: 600px) {
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 0.82rem;
+    margin-top: 2px;
+    margin-bottom: 0;
+
+    @media (max-width: 600px) {
+      font-size: 0.74rem;
+    }
+  }
+`;
+
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
   margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 `;
 
 const StatCard = styled.div`
   background: #f8f9fa;
-  padding: 16px 18px;
+  padding: 14px 16px;
   border-radius: 10px;
   border: 1px solid #e9ecef;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    padding: 10px 12px;
+    gap: 10px;
+  }
 
   .stat-icon {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -48,30 +96,49 @@ const StatCard = styled.div`
     background: #ffebee;
     color: var(--brand-red, #c62828);
     flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      width: 36px;
+      height: 36px;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
   }
 
   p {
     color: #6c757d;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     margin: 0;
   }
 
   h2 {
     color: #212529;
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     margin-top: 2px;
     margin-bottom: 0;
+
+    @media (max-width: 480px) {
+      font-size: 1rem;
+    }
   }
 `;
 
 const FilterControlsRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   width: 100%;
   max-width: 600px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
 `;
 
 const SearchBox = styled.div`
@@ -80,22 +147,34 @@ const SearchBox = styled.div`
   background: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 8px;
-  padding: 8px 14px;
-  gap: 10px;
+  padding: 8px 12px;
+  gap: 8px;
   flex: 1;
-  min-width: 240px;
+  min-width: 180px;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    min-width: 0;
+    padding: 6px 10px;
+  }
 
   input {
     border: none;
     background: transparent;
     outline: none;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     width: 100%;
     color: #212529;
+
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
   }
 
   svg {
     color: #6c757d;
+    flex-shrink: 0;
   }
 `;
 
@@ -105,11 +184,18 @@ const DatePickerBox = styled.div`
   background: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   gap: 6px;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: space-between;
+    padding: 5px 8px;
+  }
 
   label {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: #6c757d;
     font-weight: 600;
     white-space: nowrap;
@@ -119,7 +205,7 @@ const DatePickerBox = styled.div`
     border: none;
     background: transparent;
     outline: none;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #212529;
     font-family: inherit;
     cursor: pointer;
@@ -141,24 +227,38 @@ const DateGroupHeader = styled.div`
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-left: 4px solid var(--brand-red, #c62828);
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-radius: 8px;
-  margin-top: 18px;
-  margin-bottom: 12px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  @media (max-width: 480px) {
+    padding: 6px 8px;
+  }
 
   .date-title {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     color: #212529;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
   }
 
   .date-stats {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     color: #6c757d;
     font-weight: 600;
+
+    @media (max-width: 480px) {
+      font-size: 0.7rem;
+    }
   }
 `;
 
@@ -166,21 +266,25 @@ const DateGroupHeader = styled.div`
 const CustomersGrid = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const CustomerCard = styled(motion.div)`
   background: #ffffff;
   border: 1px solid #e9ecef;
   border-radius: 12px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     border-color: var(--gold-primary, #D4AF37);
@@ -192,20 +296,23 @@ const CustomerCard = styled(motion.div)`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
-    padding: 16px;
-    gap: 12px;
+    padding: 12px 10px;
+    gap: 8px;
+    border-radius: 10px;
   }
 `;
 
 const CustomerMainInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex: 1;
+  min-width: 0;
+  width: 100%;
 
   .avatar {
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--brand-red, #c62828), var(--brand-red-dark, #8e0000));
     color: #ffffff;
@@ -213,20 +320,35 @@ const CustomerMainInfo = styled.div`
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      width: 34px;
+      height: 34px;
+      font-size: 0.88rem;
+    }
   }
 
   .name-block {
+    min-width: 0;
+    flex: 1;
+
     .name {
       font-weight: 700;
       color: #212529;
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       margin-bottom: 2px;
+      word-break: break-word;
+
+      @media (max-width: 480px) {
+        font-size: 0.88rem;
+      }
     }
     .id {
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       color: #868e96;
+      word-break: break-word;
     }
   }
 `;
@@ -234,53 +356,68 @@ const CustomerMainInfo = styled.div`
 const CustomerMeta = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
 
   @media (max-width: 768px) {
     width: 100%;
     justify-content: space-between;
-    gap: 10px;
-    padding-top: 10px;
+    align-items: center;
+    gap: 6px;
+    padding-top: 8px;
     border-top: 1px solid #f1f3f5;
   }
 
   .phone {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     color: #2e7d32;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.82rem;
+
+    @media (max-width: 480px) {
+      font-size: 0.76rem;
+    }
   }
 
   .address {
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     color: #495057;
-    max-width: 200px;
+    max-width: 180px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
     @media (max-width: 768px) {
       max-width: 100%;
+      flex-basis: 100%;
       white-space: normal;
+      word-break: break-word;
+      font-size: 0.76rem;
+      line-height: 1.3;
+      margin-top: 2px;
+      margin-bottom: 2px;
     }
   }
 
   .badge {
     background: #e3f2fd;
     color: #1976d2;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
   }
 
   .amount {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 800;
     color: var(--brand-red, #c62828);
+
+    @media (max-width: 480px) {
+      font-size: 0.92rem;
+    }
   }
 `;
 
@@ -320,32 +457,53 @@ const CustomerDetailCard = styled.div`
   border: 1px solid #e9ecef;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
 
   .grid-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
   }
 
   .info-box {
+    min-width: 0;
+
+    &.full-width-mobile {
+      @media (max-width: 600px) {
+        grid-column: span 1 !important;
+      }
+    }
+
     .label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #868e96;
       font-weight: 700;
       text-transform: uppercase;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .value {
-      font-size: 1rem;
+      font-size: 0.92rem;
       color: #212529;
       font-weight: 600;
+      word-break: break-word;
+
+      @media (max-width: 480px) {
+        font-size: 0.85rem;
+      }
     }
   }
 
   @media (max-width: 600px) {
-    padding: 16px;
+    padding: 12px 10px;
+    border-radius: 10px;
   }
 `;
 
@@ -355,17 +513,25 @@ const ProductsListContainer = styled.div`
   border: 1px solid #e9ecef;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  width: 100%;
+  box-sizing: border-box;
 
   h4 {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-family: var(--font-serif, 'Cinzel', serif);
     color: var(--brand-red, #c62828);
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     font-weight: 700;
+
+    @media (max-width: 600px) {
+      font-size: 0.92rem;
+      margin-bottom: 10px;
+    }
   }
 
   @media (max-width: 600px) {
-    padding: 16px;
+    padding: 12px 8px;
+    border-radius: 10px;
   }
 `;
 
@@ -373,17 +539,18 @@ const ProductItemRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px;
+  padding: 12px 10px;
   border-bottom: 1px solid #f1f3f5;
-  gap: 16px;
+  gap: 12px;
+  min-width: 0;
 
   &:last-child {
     border-bottom: none;
   }
 
   .product-thumb {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     border-radius: 8px;
     object-fit: cover;
     background: #f8f9fa;
@@ -393,49 +560,59 @@ const ProductItemRow = styled.div`
 
   .product-info {
     flex: 1;
+    min-width: 0;
 
     .p-name {
       font-weight: 700;
       color: #212529;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+      word-break: break-word;
     }
     .p-unit {
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       color: #6c757d;
     }
   }
 
   .product-qty-total {
     text-align: right;
+    flex-shrink: 0;
 
     .p-qty {
       background: #e3f2fd;
       color: #1976d2;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 10px;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
       display: inline-block;
       margin-bottom: 2px;
     }
 
     .p-subtotal {
-      font-size: 1rem;
+      font-size: 0.92rem;
       font-weight: 800;
       color: var(--brand-red, #c62828);
     }
   }
 
   @media (max-width: 480px) {
-    gap: 10px;
-    padding: 12px 6px;
+    gap: 8px;
+    padding: 8px 4px;
 
     .product-thumb {
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
     }
     .product-info .p-name {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
+    }
+    .product-info .p-unit {
+      font-size: 0.72rem;
+    }
+    .product-qty-total .p-subtotal {
+      font-size: 0.86rem;
     }
   }
 `;
@@ -444,39 +621,58 @@ const OrderSummaryCard = styled.div`
   background: #fff9db;
   border: 1px dashed var(--gold-dark, #AA8222);
   border-radius: 12px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 12px 10px;
+    border-radius: 8px;
+    gap: 10px;
+  }
 
   .total-label {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     color: #6c757d;
     font-weight: 700;
     text-transform: uppercase;
   }
 
   .total-val {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--brand-red, #c62828);
+
+    @media (max-width: 480px) {
+      font-size: 1.15rem;
+    }
   }
 
   .whatsapp-link {
     background: #25D366;
     color: #ffffff;
-    padding: 10px 18px;
+    padding: 9px 16px;
     border-radius: 8px;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     text-decoration: none;
     transition: transform 0.2s;
+
+    @media (max-width: 600px) {
+      width: 100%;
+      justify-content: center;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+    }
 
     &:hover {
       transform: translateY(-2px);
@@ -817,16 +1013,16 @@ const AdminCustomers = () => {
         </PageContainer>
       ) : (
         /* MAIN CUSTOMER DIRECTORY LIST VIEW (DATE-WISE GROUPED) */
-        <div style={{ background: '#ffffff', padding: '28px 24px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-            <div>
-              <h3 style={{ color: 'var(--brand-red, #c62828)', fontSize: '1.35rem', fontFamily: "var(--font-serif, 'Cinzel', serif)", fontWeight: 700 }}>
+        <MainContentCard>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+            <HeaderTitleBox>
+              <h3>
                 WhatsApp Orders & Customers
               </h3>
-              <p style={{ color: '#6c757d', fontSize: '0.82rem', marginTop: '2px' }}>
+              <p>
                 Organized date-wise. Search by name, phone, address or select a date filter.
               </p>
-            </div>
+            </HeaderTitleBox>
 
             <FilterControlsRow>
               <SearchBox>
@@ -970,7 +1166,7 @@ const AdminCustomers = () => {
               </div>
             )}
           </PageContainer>
-        </div>
+        </MainContentCard>
       )}
 
       {/* Delete Confirmation Modal */}
