@@ -174,11 +174,12 @@ export const updateAdminCredentials = (newUsername, newPassword) => {
 export const resetAllStoreData = () => {
   try {
     localStorage.removeItem('kalishwari_store_settings');
-    localStorage.removeItem('kalishwari_products_v2');
-    localStorage.removeItem('kalishwari_categories_v2');
-    localStorage.removeItem('kalishwari_festival_offers');
-    localStorage.removeItem('kalishwari_blogs_v2');
-    localStorage.removeItem('kalishwari_whatsapp_customers');
+    localStorage.removeItem('kalishwari_products_db');
+    localStorage.removeItem('kalishwari_categories_db');
+    localStorage.removeItem('kalishwari_deleted_categories_db');
+    localStorage.removeItem('kalishwari_stored_offers');
+    localStorage.removeItem('kalishwari_blogs_db');
+    localStorage.setItem('kalishwari_whatsapp_customers', JSON.stringify([]));
     
     notifyDataSync('settingsUpdated');
     notifyDataSync('productsUpdated');

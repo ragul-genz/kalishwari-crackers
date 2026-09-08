@@ -42,7 +42,7 @@ export const getStoredCustomers = () => {
     const raw = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
     const storeProducts = getStoredProducts();
 
-    let list = INITIAL_CUSTOMERS;
+    let list = [];
     if (raw) {
       list = JSON.parse(raw);
     }
@@ -64,7 +64,7 @@ export const getStoredCustomers = () => {
     }));
   } catch (error) {
     console.error('Error loading stored customers:', error);
-    return INITIAL_CUSTOMERS;
+    return [];
   }
 };
 
