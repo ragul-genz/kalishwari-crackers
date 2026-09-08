@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Search, Phone, MapPin, Calendar, ShoppingBag, 
-  Eye, Trash2, X, MessageCircle, DollarSign, Package, Tag, Check
+  Trash2, ArrowLeft, MessageCircle, DollarSign, Package, Tag, Check, Sparkles, Image as ImageIcon
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
@@ -19,47 +19,53 @@ const PageContainer = styled.div`
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-bottom: 12px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
 `;
 
 const StatCard = styled.div`
   background: #f8f9fa;
-  padding: 18px 20px;
+  padding: 16px 18px;
   border-radius: 10px;
   border: 1px solid #e9ecef;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 
   .stat-icon {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #ffebee;
     color: var(--brand-red, #c62828);
+    flex-shrink: 0;
   }
 
   p {
     color: #6c757d;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     margin: 0;
   }
 
   h2 {
     color: #212529;
-    font-size: 1.45rem;
+    font-size: 1.35rem;
     margin-top: 2px;
     margin-bottom: 0;
   }
 `;
 
-const SearchContainer = styled.div`
+const SearchBox = styled.div`
   display: flex;
   align-items: center;
   background: #f8f9fa;
@@ -67,7 +73,7 @@ const SearchContainer = styled.div`
   border-radius: 8px;
   padding: 8px 14px;
   gap: 10px;
-  max-width: 400px;
+  max-width: 420px;
   width: 100%;
 
   input {
@@ -84,161 +90,326 @@ const SearchContainer = styled.div`
   }
 `;
 
-const TableWrapper = styled.div`
-  overflow-x: auto;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    textAlign: left;
-    font-size: 0.88rem;
-    min-width: 750px;
-
-    th {
-      background: #f8f9fa;
-      color: var(--brand-red, #c62828);
-      font-weight: 700;
-      padding: 12px 14px;
-      border-bottom: 2px solid #e9ecef;
-    }
-
-    td {
-      padding: 14px;
-      border-bottom: 1px solid #f1f3f5;
-      vertical-align: middle;
-    }
-
-    tr:hover {
-      background: #fafafa;
-    }
-  }
-`;
-
-const ActionBtn = styled.button`
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s;
-  cursor: pointer;
-
-  &.view-btn {
-    background: #e3f2fd;
-    color: #1976d2;
-    border: 1px solid #bbdefb;
-    &:hover { background: #bbdefb; }
-  }
-
-  &.delete-btn {
-    background: #ffebee;
-    color: #d32f2f;
-    border: 1px solid #ffcdd2;
-    &:hover { background: #ffcdd2; }
-  }
-`;
-
-/* Modal Components */
-const ModalBackdrop = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+/* Customer Cards Grid & List for Desktop and Mobile */
+const CustomersGrid = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9990;
-  padding: 20px;
+  flex-direction: column;
+  gap: 12px;
 `;
 
-const ModalCard = styled(motion.div)`
+const CustomerCard = styled(motion.div)`
   background: #ffffff;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 620px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 28px;
-  box-shadow: 0 12px 36px rgba(0,0,0,0.2);
-  position: relative;
-`;
-
-const ModalHeader = styled.div`
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e9ecef;
+  gap: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
 
-  h3 {
-    margin: 0;
-    font-size: 1.3rem;
-    color: #212529;
-    font-family: var(--font-serif, 'Cinzel', serif);
+  &:hover {
+    border-color: var(--gold-primary, #D4AF37);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    background: #fffdf6;
   }
 
-  button {
-    color: #868e96;
-    &:hover { color: #212529; }
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
   }
 `;
 
-const CustomerInfoBox = styled.div`
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+const CustomerMainInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
 
-  @media (max-width: 550px) {
-    grid-template-columns: 1fr;
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-red, #c62828), var(--brand-red-dark, #8e0000));
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
   }
 
-  .info-item {
-    span.label {
+  .name-block {
+    .name {
+      font-weight: 700;
+      color: #212529;
+      font-size: 1.05rem;
+      margin-bottom: 2px;
+    }
+    .id {
+      font-size: 0.76rem;
+      color: #868e96;
+    }
+  }
+`;
+
+const CustomerMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f1f3f5;
+  }
+
+  .phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #2e7d32;
+    font-weight: 600;
+    font-size: 0.88rem;
+  }
+
+  .address {
+    font-size: 0.84rem;
+    color: #495057;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+      white-space: normal;
+    }
+  }
+
+  .badge {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.78rem;
+  }
+
+  .amount {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--brand-red, #c62828);
+  }
+`;
+
+/* Dedicated Detail Page Styling */
+const DetailPageHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+`;
+
+const BackButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f3f5;
+  color: #495057;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background: #e9ecef;
+    color: #212529;
+    transform: translateX(-3px);
+  }
+`;
+
+const CustomerDetailCard = styled.div`
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e9ecef;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  margin-bottom: 24px;
+
+  .grid-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .info-box {
+    .label {
       font-size: 0.75rem;
       color: #868e96;
-      display: block;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
     }
-    span.val {
-      font-size: 0.92rem;
+    .value {
+      font-size: 1rem;
       color: #212529;
       font-weight: 600;
     }
   }
+
+  @media (max-width: 600px) {
+    padding: 16px;
+  }
 `;
 
-const OrderItemsTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  font-size: 0.88rem;
+const ProductsListContainer = styled.div`
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e9ecef;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 
-  th {
-    background: #f1f3f5;
-    padding: 8px 12px;
+  h4 {
+    font-size: 1.2rem;
+    font-family: var(--font-serif, 'Cinzel', serif);
+    color: var(--brand-red, #c62828);
+    margin-bottom: 18px;
     font-weight: 700;
-    color: #495057;
-    text-align: left;
-    border-bottom: 2px solid #dee2e6;
   }
 
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #e9ecef;
+  @media (max-width: 600px) {
+    padding: 16px;
+  }
+`;
+
+const ProductItemRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  border-bottom: 1px solid #f1f3f5;
+  gap: 16px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .product-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    flex-shrink: 0;
+  }
+
+  .product-info {
+    flex: 1;
+
+    .p-name {
+      font-weight: 700;
+      color: #212529;
+      font-size: 0.95rem;
+    }
+    .p-unit {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+  }
+
+  .product-qty-total {
+    text-align: right;
+
+    .p-qty {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    .p-subtotal {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--brand-red, #c62828);
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 10px;
+    padding: 12px 6px;
+
+    .product-thumb {
+      width: 44px;
+      height: 44px;
+    }
+    .product-info .p-name {
+      font-size: 0.88rem;
+    }
+  }
+`;
+
+const OrderSummaryCard = styled.div`
+  background: #fff9db;
+  border: 1px dashed var(--gold-dark, #AA8222);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .total-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .total-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--brand-red, #c62828);
+  }
+
+  .whatsapp-link {
+    background: #25D366;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+    }
   }
 `;
 
@@ -349,7 +520,13 @@ const AdminCustomers = () => {
   const [notification, setNotification] = useState(null);
 
   const loadCustomers = () => {
-    setCustomers(getStoredCustomers());
+    const list = getStoredCustomers();
+    setCustomers(list);
+    // If selected customer is open, update its object from stored list
+    if (selectedCustomer) {
+      const match = list.find(c => c.id === selectedCustomer.id);
+      if (match) setSelectedCustomer(match);
+    }
   };
 
   useEffect(() => {
@@ -384,10 +561,10 @@ const AdminCustomers = () => {
     if (deletingCustomerId) {
       const updated = deleteCustomerRecord(deletingCustomerId);
       setCustomers(updated);
-      setDeletingCustomerId(null);
       if (selectedCustomer && selectedCustomer.id === deletingCustomerId) {
         setSelectedCustomer(null);
       }
+      setDeletingCustomerId(null);
       triggerNotify('Record Deleted', 'Customer WhatsApp order record removed.');
     }
   };
@@ -405,281 +582,273 @@ const AdminCustomers = () => {
 
   return (
     <AdminLayout title="Customers">
-      <div style={{ background: '#ffffff', padding: '28px 28px 24px 28px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-          <div>
-            <h3 style={{ color: 'var(--brand-red, #c62828)', fontSize: '1.35rem', fontFamily: "var(--font-serif, 'Cinzel', serif)", fontWeight: 700 }}>
-              WhatsApp Orders & Customers
-            </h3>
-            <p style={{ color: '#6c757d', fontSize: '0.82rem', marginTop: '2px' }}>
-              Real-time records of customers who placed orders via WhatsApp with their complete cart items
-            </p>
-          </div>
-
-          <SearchContainer>
-            <Search size={18} />
-            <input 
-              type="text" 
-              placeholder="Search by name, phone, address, pincode..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </SearchContainer>
-        </div>
-
-        <StatsGrid>
-          <StatCard>
-            <div className="stat-icon">
-              <Users size={22} />
-            </div>
-            <div>
-              <p>Total Customers</p>
-              <h2>{customers.length} Orders</h2>
-            </div>
-          </StatCard>
-
-          <StatCard>
-            <div className="stat-icon" style={{ background: '#e8f5e9', color: '#2e7d32' }}>
-              <DollarSign size={22} />
-            </div>
-            <div>
-              <p>Total Revenue</p>
-              <h2>₹{totalRevenue.toLocaleString()}</h2>
-            </div>
-          </StatCard>
-
-          <StatCard>
-            <div className="stat-icon" style={{ background: '#e3f2fd', color: '#1976d2' }}>
-              <Package size={22} />
-            </div>
-            <div>
-              <p>Products Ordered</p>
-              <h2>{totalProductsSold} Items</h2>
-            </div>
-          </StatCard>
-        </StatsGrid>
-
+      {/* Dynamic View Switch: Customer Directory OR Dedicated Customer Detail Page */}
+      {selectedCustomer ? (
+        /* DEDICATED CUSTOMER DETAIL PAGE VIEW */
         <PageContainer>
-          <TableWrapper>
-            <table>
-              <thead>
-                <tr>
-                  <th>Customer Name & ID</th>
-                  <th>Phone / WhatsApp</th>
-                  <th>Delivery Address</th>
-                  <th>Order Date</th>
-                  <th>Items Count</th>
-                  <th>Total Amount</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCustomers.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" style={{ textAlign: 'center', padding: '36px', color: '#6c757d' }}>
-                      {searchTerm ? `No WhatsApp orders match search "${searchTerm}"` : 'No WhatsApp customer orders recorded yet. When a customer places an order via WhatsApp, their cart breakdown will appear here live!'}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredCustomers.map(cust => (
-                    <tr key={cust.id}>
-                      <td>
-                        <strong style={{ color: '#212529', display: 'block' }}>{cust.name}</strong>
-                        <span style={{ fontSize: '0.75rem', color: '#868e96' }}>ID: {cust.id}</span>
-                      </td>
+          <DetailPageHeader>
+            <BackButton onClick={() => setSelectedCustomer(null)}>
+              <ArrowLeft size={18} /> Back to Customers List
+            </BackButton>
 
-                      <td>
-                        <a 
-                          href={`https://wa.me/91${cust.phone.replace(/\D/g, '')}`} 
-                          target="_blank" 
-                          rel="noreferrer"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2e7d32', fontWeight: 600 }}
-                        >
-                          <MessageCircle size={15} /> +91 {cust.phone}
-                        </a>
-                      </td>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <a 
+                href={`https://wa.me/91${selectedCustomer.phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(selectedCustomer.name)}!%20Regarding%20your%20Kalishwari%20Crackers%20Order%20(${selectedCustomer.id})`}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  background: '#25D366',
+                  color: '#ffffff',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  textDecoration: 'none'
+                }}
+              >
+                <MessageCircle size={16} /> Contact Customer
+              </a>
 
-                      <td style={{ maxWidth: '220px', color: '#495057' }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
-                          <MapPin size={14} color="#d32f2f" style={{ marginTop: '2px', flexShrink: 0 }} />
-                          <div>
-                            <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{cust.address}</div>
-                            <span style={{ fontSize: '0.75rem', color: '#868e96' }}>PIN: {cust.pincode}</span>
-                          </div>
-                        </div>
-                      </td>
+              <button
+                onClick={() => setDeletingCustomerId(selectedCustomer.id)}
+                style={{
+                  background: '#ffebee',
+                  color: '#d32f2f',
+                  border: '1px solid #ffcdd2',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                <Trash2 size={16} /> Delete Order
+              </button>
+            </div>
+          </DetailPageHeader>
 
-                      <td style={{ color: '#6c757d', fontSize: '0.82rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Calendar size={13} /> {cust.date}
-                        </div>
-                      </td>
-
-                      <td>
-                        <span style={{ background: '#e3f2fd', color: '#1976d2', padding: '4px 10px', borderRadius: '12px', fontWeight: 700, fontSize: '0.8rem' }}>
-                          {cust.itemsCount} Products
-                        </span>
-                      </td>
-
-                      <td style={{ fontWeight: 800, color: 'var(--brand-red, #c62828)', fontSize: '0.95rem' }}>
-                        ₹{cust.totalAmount}
-                      </td>
-
-                      <td style={{ textAlign: 'right' }}>
-                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                          <ActionBtn className="view-btn" onClick={() => setSelectedCustomer(cust)}>
-                            <Eye size={15} /> View Products
-                          </ActionBtn>
-                          <ActionBtn className="delete-btn" onClick={() => setDeletingCustomerId(cust.id)}>
-                            <Trash2 size={15} />
-                          </ActionBtn>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </TableWrapper>
-        </PageContainer>
-      </div>
-
-      {/* Customer Order Details Breakdown Modal */}
-      <AnimatePresence>
-        {selectedCustomer && (
-          <ModalBackdrop
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedCustomer(null)}
-          >
-            <ModalCard
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ModalHeader>
-                <h3>Customer Cart Breakdown</h3>
-                <button onClick={() => setSelectedCustomer(null)}><X size={20} /></button>
-              </ModalHeader>
-
-              <CustomerInfoBox>
-                <div className="info-item">
-                  <span className="label">Customer Name</span>
-                  <span className="val">{selectedCustomer.name}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Phone / WhatsApp</span>
-                  <span className="val" style={{ color: '#2e7d32' }}>+91 {selectedCustomer.phone}</span>
-                </div>
-                <div className="info-item" style={{ gridColumn: 'span 2' }}>
-                  <span className="label">Delivery Address & Pincode</span>
-                  <span className="val">{selectedCustomer.address} - (PIN: {selectedCustomer.pincode})</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Order Date & Time</span>
-                  <span className="val" style={{ fontSize: '0.85rem' }}>{selectedCustomer.date}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Customer ID</span>
-                  <span className="val" style={{ fontSize: '0.85rem', color: '#6c757d' }}>{selectedCustomer.id}</span>
-                </div>
-              </CustomerInfoBox>
-
-              <h4 style={{ fontSize: '1.05rem', color: 'var(--brand-red, #c62828)', marginBottom: '12px', fontWeight: 700 }}>
-                Ordered Fireworks ({selectedCustomer.itemsCount} Items)
-              </h4>
-
-              <OrderItemsTable>
-                <thead>
-                  <tr>
-                    <th>Product Name</th>
-                    <th style={{ textAlign: 'center' }}>Price</th>
-                    <th style={{ textAlign: 'center' }}>Qty</th>
-                    <th style={{ textAlign: 'right' }}>Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(selectedCustomer.cartItems || []).map((item, idx) => (
-                    <tr key={idx}>
-                      <td style={{ fontWeight: 600, color: '#212529' }}>
-                        {item.name}
-                      </td>
-                      <td style={{ textAlign: 'center', color: '#6c757d' }}>
-                        ₹{item.price}
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: '#1976d2' }}>
-                        {item.quantity}
-                      </td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, color: 'var(--brand-red, #c62828)' }}>
-                        ₹{item.totalItemPrice || (item.price * item.quantity)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </OrderItemsTable>
-
+          {/* Customer Details Card */}
+          <CustomerDetailCard>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px', paddingBottom: '14px', borderBottom: '1px solid #e9ecef' }}>
               <div style={{
-                background: '#ffebee',
-                border: '1px solid #ffcdd2',
-                borderRadius: '10px',
-                padding: '14px 18px',
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, var(--brand-red, #c62828), var(--brand-red-dark, #8e0000))',
+                color: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '20px'
+                justifyContent: 'center',
+                fontWeight: 800,
+                fontSize: '1.25rem'
               }}>
-                <div>
-                  <span style={{ fontSize: '0.78rem', color: '#868e96', display: 'block', textTransform: 'uppercase', fontWeight: 700 }}>
-                    TOTAL ORDER AMOUNT
-                  </span>
-                  <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--brand-red, #c62828)' }}>
-                    ₹{selectedCustomer.totalAmount}
-                  </span>
+                {(selectedCustomer.name || 'C')[0].toUpperCase()}
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.3rem', color: '#212529', fontFamily: "var(--font-serif, 'Cinzel', serif)" }}>
+                  {selectedCustomer.name}
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: '#868e96', fontWeight: 600 }}>
+                  Order ID: {selectedCustomer.id}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid-info">
+              <div className="info-box">
+                <span className="label">Mobile / WhatsApp</span>
+                <span className="value" style={{ color: '#2e7d32' }}>+91 {selectedCustomer.phone}</span>
+              </div>
+
+              <div className="info-box">
+                <span className="label">Order Date & Time</span>
+                <span className="value">{selectedCustomer.date}</span>
+              </div>
+
+              <div className="info-box" style={{ gridColumn: 'span 2' }}>
+                <span className="label">Delivery Address & Pincode</span>
+                <span className="value">{selectedCustomer.address} - PIN ({selectedCustomer.pincode})</span>
+              </div>
+            </div>
+          </CustomerDetailCard>
+
+          {/* Ordered Products Breakdown with Thumbnails */}
+          <ProductsListContainer>
+            <h4>
+              Ordered Fireworks Breakdown ({selectedCustomer.itemsCount} Items)
+            </h4>
+
+            {(selectedCustomer.cartItems || []).map((item, idx) => (
+              <ProductItemRow key={idx}>
+                {item.image ? (
+                  <img src={item.image} alt={item.name} className="product-thumb" />
+                ) : (
+                  <div className="product-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#adb5bd' }}>
+                    <ImageIcon size={20} />
+                  </div>
+                )}
+
+                <div className="product-info">
+                  <div className="p-name">{item.name}</div>
+                  <div className="p-unit">Unit Price: ₹{item.price}</div>
                 </div>
 
-                <a 
-                  href={`https://wa.me/91${selectedCustomer.phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(selectedCustomer.name)}!%20Thank%20you%20for%20your%20order%20at%20Kalishwari%20Crackers.%20Order%20ID:%20${selectedCustomer.id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    background: '#25D366',
-                    color: '#ffffff',
-                    padding: '10px 16px',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    fontSize: '0.88rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <MessageCircle size={16} /> Contact on WhatsApp
-                </a>
+                <div className="product-qty-total">
+                  <span className="p-qty">Qty: {item.quantity}</span>
+                  <div className="p-subtotal">₹{item.totalItemPrice || (item.price * item.quantity)}</div>
+                </div>
+              </ProductItemRow>
+            ))}
+
+            <OrderSummaryCard>
+              <div>
+                <span className="total-label">Grand Total Amount</span>
+                <div className="total-val">₹{selectedCustomer.totalAmount}</div>
               </div>
-            </ModalCard>
-          </ModalBackdrop>
-        )}
-      </AnimatePresence>
+
+              <a 
+                href={`https://wa.me/91${selectedCustomer.phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(selectedCustomer.name)}!%20Thank%20you%20for%20your%20order%20at%20Kalishwari%20Crackers.`}
+                target="_blank"
+                rel="noreferrer"
+                className="whatsapp-link"
+              >
+                <MessageCircle size={18} /> Open WhatsApp Chat
+              </a>
+            </OrderSummaryCard>
+          </ProductsListContainer>
+        </PageContainer>
+      ) : (
+        /* MAIN CUSTOMER DIRECTORY LIST VIEW */
+        <div style={{ background: '#ffffff', padding: '28px 24px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <h3 style={{ color: 'var(--brand-red, #c62828)', fontSize: '1.35rem', fontFamily: "var(--font-serif, 'Cinzel', serif)", fontWeight: 700 }}>
+                WhatsApp Orders & Customers
+              </h3>
+              <p style={{ color: '#6c757d', fontSize: '0.82rem', marginTop: '2px' }}>
+                Tap any customer card below to open their dedicated order details & fireworks list
+              </p>
+            </div>
+
+            <SearchBox>
+              <Search size={18} />
+              <input 
+                type="text" 
+                placeholder="Search by name, phone, address, pincode..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </SearchBox>
+          </div>
+
+          <StatsGrid>
+            <StatCard>
+              <div className="stat-icon">
+                <Users size={22} />
+              </div>
+              <div>
+                <p>Total Customers</p>
+                <h2>{customers.length} Orders</h2>
+              </div>
+            </StatCard>
+
+            <StatCard>
+              <div className="stat-icon" style={{ background: '#e8f5e9', color: '#2e7d32' }}>
+                <DollarSign size={22} />
+              </div>
+              <div>
+                <p>Total Revenue</p>
+                <h2>₹{totalRevenue.toLocaleString()}</h2>
+              </div>
+            </StatCard>
+
+            <StatCard>
+              <div className="stat-icon" style={{ background: '#e3f2fd', color: '#1976d2' }}>
+                <Package size={22} />
+              </div>
+              <div>
+                <p>Products Ordered</p>
+                <h2>{totalProductsSold} Items</h2>
+              </div>
+            </StatCard>
+          </StatsGrid>
+
+          <PageContainer style={{ marginTop: '16px' }}>
+            {filteredCustomers.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 20px', background: '#f8f9fa', borderRadius: '12px', border: '1px dashed #ced4da' }}>
+                <Users size={44} color="#adb5bd" style={{ marginBottom: '10px' }} />
+                <h4 style={{ color: '#495057', margin: '0 0 6px 0' }}>No Customer Orders Found</h4>
+                <p style={{ color: '#868e96', margin: 0, fontSize: '0.88rem' }}>
+                  {searchTerm ? `No WhatsApp orders match "${searchTerm}"` : 'When a customer places an order via WhatsApp, their order card will appear here live!'}
+                </p>
+              </div>
+            ) : (
+              <CustomersGrid>
+                {filteredCustomers.map(cust => (
+                  <CustomerCard
+                    key={cust.id}
+                    onClick={() => setSelectedCustomer(cust)}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <CustomerMainInfo>
+                      <div className="avatar">
+                        {(cust.name || 'C')[0].toUpperCase()}
+                      </div>
+                      <div className="name-block">
+                        <div className="name">{cust.name}</div>
+                        <div className="id">ID: {cust.id} • {cust.date}</div>
+                      </div>
+                    </CustomerMainInfo>
+
+                    <CustomerMeta>
+                      <span className="phone">
+                        <Phone size={14} /> +91 {cust.phone}
+                      </span>
+
+                      <span className="address" title={`${cust.address} (${cust.pincode})`}>
+                        <MapPin size={13} color="#d32f2f" style={{ marginRight: '4px' }} />
+                        {cust.address}
+                      </span>
+
+                      <span className="badge">
+                        {cust.itemsCount} Items
+                      </span>
+
+                      <span className="amount">
+                        ₹{cust.totalAmount}
+                      </span>
+                    </CustomerMeta>
+                  </CustomerCard>
+                ))}
+              </CustomersGrid>
+            )}
+          </PageContainer>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {deletingCustomerId && (
-          <ModalBackdrop
+          <NotificationBackdrop
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setDeletingCustomerId(null)}
           >
-            <ModalCard
+            <motion.div
               initial={{ scale: 0.85, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.85, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              style={{ maxWidth: '400px', textAlign: 'center', padding: '28px 24px' }}
+              style={{ background: '#ffffff', borderRadius: '16px', maxWidth: '400px', width: '90%', textAlign: 'center', padding: '28px 24px' }}
             >
               <div style={{
                 width: '56px',
@@ -696,10 +865,10 @@ const AdminCustomers = () => {
               </div>
 
               <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', color: '#212529' }}>
-                Delete Customer Record?
+                Delete Customer Order?
               </h3>
               <p style={{ margin: '0 0 24px 0', fontSize: '0.88rem', color: '#6c757d', lineHeight: '1.5' }}>
-                Are you sure you want to remove this WhatsApp order record from your admin dashboard?
+                Are you sure you want to remove this WhatsApp customer order from your admin dashboard?
               </p>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
@@ -718,8 +887,8 @@ const AdminCustomers = () => {
                   Yes, Delete
                 </button>
               </div>
-            </ModalCard>
-          </ModalBackdrop>
+            </motion.div>
+          </NotificationBackdrop>
         )}
       </AnimatePresence>
 

@@ -1,4 +1,5 @@
 import { notifyDataSync } from './syncManager';
+import { getStoredProducts } from './productManager';
 
 const CUSTOMERS_STORAGE_KEY = 'kalishwari_whatsapp_customers';
 
@@ -39,11 +40,28 @@ export const INITIAL_CUSTOMERS = [
 export const getStoredCustomers = () => {
   try {
     const raw = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(INITIAL_CUSTOMERS));
-      return INITIAL_CUSTOMERS;
+    const storeProducts = getStoredProducts();
+
+    let list = INITIAL_CUSTOMERS;
+    if (raw) {
+      list = JSON.parse(raw);
     }
-    return JSON.parse(raw);
+
+    // Attach/fallback product images for every item in cart
+    return list.map(cust => ({
+      ...cust,
+      cartItems: (cust.cartItems || []).map(item => {
+        let img = item.image;
+        if (!img) {
+          const match = storeProducts.find(p => p.id === item.id || p.name === item.name);
+          if (match && match.image) img = match.image;
+        }
+        return {
+          ...item,
+          image: img || ''
+        };
+      })
+    }));
   } catch (error) {
     console.error('Error loading stored customers:', error);
     return INITIAL_CUSTOMERS;
