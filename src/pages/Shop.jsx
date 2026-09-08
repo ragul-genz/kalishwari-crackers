@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle, Heart, Star } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle, Heart, Star, Flame } from 'lucide-react';
 import styled from 'styled-components';
 import sparklersImg from '../assets/images/sparklers.jpg';
 import fountainsImg from '../assets/images/fountains.jpg';
@@ -498,24 +498,30 @@ const SideFloatingIcons = styled.div`
   }
 `;
 
-const DUMMY_PRODUCTS = [
-  { id: 1, name: "Gold Sparklers (10cm)", category: "Sparklers", price: 15, regularPrice: 150, image: sparklersImg },
-  { id: 2, name: "Color Sparklers (15cm)", category: "Sparklers", price: 20, regularPrice: 200, image: sparklersImg },
-  { id: 3, name: "Flower Pot Big", category: "Fountains", price: 35, regularPrice: 350, image: fountainsImg },
-  { id: 4, name: "Chakkars Special", category: "Fountains", price: 25, regularPrice: 250, image: fountainsImg },
-  { id: 5, name: "Sky Rocket (Pack of 10)", category: "Rockets", price: 40, regularPrice: 400, image: rocketsImg },
-  { id: 6, name: "12 Shots Night Sky", category: "Night Sky", price: 80, regularPrice: 800, image: fountainsImg },
-  { id: 7, name: "30 Shots Multi-color", category: "Night Sky", price: 150, regularPrice: 1500, image: fountainsImg },
-  { id: 8, name: "Kalishwary Special Gift Box", category: "Gift Boxes", price: 250, regularPrice: 2500, image: sparklersImg },
-];
-
-const CATEGORIES = ["Sparklers", "Fountains", "Rockets", "Night Sky", "Gift Boxes"];
+import { getStoredProducts, getStoredCategories } from '../utils/productManager';
 
 const Shop = ({ cartItems, addToCart, updateQuantity }) => {
+  const [productsList, setProductsList] = useState(getStoredProducts());
+  const [categoriesList, setCategoriesList] = useState(getStoredCategories());
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('default');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setProductsList(getStoredProducts());
+      setCategoriesList(getStoredCategories());
+    };
+    window.addEventListener('productsUpdated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('focus', handleUpdate);
+    return () => {
+      window.removeEventListener('productsUpdated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('focus', handleUpdate);
+    };
+  }, []);
 
   const scrollToCategory = (category) => {
     const element = document.getElementById(`category-${category.replace(/\\s+/g, '-')}`);
@@ -548,6 +554,8 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
     setShowCheckout(true);
   };
 
+  const availableCategories = Array.from(new Set([...categoriesList, ...productsList.map(p => p.category)]));
+
   return (
     <ShopWrapper>
       <TopBanner />
@@ -575,7 +583,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
               >
                 All Categories
               </Pill>
-              {CATEGORIES.map(category => (
+              {availableCategories.map(category => (
                 <Pill 
                   key={category}
                   $active={selectedCategory === category}
@@ -593,8 +601,8 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
           </ToolbarControls>
         </Toolbar>
 
-        {(selectedCategory === 'All' ? CATEGORIES : [selectedCategory]).map(category => {
-          let categoryProducts = DUMMY_PRODUCTS.filter(p => 
+        {(selectedCategory === 'All' ? availableCategories : [selectedCategory]).map(category => {
+          let categoryProducts = productsList.filter(p => 
             p.category === category && p.name.toLowerCase().includes(searchQuery.toLowerCase())
           );
           if (categoryProducts.length === 0) return null;
@@ -646,7 +654,6 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                           {[...Array(5)].map((_, i) => (
                             <Star key={i} size={14} fill="#2ecc71" color="#2ecc71" />
                           ))}
-                          <ReviewCount>(121)</ReviewCount>
                         </RatingRow>
                         
                         <ActionRow>
@@ -693,8 +700,8 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
 
       <StickyBottomBar>
         {!isOrderValid && (
-          <WarningBanner>
-            🔥 Order value must be at least ₹2,500. 🔥
+          <WarningBanner style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <Flame size={16} /> Order value must be at least ₹2,500. <Flame size={16} />
           </WarningBanner>
         )}
         <div className="container">

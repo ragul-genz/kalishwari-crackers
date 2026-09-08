@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Download, Star, Zap, Sun, Moon } from 'lucide-react';
 import styled from 'styled-components';
+import { getStoredSettings } from '../utils/settingsManager';
 import logoImg from '../assets/logo.jpg';
 
 const TopBar = styled.div`
@@ -18,7 +19,7 @@ const TopBar = styled.div`
 const Marquee = styled.div`
   display: flex;
   white-space: nowrap;
-  animation: marquee 20s linear infinite;
+  animation: marquee 25s linear infinite;
   
   @keyframes marquee {
     0% { transform: translateX(100%); }
@@ -61,14 +62,14 @@ const NavContainer = styled.div`
 
 const NavLogo = styled(Link)`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
 `;
 
 const LogoWrapper = styled.div`
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background-color: #000;
   display: flex;
@@ -76,20 +77,36 @@ const LogoWrapper = styled.div`
   align-items: center;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(212, 175, 55, 0.15);
-  
+  border: 2px solid var(--brand-red, #c62828);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+
   @media (max-width: 768px) {
-    width: 45px;
-    height: 45px;
+    width: 44px;
+    height: 44px;
   }
 `;
 
 const LogoImage = styled.img`
-  width: 90%;
-  height: 90%;
-  object-fit: contain;
-  filter: contrast(1.4) brightness(0.85);
-  mix-blend-mode: lighten;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const ShopTitleText = styled.span`
+  font-family: var(--font-serif, 'Cinzel', serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: 1px;
+  white-space: nowrap;
+
+  @media (max-width: 900px) {
+    font-size: 0.95rem;
+  }
+  @media (max-width: 480px) {
+    display: none;
+  }
 `;
 
 const MenuIcon = styled.div`
@@ -214,8 +231,15 @@ const CartBadge = styled.span`
 `;
 
 const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [storeSettings, setStoreSettings] = useState(getStoredSettings());
   const location = useLocation();
+
+  useEffect(() => {
+    const handleUpdate = () => setStoreSettings(getStoredSettings());
+    window.addEventListener('settingsUpdated', handleUpdate);
+    return () => window.removeEventListener('settingsUpdated', handleUpdate);
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -225,18 +249,17 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
     <HeaderWrapper $isDarkMode={isDarkMode}>
       <TopBar>
         <Marquee>
-          <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> Diwali Special 50% for every purchase</MarqueeItem>
-          <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> Diwali Special 50% for every purchase</MarqueeItem>
-          <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> Diwali Special 50% for every purchase</MarqueeItem>
-          <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> Diwali Special 50% for every purchase</MarqueeItem>
+          <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> {storeSettings.adBannerText}</MarqueeItem>
+          <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> {storeSettings.adBannerText}</MarqueeItem>
         </Marquee>
       </TopBar>
       <Nav>
         <NavContainer>
           <NavLogo to="/">
             <LogoWrapper>
-              <LogoImage src={logoImg} alt="Kalishwary Crackers" />
+              <LogoImage src={storeSettings.logo} alt={storeSettings.shopName} />
             </LogoWrapper>
+            <ShopTitleText>{storeSettings.shopName}</ShopTitleText>
           </NavLogo>
 
           <MenuIcon onClick={toggleMenu}>

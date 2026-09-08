@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { MapPin, Phone, Mail } from 'lucide-react';
+import { getStoredSettings } from '../utils/settingsManager';
 
 const FooterWrapper = styled.footer`
   background-color: var(--bg-dark);
@@ -24,7 +26,7 @@ const FooterContainer = styled.div`
 
 const FooterSection = styled.div`
   flex: 1;
-  min-width: 150px;
+  min-width: 200px;
   
   h4 {
     margin-bottom: 1.5rem;
@@ -45,7 +47,7 @@ const FooterSection = styled.div`
     margin-bottom: 0.8rem;
   }
   
-    a, p {
+  a, p {
     color: var(--text-muted);
     font-size: 0.9rem;
     transition: var(--transition);
@@ -55,39 +57,6 @@ const FooterSection = styled.div`
       color: var(--gold-primary);
     }
   }
-`;
-
-const NewsletterForm = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 1rem;
-  
-    input {
-    padding: 12px 15px;
-    background-color: transparent;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 25px;
-    color: var(--text-main);
-    font-size: 0.9rem;
-    outline: none;
-    
-    &::placeholder {
-      color: #90a4ae;
-    }
-    
-    &:focus {
-      border-color: var(--gold-primary);
-    }
-  }
-`;
-
-const FooterTagline = styled.p`
-  font-size: 0.85rem !important;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--gold-primary) !important;
-  margin-bottom: 1rem !important;
 `;
 
 const FooterBottom = styled.div`
@@ -100,25 +69,38 @@ const FooterBottom = styled.div`
 `;
 
 const Footer = () => {
+  const [storeSettings, setStoreSettings] = useState(getStoredSettings());
+
+  useEffect(() => {
+    const handleUpdate = () => setStoreSettings(getStoredSettings());
+    window.addEventListener('settingsUpdated', handleUpdate);
+    return () => window.removeEventListener('settingsUpdated', handleUpdate);
+  }, []);
+
   return (
     <FooterWrapper>
       <FooterContainer>
         <FooterSection>
           <h4>ABOUT US</h4>
           <p style={{color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6'}}>
-            Kalishwary Crackers is a leading online shop in Sivakasi. We provide 100% genuine and safe fireworks for all your celebrations.
+            {storeSettings.shopName} is a leading online shop in Sivakasi. We provide 100% genuine and safe fireworks for all your celebrations.
           </p>
         </FooterSection>
         
         <FooterSection>
-          <h4>CATEGORIES</h4>
-          <ul>
-            <li><Link to="/shop">Sparklers</Link></li>
-            <li><Link to="/shop">Fountains</Link></li>
-            <li><Link to="/shop">Rockets</Link></li>
-            <li><Link to="/shop">Night Sky</Link></li>
-            <li><Link to="/shop">Gift Boxes</Link></li>
-          </ul>
+          <h4>STORE LOCATION</h4>
+          <p style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
+            <MapPin size={18} style={{ color: 'var(--brand-red, #c62828)', flexShrink: 0, marginTop: '3px' }} />
+            <span>{storeSettings.address}</span>
+          </p>
+          <p style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+            <Phone size={16} style={{ color: 'var(--brand-red, #c62828)', flexShrink: 0 }} />
+            <span>{storeSettings.phone}</span>
+          </p>
+          <p style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+            <Mail size={16} style={{ color: 'var(--brand-red, #c62828)', flexShrink: 0 }} />
+            <span>{storeSettings.email}</span>
+          </p>
         </FooterSection>
 
         <FooterSection>
@@ -130,19 +112,9 @@ const Footer = () => {
             <li><Link to="/contact">Contact Us</Link></li>
           </ul>
         </FooterSection>
-        
-        <FooterSection style={{flex: 1.5}}>
-          <h4>JOIN OUR<br/>NEWSLETTER!</h4>
-          <p style={{fontSize: '0.85rem', marginBottom: '1rem', lineHeight: '1.4'}}>
-            Will be used in accordance with our<br/><a href="#" style={{color: 'var(--brand-red)'}}>Privacy Policy</a>
-          </p>
-          <NewsletterForm>
-            <input type="email" placeholder="Your email address" />
-          </NewsletterForm>
-        </FooterSection>
       </FooterContainer>
       <FooterBottom>
-        <p>&copy; {new Date().getFullYear()} Kalishwary Crackers. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} {storeSettings.shopName}. All rights reserved.</p>
         <p style={{marginTop: '8px'}}>Developed by : <span style={{fontWeight: '700', color: 'var(--brand-red)'}}>GenZ Neural-X</span></p>
       </FooterBottom>
     </FooterWrapper>

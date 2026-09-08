@@ -12,8 +12,16 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Blogs from './pages/Blogs';
 import Offers from './pages/Offers';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminProducts from './pages/AdminProducts';
+import AdminOffers from './pages/AdminOffers';
+import AdminCustomers from './pages/AdminCustomers';
+import AdminBlogs from './pages/AdminBlogs';
+import AdminSettings from './pages/AdminSettings';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import ScrollToTop from './components/ScrollToTop';
+import './utils/syncManager';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -122,6 +130,16 @@ const GlobalStyle = createGlobalStyle`
     background: rgba(212, 175, 55, 0.1);
   }
 
+  @media (max-width: 600px) {
+    .btn-primary, .btn-outline {
+      padding: 6px 12px !important;
+      font-size: 0.76rem !important;
+      letter-spacing: 0.5px !important;
+      gap: 4px !important;
+      border-radius: 6px !important;
+    }
+  }
+
   .glass-card {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
@@ -148,6 +166,8 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+import ProtectedRoute from './components/ProtectedRoute';
+
 const PageWrapper = ({ children }) => {
   return (
     <motion.div
@@ -173,8 +193,42 @@ const AnimatedRoutes = ({ cartItems, addToCart, updateQuantity, removeFromCart }
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
         <Route path="/blogs" element={<PageWrapper><Blogs /></PageWrapper>} />
         <Route path="/offers" element={<PageWrapper><Offers /></PageWrapper>} />
+
+        {/* Dedicated Admin Routes */}
+        <Route path="/admin" element={<PageWrapper><AdminLogin /></PageWrapper>} />
+        <Route path="/admin/login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute><PageWrapper><AdminDashboard /></PageWrapper></ProtectedRoute>} />
+        <Route path="/admin/customers" element={<ProtectedRoute><PageWrapper><AdminCustomers /></PageWrapper></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute><PageWrapper><AdminProducts /></PageWrapper></ProtectedRoute>} />
+        <Route path="/admin/offers" element={<ProtectedRoute><PageWrapper><AdminOffers /></PageWrapper></ProtectedRoute>} />
+        <Route path="/admin/blogs" element={<ProtectedRoute><PageWrapper><AdminBlogs /></PageWrapper></ProtectedRoute>} />
+        <Route path="/admin/settings" element={<ProtectedRoute><PageWrapper><AdminSettings /></PageWrapper></ProtectedRoute>} />
       </Routes>
     </AnimatePresence>
+  );
+};
+
+const MainLayout = ({ cartItems, addToCart, updateQuantity, removeFromCart, cartCount, isDarkMode, setIsDarkMode }) => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  return (
+    <>
+      {!isAdminRoute && (
+        <Navbar cartCount={cartCount} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      )}
+      <main>
+        <AnimatedRoutes 
+          cartItems={cartItems} 
+          addToCart={addToCart} 
+          updateQuantity={updateQuantity} 
+          removeFromCart={removeFromCart} 
+        />
+      </main>
+      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && <FloatingWhatsApp />}
+      <ScrollToTop />
+    </>
   );
 };
 
@@ -231,18 +285,15 @@ function App() {
     <Router>
       <GlobalStyle />
       <Toaster position="bottom-right" />
-      <Navbar cartCount={cartCount} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-      <main>
-        <AnimatedRoutes 
-          cartItems={cartItems} 
-          addToCart={addToCart} 
-          updateQuantity={updateQuantity} 
-          removeFromCart={removeFromCart} 
-        />
-      </main>
-      <Footer />
-      <FloatingWhatsApp />
-      <ScrollToTop />
+      <MainLayout 
+        cartItems={cartItems} 
+        addToCart={addToCart} 
+        updateQuantity={updateQuantity} 
+        removeFromCart={removeFromCart} 
+        cartCount={cartCount}
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
+      />
     </Router>
   );
 }

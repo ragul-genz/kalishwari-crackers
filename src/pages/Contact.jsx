@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { MapPin, PhoneCall, Mail, Clock } from 'lucide-react';
 import bannerBg from '../assets/images/rockets.jpg';
+import { getStoredSettings } from '../utils/settingsManager';
 
 const PageWrapper = styled.div`
   min-height: 80vh;
@@ -98,7 +99,6 @@ const FormGroup = styled.div`
     &:focus {
       outline: none;
       border-color: var(--brand-red, #c62828);
-      background-color: #fff;
     }
   }
 
@@ -108,40 +108,37 @@ const FormGroup = styled.div`
 `;
 
 const SubmitButton = styled.button`
-  grid-column: 1 / -1;
   background-color: var(--brand-red, #c62828);
   color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  padding: 14px 30px;
   border-radius: 4px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  justify-self: start;
+  grid-column: 1 / -1;
+  width: fit-content;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: var(--brand-red-dark, #8e0000);
+    background-color: #a71d1d;
   }
 `;
 
 const RightColumn = styled.div``;
 
 const InfoBox = styled.div`
-  background-color: #fff9f9;
+  background-color: #f9f9f9;
+  padding: 30px;
   border-radius: 8px;
-  padding: 2.5rem;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
 `;
 
 const InfoBoxTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #333;
+  font-size: 1.4rem;
+  color: #222;
   margin-bottom: 1.5rem;
   padding-bottom: 10px;
   border-bottom: 2px solid var(--brand-red, #c62828);
-  display: inline-block;
-  text-transform: uppercase;
 `;
 
 const InfoItem = styled.div`
@@ -190,6 +187,14 @@ const MapContainer = styled.div`
 `;
 
 const Contact = () => {
+  const [storeSettings, setStoreSettings] = useState(getStoredSettings());
+
+  useEffect(() => {
+    const handleUpdate = () => setStoreSettings(getStoredSettings());
+    window.addEventListener('settingsUpdated', handleUpdate);
+    return () => window.removeEventListener('settingsUpdated', handleUpdate);
+  }, []);
+
   return (
     <PageWrapper>
       <TopBanner>
@@ -239,7 +244,7 @@ const Contact = () => {
               </div>
               <div className="details">
                 <h4>Address :</h4>
-                <p>KONAMPATTI NEAR BY SRI SANKARI MAHAL, SATTUR ROAD, SIVAKASI - 626 123</p>
+                <p>{storeSettings.address}</p>
               </div>
             </InfoItem>
 
@@ -249,7 +254,7 @@ const Contact = () => {
               </div>
               <div className="details">
                 <h4>Customer Service Number :</h4>
-                <p>+91 6380116372</p>
+                <p>{storeSettings.phone}</p>
               </div>
             </InfoItem>
 
@@ -259,7 +264,7 @@ const Contact = () => {
               </div>
               <div className="details">
                 <h4>Mail :</h4>
-                <p><a href="mailto:kalishwarycrackers@gmail.com">kalishwarycrackers@gmail.com</a></p>
+                <p><a href={`mailto:${storeSettings.email}`}>{storeSettings.email}</a></p>
               </div>
             </InfoItem>
 
