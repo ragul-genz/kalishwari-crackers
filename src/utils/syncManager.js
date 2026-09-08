@@ -57,6 +57,8 @@ export const initGlobalRealtimeSync = () => {
       window.dispatchEvent(new CustomEvent('blogsUpdated'));
     } else if (e.key === 'kalishwari_site_settings_v2') {
       window.dispatchEvent(new CustomEvent('settingsUpdated'));
+    } else if (e.key === 'kalishwari_whatsapp_customers') {
+      window.dispatchEvent(new CustomEvent('customersUpdated'));
     }
   });
 

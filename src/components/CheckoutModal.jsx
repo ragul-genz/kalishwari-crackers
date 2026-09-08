@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { X } from 'lucide-react';
 import { Fireworks } from '@fireworks-js/react';
+import { saveCustomerOrder } from '../utils/customerManager';
 
 const Overlay = styled.div`
   position: fixed;
@@ -93,6 +94,16 @@ const CheckoutModal = ({ cartItems, totalAmount, onClose }) => {
       alert('Please fill all the details');
       return;
     }
+
+    // Save Customer Order Record to Admin DB (Only for WhatsApp redirect orders!)
+    saveCustomerOrder({
+      name: formData.name,
+      mobile: formData.mobile,
+      address: formData.address,
+      pincode: formData.pincode,
+      totalAmount,
+      cartItems
+    });
 
     setShowFireworks(true);
     
