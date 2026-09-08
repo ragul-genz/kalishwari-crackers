@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Search, Phone, MapPin, Calendar, ShoppingBag, 
-  Trash2, ArrowLeft, MessageCircle, DollarSign, Package, Tag, Check, Sparkles, Image as ImageIcon
+  Trash2, ArrowLeft, MessageCircle, DollarSign, Package, Tag, Check, Sparkles, Image as ImageIcon, X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
@@ -65,6 +65,15 @@ const StatCard = styled.div`
   }
 `;
 
+const FilterControlsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 600px;
+`;
+
 const SearchBox = styled.div`
   display: flex;
   align-items: center;
@@ -73,8 +82,8 @@ const SearchBox = styled.div`
   border-radius: 8px;
   padding: 8px 14px;
   gap: 10px;
-  max-width: 420px;
-  width: 100%;
+  flex: 1;
+  min-width: 240px;
 
   input {
     border: none;
@@ -87,6 +96,69 @@ const SearchBox = styled.div`
 
   svg {
     color: #6c757d;
+  }
+`;
+
+const DatePickerBox = styled.div`
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 6px 12px;
+  gap: 6px;
+
+  label {
+    font-size: 0.78rem;
+    color: #6c757d;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  input[type="date"] {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.85rem;
+    color: #212529;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .clear-date-btn {
+    background: transparent;
+    color: #868e96;
+    padding: 2px;
+    cursor: pointer;
+    &:hover { color: #d32f2f; }
+  }
+`;
+
+const DateGroupHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-left: 4px solid var(--brand-red, #c62828);
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-top: 18px;
+  margin-bottom: 12px;
+
+  .date-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date-stats {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 600;
   }
 `;
 
@@ -428,19 +500,6 @@ const NotificationBackdrop = styled(motion.div)`
   z-index: 10000;
 `;
 
-const NotificationBoxCard = styled(motion.div)`
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 32px 36px;
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
 const SVGPathDrawingCheckmark = () => {
   return (
     <div style={{ width: '80px', height: '80px', marginBottom: '16px' }}>
@@ -483,11 +542,8 @@ const AnimatedNotification = ({ notification, onClose }) => {
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
-        <NotificationBoxCard
-          initial={{ scale: 0.85, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.85, opacity: 0, y: 20 }}
-          transition={{ type: "spring", stiffness: 450, damping: 26 }}
+        <div
+          style={{ background: '#ffffff', borderRadius: '20px', padding: '32px 36px', textAlign: 'center', maxWidth: '400px', width: '90%', boxShadow: '0 20px 40px rgba(0,0,0,0.25)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
           onClick={(e) => e.stopPropagation()}
         >
           <SVGPathDrawingCheckmark />
@@ -505,7 +561,7 @@ const AnimatedNotification = ({ notification, onClose }) => {
           <p style={{ fontSize: '0.9rem', color: '#6c757d', lineHeight: '1.5', margin: 0 }}>
             {notification.message}
           </p>
-        </NotificationBoxCard>
+        </div>
       </NotificationBackdrop>
     </AnimatePresence>
   );
@@ -515,6 +571,7 @@ const AdminCustomers = () => {
   const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDateFilter, setSelectedDateFilter] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [deletingCustomerId, setDeletingCustomerId] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -522,7 +579,6 @@ const AdminCustomers = () => {
   const loadCustomers = () => {
     const list = getStoredCustomers();
     setCustomers(list);
-    // If selected customer is open, update its object from stored list
     if (selectedCustomer) {
       const match = list.find(c => c.id === selectedCustomer.id);
       if (match) setSelectedCustomer(match);
@@ -569,13 +625,49 @@ const AdminCustomers = () => {
     }
   };
 
-  const filteredCustomers = customers.filter(c => 
-    (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.phone || '').includes(searchTerm) ||
-    (c.address || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.pincode || '').includes(searchTerm) ||
-    (c.id || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Helper to extract clean date header string
+  const getOrderDateHeader = (cust) => {
+    if (cust.dateOnly) return cust.dateOnly;
+    if (cust.date) {
+      const parts = cust.date.split(/\d{2}:\d{2}/)[0].trim();
+      if (parts) return parts;
+    }
+    return 'Recent Orders';
+  };
+
+  // Filter customers by Search Term AND Date Filter
+  const filteredCustomers = customers.filter(c => {
+    const term = searchTerm.toLowerCase().trim();
+    const matchesText = !term ||
+      (c.name || '').toLowerCase().includes(term) ||
+      (c.phone || '').includes(term) ||
+      (c.address || '').toLowerCase().includes(term) ||
+      (c.pincode || '').includes(term) ||
+      (c.date || '').toLowerCase().includes(term) ||
+      (c.dateOnly || '').toLowerCase().includes(term);
+
+    let matchesDate = true;
+    if (selectedDateFilter) {
+      const targetDate = selectedDateFilter; // e.g. "2026-09-08"
+      if (c.isoDate) {
+        matchesDate = c.isoDate === targetDate;
+      } else if (c.date) {
+        // Fallback check against formatted date string
+        const parsedISO = new Date(c.date).toISOString().split('T')[0];
+        matchesDate = parsedISO === targetDate || c.date.includes(targetDate);
+      }
+    }
+
+    return matchesText && matchesDate;
+  });
+
+  // Group filtered customers date-wise
+  const groupedCustomers = filteredCustomers.reduce((acc, cust) => {
+    const dateKey = getOrderDateHeader(cust);
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(cust);
+    return acc;
+  }, {});
 
   const totalRevenue = customers.reduce((acc, c) => acc + (c.totalAmount || 0), 0);
   const totalProductsSold = customers.reduce((acc, c) => acc + (c.itemsCount || 0), 0);
@@ -675,7 +767,7 @@ const AdminCustomers = () => {
             </div>
           </CustomerDetailCard>
 
-          {/* Ordered Products Breakdown with Thumbnails */}
+          {/* Ordered Products Breakdown with Thumbnails and S.No */}
           <ProductsListContainer>
             <h4>
               Ordered Fireworks Breakdown ({selectedCustomer.itemsCount} Items)
@@ -724,7 +816,7 @@ const AdminCustomers = () => {
           </ProductsListContainer>
         </PageContainer>
       ) : (
-        /* MAIN CUSTOMER DIRECTORY LIST VIEW */
+        /* MAIN CUSTOMER DIRECTORY LIST VIEW (DATE-WISE GROUPED) */
         <div style={{ background: '#ffffff', padding: '28px 24px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
@@ -732,19 +824,40 @@ const AdminCustomers = () => {
                 WhatsApp Orders & Customers
               </h3>
               <p style={{ color: '#6c757d', fontSize: '0.82rem', marginTop: '2px' }}>
-                Tap any customer card below to open their dedicated order details & fireworks list
+                Organized date-wise. Search by name, phone, address or select a date filter.
               </p>
             </div>
 
-            <SearchBox>
-              <Search size={18} />
-              <input 
-                type="text" 
-                placeholder="Search by name, phone, address, pincode..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </SearchBox>
+            <FilterControlsRow>
+              <SearchBox>
+                <Search size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Search by name, phone, address, date..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </SearchBox>
+
+              <DatePickerBox>
+                <label>Filter Date:</label>
+                <input 
+                  type="date" 
+                  value={selectedDateFilter}
+                  onChange={(e) => setSelectedDateFilter(e.target.value)}
+                />
+                {selectedDateFilter && (
+                  <button 
+                    type="button" 
+                    className="clear-date-btn" 
+                    title="Clear Date Filter"
+                    onClick={() => setSelectedDateFilter('')}
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </DatePickerBox>
+            </FilterControlsRow>
           </div>
 
           <StatsGrid>
@@ -785,53 +898,76 @@ const AdminCustomers = () => {
                 <Users size={44} color="#adb5bd" style={{ marginBottom: '10px' }} />
                 <h4 style={{ color: '#495057', margin: '0 0 6px 0' }}>No Customer Orders Found</h4>
                 <p style={{ color: '#868e96', margin: 0, fontSize: '0.88rem' }}>
-                  {searchTerm ? `No WhatsApp orders match "${searchTerm}"` : 'When a customer places an order via WhatsApp, their order card will appear here live!'}
+                  {searchTerm || selectedDateFilter ? 'No WhatsApp orders match the selected search or date filter.' : 'When a customer places an order via WhatsApp, their order card will appear here live!'}
                 </p>
               </div>
             ) : (
-              <CustomersGrid>
-                {filteredCustomers.map((cust, index) => (
-                  <CustomerCard
-                    key={cust.id}
-                    onClick={() => setSelectedCustomer(cust)}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <CustomerMainInfo>
-                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--brand-red, #c62828)', minWidth: '28px' }}>
-                        #{index + 1}
-                      </span>
-                      <div className="avatar">
-                        {(cust.name || 'C')[0].toUpperCase()}
-                      </div>
-                      <div className="name-block">
-                        <div className="name">{cust.name}</div>
-                        <div className="id">{cust.date}</div>
-                      </div>
-                    </CustomerMainInfo>
+              <div>
+                {/* Render Date Groups */}
+                {Object.keys(groupedCustomers).map((dateHeaderKey) => {
+                  const dateOrders = groupedCustomers[dateHeaderKey];
+                  const dateTotalRevenue = dateOrders.reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+                  const dateTotalItems = dateOrders.reduce((acc, o) => acc + (o.itemsCount || 0), 0);
 
-                    <CustomerMeta>
-                      <span className="phone">
-                        <Phone size={14} /> +91 {cust.phone}
-                      </span>
+                  return (
+                    <div key={dateHeaderKey} style={{ marginBottom: '24px' }}>
+                      <DateGroupHeader>
+                        <div className="date-title">
+                          <Calendar size={16} color="var(--brand-red, #c62828)" />
+                          <span>{dateHeaderKey}</span>
+                        </div>
+                        <div className="date-stats">
+                          {dateOrders.length} {dateOrders.length === 1 ? 'Order' : 'Orders'} • Total: ₹{dateTotalRevenue.toLocaleString()} ({dateTotalItems} Items)
+                        </div>
+                      </DateGroupHeader>
 
-                      <span className="address" title={`${cust.address} (${cust.pincode})`}>
-                        <MapPin size={13} color="#d32f2f" style={{ marginRight: '4px' }} />
-                        {cust.address}
-                      </span>
+                      <CustomersGrid>
+                        {dateOrders.map((cust, index) => (
+                          <CustomerCard
+                            key={cust.id}
+                            onClick={() => setSelectedCustomer(cust)}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <CustomerMainInfo>
+                              <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--brand-red, #c62828)', minWidth: '28px' }}>
+                                #{index + 1}
+                              </span>
+                              <div className="avatar">
+                                {(cust.name || 'C')[0].toUpperCase()}
+                              </div>
+                              <div className="name-block">
+                                <div className="name">{cust.name}</div>
+                                <div className="id">{cust.date}</div>
+                              </div>
+                            </CustomerMainInfo>
 
-                      <span className="badge">
-                        {cust.itemsCount} Items
-                      </span>
+                            <CustomerMeta>
+                              <span className="phone">
+                                <Phone size={14} /> +91 {cust.phone}
+                              </span>
 
-                      <span className="amount">
-                        ₹{cust.totalAmount}
-                      </span>
-                    </CustomerMeta>
-                  </CustomerCard>
-                ))}
-              </CustomersGrid>
+                              <span className="address" title={`${cust.address} (${cust.pincode})`}>
+                                <MapPin size={13} color="#d32f2f" style={{ marginRight: '4px' }} />
+                                {cust.address}
+                              </span>
+
+                              <span className="badge">
+                                {cust.itemsCount} Items
+                              </span>
+
+                              <span className="amount">
+                                ₹{cust.totalAmount}
+                              </span>
+                            </CustomerMeta>
+                          </CustomerCard>
+                        ))}
+                      </CustomersGrid>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </PageContainer>
         </div>
@@ -846,10 +982,7 @@ const AdminCustomers = () => {
             exit={{ opacity: 0 }}
             onClick={() => setDeletingCustomerId(null)}
           >
-            <motion.div
-              initial={{ scale: 0.85, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.85, opacity: 0, y: 20 }}
+            <div
               onClick={(e) => e.stopPropagation()}
               style={{ background: '#ffffff', borderRadius: '16px', maxWidth: '400px', width: '90%', textAlign: 'center', padding: '28px 24px' }}
             >
@@ -890,7 +1023,7 @@ const AdminCustomers = () => {
                   Yes, Delete
                 </button>
               </div>
-            </motion.div>
+            </div>
           </NotificationBackdrop>
         )}
       </AnimatePresence>

@@ -72,7 +72,8 @@ export const saveCustomerOrder = (customerData) => {
   try {
     const current = getStoredCustomers();
 
-    const formattedDate = new Date().toLocaleString('en-US', {
+    const now = new Date();
+    const formattedDate = now.toLocaleString('en-US', {
       month: 'short',
       day: '2-digit',
       year: 'numeric',
@@ -80,6 +81,14 @@ export const saveCustomerOrder = (customerData) => {
       minute: '2-digit',
       hour12: true
     });
+
+    const dateOnly = now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric'
+    });
+
+    const isoDate = now.toISOString().split('T')[0];
 
     const totalQty = (customerData.cartItems || []).reduce((acc, item) => acc + item.quantity, 0);
 
@@ -90,6 +99,8 @@ export const saveCustomerOrder = (customerData) => {
       address: customerData.address.trim(),
       pincode: customerData.pincode.trim(),
       date: formattedDate,
+      dateOnly: dateOnly,
+      isoDate: isoDate,
       itemsCount: totalQty,
       totalAmount: customerData.totalAmount,
       cartItems: (customerData.cartItems || []).map(item => ({
