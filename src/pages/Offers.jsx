@@ -101,6 +101,34 @@ const ImageContainer = styled.div`
     text-transform: uppercase;
   }
 
+  .status-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 5;
+
+    &.Active {
+      background: rgba(46, 125, 50, 0.9);
+      color: #ffffff;
+    }
+    &.Draft {
+      background: rgba(230, 81, 0, 0.9);
+      color: #ffffff;
+    }
+    &.Expired {
+      background: rgba(117, 117, 117, 0.9);
+      color: #ffffff;
+    }
+  }
+
   .expiry-tag {
     position: absolute;
     bottom: 12px;
@@ -205,9 +233,7 @@ const Offers = () => {
 
   const loadOffers = () => {
     const list = getStoredOffers();
-    // Only display Active offers to customers
-    const activeOffers = list.filter(o => o.status === 'Active' || !o.status);
-    setOffers(activeOffers);
+    setOffers(list);
   };
 
   useEffect(() => {
@@ -265,58 +291,79 @@ const Offers = () => {
         </EmptyState>
       ) : (
         <OffersGrid>
-          {offers.map((offer) => (
-            <OfferCard
-              key={offer.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ImageContainer>
-                <img src={offer.image} alt={offer.title} />
-                <span className="discount-tag">{offer.discount}</span>
-                {offer.validUntil && (
-                  <span className="expiry-tag">
-                    <Calendar size={12} /> Valid till {offer.validUntil}
-                  </span>
-                )}
-              </ImageContainer>
+          {offers.map((offer) => {
+            const status = offer.status || 'Active';
+            const isExpired = status === 'Expired';
+            const isDraft = status === 'Draft';
 
-              <CardContent>
-                <h3>{offer.title}</h3>
-                <p>{offer.description}</p>
-
-                {offer.couponCode ? (
-                  <CodeContainer>
-                    <div>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>
-                        PROMO CODE
-                      </span>
-                      <span className="code-text">{offer.couponCode}</span>
-                    </div>
-
-                    <button onClick={() => handleCopyCode(offer.id, offer.couponCode)}>
-                      {copiedId === offer.id ? (
-                        <>
-                          <Check size={14} /> Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={14} /> Copy Code
-                        </>
-                      )}
-                    </button>
-                  </CodeContainer>
-                ) : (
-                  <CodeContainer style={{ justifyContent: 'center', background: 'rgba(46, 125, 50, 0.08)', borderColor: '#2e7d32' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#2e7d32', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Sparkles size={16} /> Direct Discount - No Coupon Code Required
+            return (
+              <OfferCard
+                key={offer.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{ opacity: isExpired ? 0.75 : 1 }}
+              >
+                <ImageContainer style={{ filter: isExpired ? 'grayscale(0.4)' : 'none' }}>
+                  <img src={offer.image} alt={offer.title} />
+                  <span className="discount-tag">{offer.discount}</span>
+                  <span className={`status-tag ${status}`}>{status}</span>
+                  {offer.validUntil && (
+                    <span className="expiry-tag">
+                      <Calendar size={12} /> Valid till {offer.validUntil}
                     </span>
-                  </CodeContainer>
-                )}
-              </CardContent>
-            </OfferCard>
-          ))}
+                  )}
+                </ImageContainer>
+
+                <CardContent>
+                  <h3>{offer.title}</h3>
+                  <p>{offer.description}</p>
+
+                  {offer.couponCode ? (
+                    <CodeContainer>
+                      <div>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>
+                          PROMO CODE
+                        </span>
+                        <span className="code-text" style={{ textDecoration: isExpired ? 'line-through' : 'none' }}>
+                          {offer.couponCode}
+                        </span>
+                      </div>
+
+                      <button 
+                        disabled={isExpired || isDraft}
+                        onClick={() => handleCopyCode(offer.id, offer.couponCode)}
+                        style={{
+                          opacity: (isExpired || isDraft) ? 0.6 : 1,
+                          cursor: (isExpired || isDraft) ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        {copiedId === offer.id ? (
+                          <>
+                            <Check size={14} /> Copied
+                          </>
+                        ) : isExpired ? (
+                          'Expired'
+                        ) : isDraft ? (
+                          'Upcoming'
+                        ) : (
+                          <>
+                            <Copy size={14} /> Copy Code
+                          </>
+                        )}
+                      </button>
+                    </CodeContainer>
+                  ) : (
+                    <CodeContainer style={{ justifyContent: 'center', background: isExpired ? '#f1f3f5' : 'rgba(46, 125, 50, 0.08)', borderColor: isExpired ? '#ced4da' : '#2e7d32' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 600, color: isExpired ? '#868e96' : '#2e7d32', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Sparkles size={16} /> {isExpired ? 'Offer Expired' : isDraft ? 'Upcoming Offer' : 'Direct Discount - No Coupon Code Required'}
+                      </span>
+                    </CodeContainer>
+                  )}
+                </CardContent>
+              </OfferCard>
+            );
+          })}
         </OffersGrid>
       )}
     </PageWrapper>
