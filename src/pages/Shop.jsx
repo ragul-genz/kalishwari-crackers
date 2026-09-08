@@ -234,6 +234,35 @@ const DiscountBadge = styled.div`
   z-index: 10;
 `;
 
+const StockBadge = styled.span`
+  position: absolute;
+  bottom: 12px;
+  left: 15px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+  &.out-of-stock {
+    background: #d32f2f;
+    color: #ffffff;
+  }
+
+  &.low-stock {
+    background: #e65100;
+    color: #ffffff;
+  }
+
+  &.in-stock {
+    background: #2e7d32;
+    color: #ffffff;
+  }
+`;
+
 const ProductDetails = styled.div`
   padding: 20px;
   display: flex;
@@ -621,6 +650,11 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                   const cartItem = cartItems.find(item => item.id === product.id);
                   const qty = cartItem ? cartItem.quantity : 0;
                   
+                  // Stock status check
+                  const stockStatus = (product.stock || 'In Stock').toLowerCase();
+                  const isOutOfStock = stockStatus === 'out of stock';
+                  const isLowStock = stockStatus === 'low stock';
+
                   // Calculate discount percentage
                   const discount = Math.round(((product.regularPrice - product.price) / product.regularPrice) * 100);
 
@@ -632,9 +666,18 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                       viewport={{ once: true, margin: "-30px" }}
                       transition={{ duration: 0.4 }}
                     >
-                      <ImageContainer>
+                      <ImageContainer style={{ filter: isOutOfStock ? 'grayscale(0.4)' : 'none', opacity: isOutOfStock ? 0.8 : 1 }}>
                         <DiscountBadge>{discount}%</DiscountBadge>
                         <WishlistBtn><Heart size={16} /></WishlistBtn>
+                        
+                        {isOutOfStock ? (
+                          <StockBadge className="out-of-stock">Out of Stock</StockBadge>
+                        ) : isLowStock ? (
+                          <StockBadge className="low-stock">Low Stock</StockBadge>
+                        ) : (
+                          <StockBadge className="in-stock">In Stock</StockBadge>
+                        )}
+
                         <img src={product.image} alt={product.name} />
                       </ImageContainer>
                       <ProductDetails>
@@ -657,7 +700,20 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                         </RatingRow>
                         
                         <ActionRow>
-                          {qty > 0 ? (
+                          {isOutOfStock ? (
+                            <OrderBtn 
+                              disabled 
+                              style={{ 
+                                background: '#e0e0e0', 
+                                color: '#868e96', 
+                                borderColor: '#ced4da', 
+                                cursor: 'not-allowed',
+                                opacity: 0.8
+                              }}
+                            >
+                              Out of Stock
+                            </OrderBtn>
+                          ) : qty > 0 ? (
                             <QtyControl>
                               <button onClick={() => updateQuantity(product.id, qty - 1)}>-</button>
                               <input 
@@ -669,7 +725,6 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                                   if (!isNaN(val) && val >= 0) {
                                     updateQuantity(product.id, val);
                                   } else if (e.target.value === '') {
-                                    // if they clear it, temporarily set to 0 or leave empty visually
                                     updateQuantity(product.id, 0);
                                   }
                                 }} 

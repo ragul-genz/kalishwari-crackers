@@ -1101,6 +1101,7 @@ const AdminProducts = () => {
                       <label>Stock Status</label>
                       <select value={formStock} onChange={(e) => setFormStock(e.target.value)}>
                         <option value="In Stock">In Stock</option>
+                        <option value="Low Stock">Low Stock</option>
                         <option value="Out of Stock">Out of Stock</option>
                       </select>
                     </div>
