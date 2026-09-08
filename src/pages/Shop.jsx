@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronDown, CheckCircle, FileText, Gift, MapPin, Phone, MessageCircle, Heart, Star, Flame } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle, XCircle, AlertTriangle, FileText, Gift, MapPin, Phone, MessageCircle, Heart, Star, Flame } from 'lucide-react';
 import styled from 'styled-components';
 import sparklersImg from '../assets/images/sparklers.jpg';
 import fountainsImg from '../assets/images/fountains.jpg';
@@ -698,6 +698,22 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                             <Star key={i} size={14} fill="#2ecc71" color="#2ecc71" />
                           ))}
                         </RatingRow>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 600, margin: '6px 0 10px 0' }}>
+                          {isOutOfStock ? (
+                            <span style={{ color: '#d32f2f', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <XCircle size={14} /> Out of Stock
+                            </span>
+                          ) : isLowStock ? (
+                            <span style={{ color: '#e65100', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <AlertTriangle size={14} /> Low Stock - Order Soon!
+                            </span>
+                          ) : (
+                            <span style={{ color: '#2e7d32', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <CheckCircle size={14} /> In Stock (Ready to Ship)
+                            </span>
+                          )}
+                        </div>
                         
                         <ActionRow>
                           {isOutOfStock ? (
