@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Search, Phone, MapPin, Calendar, ShoppingBag, 
-  Trash2, ArrowLeft, MessageCircle, DollarSign, Package, Tag, Check, Sparkles, Image as ImageIcon, X
+  Trash2, ArrowLeft, MessageCircle, DollarSign, Package, Tag, Check, Sparkles, Image as ImageIcon, X, FileSpreadsheet, Download
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
@@ -217,6 +217,35 @@ const DatePickerBox = styled.div`
     padding: 2px;
     cursor: pointer;
     &:hover { color: #d32f2f; }
+  }
+`;
+
+const ExportCsvBtn = styled.button`
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #2e7d32;
+    color: #ffffff;
+    border-color: #2e7d32;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: center;
+    padding: 7px 10px;
+    font-size: 0.78rem;
   }
 `;
 
@@ -821,6 +850,50 @@ const AdminCustomers = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    if (customers.length === 0) {
+      alert('No customer records available to export.');
+      return;
+    }
+
+    const dataToExport = filteredCustomers.length > 0 ? filteredCustomers : customers;
+
+    const headers = ['S.No', 'Order Date', 'Customer Name', 'Mobile Number', 'Delivery Address', 'Pincode', 'Items Count', 'Total Amount (INR)', 'Cart Breakdown'];
+
+    const csvRows = [
+      headers.join(','),
+      ...dataToExport.map((cust, idx) => {
+        const itemsDetail = (cust.cartItems || [])
+          .map(i => `${i.name} x${i.quantity} (Rs.${i.price})`)
+          .join('; ');
+
+        return [
+          idx + 1,
+          `"${(cust.date || '').replace(/"/g, '""')}"`,
+          `"${(cust.name || '').replace(/"/g, '""')}"`,
+          `"${(cust.phone || '').replace(/"/g, '""')}"`,
+          `"${(cust.address || '').replace(/"/g, '""')}"`,
+          `"${(cust.pincode || '').replace(/"/g, '""')}"`,
+          cust.itemsCount || 0,
+          cust.totalAmount || 0,
+          `"${itemsDetail.replace(/"/g, '""')}"`
+        ].join(',');
+      })
+    ];
+
+    const csvString = csvRows.join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Kalishwari_Customer_Orders_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    triggerNotify('CSV Exported', `Exported ${dataToExport.length} WhatsApp customer orders to CSV file!`);
+  };
+
   // Helper to extract clean date header string
   const getOrderDateHeader = (cust) => {
     if (cust.dateOnly) return cust.dateOnly;
@@ -1053,6 +1126,10 @@ const AdminCustomers = () => {
                   </button>
                 )}
               </DatePickerBox>
+
+              <ExportCsvBtn onClick={handleExportCSV} title="Export Customers to CSV File">
+                <FileSpreadsheet size={16} /> Download CSV
+              </ExportCsvBtn>
             </FilterControlsRow>
           </div>
 

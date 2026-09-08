@@ -96,7 +96,9 @@ export const DEFAULT_SETTINGS = {
   email: 'info@kalishwaricrackers.com',
   address: '123 Fireworks Lane, Sivakasi, Tamil Nadu 626123, India',
   adminUsername: import.meta.env.VITE_ADMIN_USERNAME || 'admin',
-  adminPasswordHash: DEFAULT_PASSWORD_HASH
+  adminPasswordHash: DEFAULT_PASSWORD_HASH,
+  priceList: '',
+  priceListName: ''
 };
 
 export const getStoredSettings = () => {
@@ -167,4 +169,25 @@ export const updateAdminCredentials = (newUsername, newPassword) => {
     payload.adminPasswordHash = sha256(newPassword);
   }
   return saveStoredSettings(payload);
+};
+
+export const resetAllStoreData = () => {
+  try {
+    localStorage.removeItem('kalishwari_store_settings');
+    localStorage.removeItem('kalishwari_products_v2');
+    localStorage.removeItem('kalishwari_categories_v2');
+    localStorage.removeItem('kalishwari_festival_offers');
+    localStorage.removeItem('kalishwari_blogs_v2');
+    localStorage.removeItem('kalishwari_whatsapp_customers');
+    
+    notifyDataSync('settingsUpdated');
+    notifyDataSync('productsUpdated');
+    notifyDataSync('offersUpdated');
+    notifyDataSync('blogsUpdated');
+    notifyDataSync('customersUpdated');
+    return true;
+  } catch (error) {
+    console.error('Error resetting store data:', error);
+    return false;
+  }
 };

@@ -139,7 +139,15 @@ const NavMenu = styled.ul`
   }
 `;
 
-const NavItem = styled.li``;
+const NavItem = styled.li`
+  &.mobile-pricelist-link {
+    display: none;
+    @media (max-width: 768px) {
+      display: block;
+      margin-top: 10px;
+    }
+  }
+`;
 
 const NavLink = styled(Link)`
   color: var(--text-main);
@@ -285,13 +293,41 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
             <NavItem>
               <NavLink to="/contact" $active={location.pathname === '/contact'} onClick={toggleMenu}>Contact</NavLink>
             </NavItem>
+            <NavItem className="mobile-pricelist-link">
+              <a 
+                href={storeSettings.priceList || "/pricelist.pdf"} 
+                target="_blank" 
+                rel="noreferrer"
+                download={storeSettings.priceListName || "Kalishwari_Crackers_Pricelist"}
+                style={{
+                  color: 'var(--gold-primary)',
+                  fontWeight: 700,
+                  fontSize: '0.92rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  textDecoration: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: '1px solid var(--gold-primary)'
+                }}
+                onClick={toggleMenu}
+              >
+                <Download size={16} /> Download Pricelist
+              </a>
+            </NavItem>
           </NavMenu>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <ThemeToggle onClick={() => setIsDarkMode(!isDarkMode)}>
               {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
             </ThemeToggle>
-            <DownloadBtn href="/pricelist.pdf" target="_blank">
+            <DownloadBtn 
+              href={storeSettings.priceList || "/pricelist.pdf"} 
+              target="_blank" 
+              rel="noreferrer"
+              download={storeSettings.priceListName || "Kalishwari_Crackers_Pricelist"}
+            >
               <Download size={18} /> Download Pricelist
             </DownloadBtn>
             <CartIconContainer to="/cart">

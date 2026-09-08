@@ -2,13 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Upload, Key, Megaphone, Phone, MapPin, Save, RefreshCw, Shield, Store, Eye, EyeOff 
+  Upload, Key, Megaphone, Phone, MapPin, Save, RefreshCw, Shield, Store, Eye, EyeOff,
+  FileText, Download, Trash2, RotateCcw, CheckCircle, FileSpreadsheet
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
-import { getStoredSettings, saveStoredSettings, updateAdminCredentials, DEFAULT_SETTINGS } from '../utils/settingsManager';
+import { 
+  getStoredSettings, saveStoredSettings, updateAdminCredentials, resetAllStoreData, DEFAULT_SETTINGS 
+} from '../utils/settingsManager';
 
 const SettingsGrid = styled.div`
   display: grid;
@@ -320,6 +323,7 @@ const AnimatedNotification = ({ notification, onClose }) => {
 const AdminSettings = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const priceListInputRef = useRef(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -329,6 +333,7 @@ const AdminSettings = () => {
 
   const [settings, setSettings] = useState(getStoredSettings());
   const [notification, setNotification] = useState(null);
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
   // Form State
   const [shopName, setShopName] = useState(settings.shopName || '');
@@ -344,10 +349,17 @@ const AdminSettings = () => {
   const [email, setEmail] = useState(settings.email || '');
   const [address, setAddress] = useState(settings.address || '');
 
+  // Pricelist state
+  const [priceList, setPriceList] = useState(settings.priceList || '');
+  const [priceListName, setPriceListName] = useState(settings.priceListName || '');
+  const [customPriceListUrl, setCustomPriceListUrl] = useState('');
+
   useEffect(() => {
     const handleUpdate = () => {
       const updated = getStoredSettings();
       setSettings(updated);
+      setPriceList(updated.priceList || '');
+      setPriceListName(updated.priceListName || '');
     };
     window.addEventListener('settingsUpdated', handleUpdate);
     return () => window.removeEventListener('settingsUpdated', handleUpdate);
@@ -427,9 +439,98 @@ const AdminSettings = () => {
     triggerNotify('Contact Info Saved', 'Store Phone, Email, WhatsApp & Address updated!');
   };
 
+  const handlePriceListFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 15 * 1024 * 1024) {
+        toast.error('File size should be less than 15MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPriceList(reader.result);
+        setPriceListName(file.name);
+        setCustomPriceListUrl('');
+        toast.success(`Selected "${file.name}"! Click Save Pricelist to publish to Portal.`);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSavePriceList = (e) => {
+    e.preventDefault();
+    if (!priceList && !customPriceListUrl) {
+      toast.error('Please upload a pricelist file or enter URL first.');
+      return;
+    }
+    const targetList = customPriceListUrl.trim() || priceList;
+    const targetName = priceListName || 'Kalishwari_Crackers_Pricelist.pdf';
+    saveStoredSettings({ priceList: targetList, priceListName: targetName });
+    triggerNotify('Pricelist Published', 'Price list updated! Customers can now download it directly from the portal header.');
+  };
+
+  const handleRemovePriceList = () => {
+    setPriceList('');
+    setPriceListName('');
+    setCustomPriceListUrl('');
+    saveStoredSettings({ priceList: '', priceListName: '' });
+    toast('Pricelist file removed.');
+  };
+
+  const executeResetDashboard = () => {
+    resetAllStoreData();
+    const updated = getStoredSettings();
+    setSettings(updated);
+    setShopName(updated.shopName || '');
+    setLogo(updated.logo || '');
+    setAdminUsername(updated.adminUsername || '');
+    setAdBannerText(updated.adBannerText || '');
+    setPhone(updated.phone || '');
+    setWhatsapp(updated.whatsapp || '');
+    setEmail(updated.email || '');
+    setAddress(updated.address || '');
+    setPriceList('');
+    setPriceListName('');
+    setConfirmResetOpen(false);
+    triggerNotify('Dashboard Reset Complete', 'All store data, products, offers, blogs & settings restored to factory defaults!');
+  };
+
   return (
     <AdminLayout title="Settings">
       <AnimatedNotification notification={notification} onClose={() => setNotification(null)} />
+
+      {/* Top Header Action Bar with Reset Dashboard Data Button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px', background: '#ffffff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #e9ecef', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+        <div>
+          <h3 style={{ margin: 0, color: 'var(--brand-red, #c62828)', fontSize: '1.15rem', fontFamily: "var(--font-serif, 'Cinzel', serif)", fontWeight: 700 }}>
+            Store Control & Configuration
+          </h3>
+          <p style={{ margin: '2px 0 0 0', color: '#6c757d', fontSize: '0.8rem' }}>
+            Manage pricelist, branding, credentials, banner and system data
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setConfirmResetOpen(true)}
+          style={{
+            background: '#ffebee',
+            color: '#d32f2f',
+            border: '1px solid #ffcdd2',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontSize: '0.85rem',
+            fontWeight: '600',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <RotateCcw size={16} /> Reset Dashboard Data
+        </button>
+      </div>
 
       <SettingsGrid>
         {/* 1. Store Logo & Branding */}
@@ -519,7 +620,122 @@ const AdminSettings = () => {
           </div>
         </SettingsCard>
 
-        {/* 2. Security & Credentials */}
+        {/* 2. Downloadable Price List Card */}
+        <SettingsCard>
+          <div>
+            <div className="card-header">
+              <div className="icon-wrapper" style={{ background: '#e3f2fd', color: '#1976d2' }}>
+                <FileText size={22} />
+              </div>
+              <div>
+                <h3>Price List PDF / Image</h3>
+                <p>Upload catalog or price list file for customer portal download</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSavePriceList}>
+              <FormGroup>
+                <label>Upload Pricelist File (PDF or Image)</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => priceListInputRef.current?.click()}
+                    style={{
+                      padding: '9px 16px',
+                      background: '#f8f9fa',
+                      border: '1px solid #ced4da',
+                      borderRadius: '6px',
+                      fontSize: '0.86rem',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Upload size={16} /> Select PDF / Image File
+                  </button>
+                  <input
+                    type="file"
+                    ref={priceListInputRef}
+                    style={{ display: 'none' }}
+                    accept=".pdf,image/*"
+                    onChange={handlePriceListFileUpload}
+                  />
+                </div>
+
+                {priceListName && (
+                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px', background: '#e8f5e9', padding: '8px 12px', borderRadius: '6px', border: '1px solid #c8e6c9' }}>
+                    <FileText size={18} color="#2e7d32" />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ fontSize: '0.82rem', color: '#2e7d32', fontWeight: '700', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {priceListName}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: '#4caf50' }}>Ready for Customer Portal Header</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRemovePriceList}
+                      title="Remove Pricelist"
+                      style={{ background: 'transparent', color: '#d32f2f', padding: '2px', cursor: 'pointer' }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
+              </FormGroup>
+
+              <FormGroup>
+                <label>Or Enter Direct Pricelist URL (Optional)</label>
+                <input 
+                  type="url" 
+                  value={customPriceListUrl} 
+                  onChange={(e) => {
+                    setCustomPriceListUrl(e.target.value);
+                    if (e.target.value) {
+                      setPriceList(e.target.value);
+                      setPriceListName('Online_Price_List.pdf');
+                    }
+                  }} 
+                  placeholder="https://example.com/pricelist.pdf"
+                />
+              </FormGroup>
+
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginTop: '10px' }}>
+                <SaveButton whileTap={{ scale: 0.96 }} type="submit">
+                  <Save size={16} /> Save Pricelist
+                </SaveButton>
+
+                {priceList && (
+                  <a
+                    href={priceList}
+                    target="_blank"
+                    rel="noreferrer"
+                    download={priceListName || "Kalishwari_Crackers_Pricelist"}
+                    style={{
+                      padding: '8px 14px',
+                      background: '#e3f2fd',
+                      color: '#1976d2',
+                      border: '1px solid #bbdefb',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      textDecoration: 'none',
+                      marginTop: '6px'
+                    }}
+                  >
+                    <Download size={15} /> Test Download
+                  </a>
+                )}
+              </div>
+            </form>
+          </div>
+        </SettingsCard>
+
+        {/* 3. Security & Credentials */}
         <SettingsCard>
           <div>
             <div className="card-header">
@@ -594,7 +810,7 @@ const AdminSettings = () => {
           </div>
         </SettingsCard>
 
-        {/* 3. Customer Top Running Ad Marquee Banner */}
+        {/* 4. Customer Top Running Ad Marquee Banner */}
         <SettingsCard>
           <div>
             <div className="card-header">
@@ -626,7 +842,7 @@ const AdminSettings = () => {
           </div>
         </SettingsCard>
 
-        {/* 4. Store Contact Details & Address */}
+        {/* 5. Store Contact Details & Address */}
         <SettingsCard>
           <div>
             <div className="card-header">
@@ -689,7 +905,56 @@ const AdminSettings = () => {
           </div>
         </SettingsCard>
       </SettingsGrid>
-    </AdminLayout>
+
+      {/* Confirm Reset All Store Data Modal */}
+      <AnimatePresence>
+        {confirmResetOpen && (
+          <NotificationBackdrop initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setConfirmResetOpen(false)}>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{ background: '#ffffff', borderRadius: '16px', maxWidth: '420px', width: '90%', textAlign: 'center', padding: '28px 24px' }}
+            >
+              <div style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: '#ffebee',
+                border: '1px solid #ffcdd2',
+                display: 'flex',
+                alignItems: 'center',
+                justify-content: 'center',
+                margin: '0 auto 16px auto'
+              }}>
+                <RotateCcw size={26} color="#d32f2f" />
+              </div>
+
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', color: '#212529' }}>
+                Reset All Dashboard Data?
+              </h3>
+              <p style={{ margin: '0 0 24px 0', fontSize: '0.88rem', color: '#6c757d', lineHeight: '1.5' }}>
+                Are you sure you want to reset all store products, categories, offers, blogs, customer orders & settings back to factory defaults?
+              </p>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setConfirmResetOpen(false)}
+                  style={{ padding: '9px 18px', borderRadius: '8px', background: '#e9ecef', color: '#495057', fontWeight: 600 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={executeResetDashboard}
+                  style={{ padding: '9px 18px', borderRadius: '8px', background: '#d32f2f', color: '#ffffff', fontWeight: 600 }}
+                >
+                  Yes, Reset All
+                </button>
+              </div>
+            </div>
+          </NotificationBackdrop>
+        )}
+      </AnimatePresence>
   );
 };
 
