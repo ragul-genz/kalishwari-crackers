@@ -922,7 +922,7 @@ const AdminSettings = () => {
                 border: '1px solid #ffcdd2',
                 display: 'flex',
                 alignItems: 'center',
-                justify-content: 'center',
+                justifyContent: 'center',
                 margin: '0 auto 16px auto'
               }}>
                 <RotateCcw size={26} color="#d32f2f" />
@@ -955,6 +955,7 @@ const AdminSettings = () => {
           </NotificationBackdrop>
         )}
       </AnimatePresence>
+    </AdminLayout>
   );
 };
 
