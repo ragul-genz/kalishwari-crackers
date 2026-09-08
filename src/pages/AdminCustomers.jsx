@@ -593,7 +593,7 @@ const AdminCustomers = () => {
 
             <div style={{ display: 'flex', gap: '10px' }}>
               <a 
-                href={`https://wa.me/91${selectedCustomer.phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(selectedCustomer.name)}!%20Regarding%20your%20Kalishwari%20Crackers%20Order%20(${selectedCustomer.id})`}
+                href={`https://wa.me/91${selectedCustomer.phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(selectedCustomer.name)}!%20Regarding%20your%20Kalishwari%20Crackers%20Order`}
                 target="_blank"
                 rel="noreferrer"
                 style={{
@@ -654,9 +654,6 @@ const AdminCustomers = () => {
                 <h3 style={{ margin: 0, fontSize: '1.3rem', color: '#212529', fontFamily: "var(--font-serif, 'Cinzel', serif)" }}>
                   {selectedCustomer.name}
                 </h3>
-                <span style={{ fontSize: '0.8rem', color: '#868e96', fontWeight: 600 }}>
-                  Order ID: {selectedCustomer.id}
-                </span>
               </div>
             </div>
 
@@ -804,7 +801,7 @@ const AdminCustomers = () => {
                       </div>
                       <div className="name-block">
                         <div className="name">{cust.name}</div>
-                        <div className="id">ID: {cust.id} • {cust.date}</div>
+                        <div className="id">{cust.date}</div>
                       </div>
                     </CustomerMainInfo>
 
