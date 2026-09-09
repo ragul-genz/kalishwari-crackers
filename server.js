@@ -31,8 +31,12 @@ const memoryStore = {
   settings: {}
 };
 
+let isInitializing = false;
+
 // Initialize TiDB Connection
-async function initDatabase() {
+export async function initDatabase() {
+  if (isConnected || isInitializing) return;
+  isInitializing = true;
   const host = process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
   const port = parseInt(process.env.DB_PORT || '4000', 10);
   const user = process.env.DB_USER || '2jfg5VSYFyCSWGr.root';
@@ -531,8 +535,12 @@ app.post('/api/settings', async (req, res) => {
   }
 });
 
-// Start Server
-app.listen(PORT, async () => {
-  console.log(`🚀 Kalishwari Crackers API Server running on port ${PORT}`);
-  await initDatabase();
-});
+export default app;
+
+// Start Server locally if not running on Vercel
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`🚀 Kalishwari Crackers API Server running on port ${PORT}`);
+    await initDatabase();
+  });
+}
