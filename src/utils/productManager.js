@@ -207,8 +207,12 @@ export const getCategoriesAsync = async () => {
     if (Array.isArray(apiCats)) {
       const activeCats = apiCats.filter(c => !c.is_deleted);
       if (activeCats.length > 0) {
-        const catNames = activeCats.map(c => c.name);
-        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(catNames));
+        const data = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+        const existingCustom = data ? JSON.parse(data) : [];
+        const serverCatNames = activeCats.map(c => c.name);
+        const mergedCustom = Array.from(new Set([...existingCustom, ...serverCatNames]));
+        
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(mergedCustom));
         
         const imgMap = getCategoryImagesMap();
         activeCats.forEach(c => {
