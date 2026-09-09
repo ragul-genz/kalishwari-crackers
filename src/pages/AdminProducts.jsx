@@ -809,7 +809,7 @@ const AdminProducts = () => {
     setIsCategoryModalOpen(true);
   };
 
-  const handleCreateCategorySubmit = (e) => {
+  const handleCreateCategorySubmit = async (e) => {
     e.preventDefault();
     if (!standaloneCategoryInput.trim()) {
       toast.error('Please enter category name');
@@ -818,7 +818,8 @@ const AdminProducts = () => {
     const newCat = standaloneCategoryInput.trim();
     const categoryImage = categoryUploadedImage || categoryCustomImageInput.trim() || resolveProductImage('', newCat);
     
-    saveCategory(newCat, categoryImage);
+    await saveCategory(newCat, categoryImage);
+    setCategoriesList(getStoredCategories());
     setStandaloneCategoryInput('');
     setCategoryUploadedImage('');
     setCategoryCustomImageInput('');
@@ -826,7 +827,7 @@ const AdminProducts = () => {
     triggerNotify(editingCategory ? 'Category Updated' : 'Category Created', `Category "${newCat}" saved successfully!`);
   };
 
-  const handleSaveProduct = (e) => {
+  const handleSaveProduct = async (e) => {
     e.preventDefault();
 
     if (!formName.trim() || !formPrice || !formRegularPrice) {
@@ -842,7 +843,8 @@ const AdminProducts = () => {
     }
 
     if (!categoriesList.includes(finalCategory)) {
-      saveCategory(finalCategory);
+      await saveCategory(finalCategory);
+      setCategoriesList(getStoredCategories());
     }
 
     const imageToUse = uploadedImage 
