@@ -319,27 +319,7 @@ const SubmitButton = styled(motion.button)`
   }
 `;
 
-const DemoCredentialsHint = styled.div`
-  margin-top: 14px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px dashed rgba(212, 175, 55, 0.3);
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--gold-light, #F3E5AB);
 
-  span {
-    font-weight: 700;
-    color: #ffffff;
-  }
-
-  @media (max-width: 600px) {
-    margin-top: 8px;
-    padding: 5px 8px;
-    font-size: 0.7rem;
-  }
-`;
 
 const NotificationBackdrop = styled(motion.div)`
   position: fixed;
@@ -677,9 +657,6 @@ const AdminLogin = () => {
           </SubmitButton>
         </StyledForm>
 
-        <DemoCredentialsHint>
-          Default Credentials: <span>{import.meta.env.VITE_ADMIN_USERNAME || 'admin'}</span> / <span>{import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'}</span>
-        </DemoCredentialsHint>
       </LoginCardWrapper>
     </PageContainer>
   );
