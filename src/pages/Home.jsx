@@ -20,6 +20,11 @@ const HeroSection = styled.section`
     radial-gradient(circle at 100% 50%, rgba(198, 40, 40, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 30%);
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    min-height: auto;
+    padding: 2rem 0;
+  }
 `;
 
 const HeroOverlay = styled.div`
@@ -74,6 +79,11 @@ const HeroTitle = styled.h1`
   text-shadow: 1px 1px 20px rgba(212,175,55,0.2);
   font-weight: 700;
   text-transform: uppercase;
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
 `;
 
 const HeroSubtitle = styled.p`
@@ -82,6 +92,12 @@ const HeroSubtitle = styled.p`
   margin-bottom: 2.5rem;
   line-height: 1.8;
   font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+  }
 `;
 
 const YellowButton = styled(Link)`
@@ -101,6 +117,12 @@ const YellowButton = styled(Link)`
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
   }
+
+  @media (max-width: 768px) {
+    padding: 8px 18px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
 `;
 
 const HeroImageContainer = styled.div`
@@ -110,7 +132,7 @@ const HeroImageContainer = styled.div`
   
   @media (max-width: 768px) {
     justify-content: center;
-    margin-top: 2rem;
+    margin-top: 1.2rem;
   }
 `;
 
@@ -129,8 +151,8 @@ const CrackersImageWrapper = styled.div`
   border: 1px solid rgba(212, 175, 55, 0.15);
 
   @media (max-width: 768px) {
-    width: 220px;
-    height: 220px;
+    width: 140px;
+    height: 140px;
   }
 `;
 
@@ -149,6 +171,12 @@ const FeaturesSection = styled.section`
   margin-top: -50px;
   position: relative;
   z-index: 20;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
 `;
 
 const FeatureCard = styled.div`
@@ -164,6 +192,25 @@ const FeatureCard = styled.div`
     color: var(--text-muted);
     font-size: 0.95rem;
   }
+
+  @media (max-width: 768px) {
+    padding: 0.8rem 0.4rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    backdrop-filter: blur(5px);
+    
+    h3 {
+      font-size: 0.76rem;
+      margin-bottom: 0.2rem;
+      letter-spacing: 0;
+    }
+    
+    p {
+      font-size: 0.65rem;
+      line-height: 1.25;
+    }
+  }
 `;
 
 const FeatureIcon = styled.div`
@@ -171,22 +218,44 @@ const FeatureIcon = styled.div`
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.4rem;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `;
 
 const CategoriesSection = styled.section`
   padding: 6rem 20px;
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 12px;
+  }
 `;
 
 const SectionTitle = styled.h2`
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+  }
 `;
 
 const CategoriesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
 `;
 
 const CategoryCard = styled(Link)`
@@ -203,6 +272,10 @@ const CategoryCard = styled(Link)`
     border-color: rgba(212, 175, 55, 0.3);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   }
+
+  @media (max-width: 768px) {
+    border-radius: 10px;
+  }
 `;
 
 const CategoryImagePlaceholder = styled.div`
@@ -211,6 +284,14 @@ const CategoryImagePlaceholder = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    height: 85px;
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
 `;
 
 const CategoryInfo = styled.div`
@@ -220,6 +301,14 @@ const CategoryInfo = styled.div`
   h3 {
     color: var(--text-light);
     margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.6rem 0.4rem;
+    h3 {
+      font-size: 0.82rem;
+      margin-bottom: 0.2rem;
+    }
   }
 `;
 
@@ -232,6 +321,15 @@ const CategoryLink = styled.span`
   font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
+
+  @media (max-width: 768px) {
+    font-size: 0.68rem;
+    gap: 0.2rem;
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
 `;
 
 const CtaSection = styled.section`
@@ -240,6 +338,10 @@ const CtaSection = styled.section`
   text-align: center;
   border-top: 1px solid rgba(212, 175, 55, 0.1);
   border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 12px;
+  }
 `;
 
 const CtaContent = styled.div`
@@ -255,6 +357,17 @@ const CtaContent = styled.div`
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
   }
 `;
 

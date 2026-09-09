@@ -109,12 +109,41 @@ const ShopTitleText = styled.span`
   }
 `;
 
+const NavLeftGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
 const MenuIcon = styled.div`
   display: none;
   color: var(--text-main);
   @media (max-width: 768px) {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    &:hover {
+      background: rgba(212, 175, 55, 0.1);
+    }
+  }
+`;
+
+const NavBackdrop = styled.div`
+  display: none;
+  @media (max-width: 768px) {
+    display: ${props => (props.$isOpen ? 'block' : 'none')};
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 80px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 998;
   }
 `;
 
@@ -125,26 +154,35 @@ const NavMenu = styled.ul`
 
   @media (max-width: 768px) {
     flex-direction: column;
-    width: 100%;
-    position: absolute;
+    width: 270px;
+    max-width: 80vw;
+    height: calc(100vh - 80px);
+    position: fixed;
     top: 80px;
     left: ${props => (props.$isOpen ? '0' : '-100%')};
     opacity: ${props => (props.$isOpen ? '1' : '0')};
-    transition: all 0.5s ease;
+    transition: all 0.35s ease;
     background-color: var(--bg-card);
-    padding: 2rem 0;
-    align-items: center;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    padding: 1.5rem 1rem;
+    align-items: flex-start;
+    gap: 0.5rem;
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
     z-index: 999;
+    overflow-y: auto;
   }
 `;
 
 const NavItem = styled.li`
+  width: 100%;
   &.mobile-pricelist-link {
     display: none;
     @media (max-width: 768px) {
       display: block;
-      margin-top: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(212, 175, 55, 0.15);
+      width: 100%;
     }
   }
 `;
@@ -158,9 +196,9 @@ const NavLink = styled(Link)`
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 8px 16px;
-  border-radius: 20px;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
 
   ${props => props.$active && `
     background-color: var(--gold-primary);
@@ -169,6 +207,12 @@ const NavLink = styled(Link)`
 
   &:hover {
     color: ${props => props.$active ? '#ffffff' : 'var(--gold-primary)'};
+    background-color: rgba(212, 175, 55, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: flex-start;
   }
 `;
 
@@ -222,7 +266,7 @@ const CartIconContainer = styled(Link)`
   }
 
   @media (max-width: 768px) {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
   }
 `;
 
@@ -263,16 +307,20 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
       </TopBar>
       <Nav>
         <NavContainer>
-          <NavLogo to="/">
-            <LogoWrapper>
-              <LogoImage src={storeSettings.logo} alt={storeSettings.shopName} />
-            </LogoWrapper>
-            <ShopTitleText>{storeSettings.shopName}</ShopTitleText>
-          </NavLogo>
+          <NavLeftGroup>
+            <MenuIcon onClick={toggleMenu}>
+              {isOpen ? <X size={26} /> : <Menu size={26} />}
+            </MenuIcon>
 
-          <MenuIcon onClick={toggleMenu}>
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </MenuIcon>
+            <NavLogo to="/">
+              <LogoWrapper>
+                <LogoImage src={storeSettings.logo} alt={storeSettings.shopName} />
+              </LogoWrapper>
+              <ShopTitleText>{storeSettings.shopName}</ShopTitleText>
+            </NavLogo>
+          </NavLeftGroup>
+
+          <NavBackdrop $isOpen={isOpen} onClick={() => setIsOpen(false)} />
 
           <NavMenu $isOpen={isOpen}>
             <NavItem>
