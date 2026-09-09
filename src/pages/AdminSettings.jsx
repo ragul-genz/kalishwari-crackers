@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
 import { 
-  getStoredSettings, saveStoredSettings, updateAdminCredentials, resetAllStoreData, DEFAULT_SETTINGS 
+  getStoredSettings, getSettingsAsync, saveStoredSettings, updateAdminCredentials, resetAllStoreData, DEFAULT_SETTINGS 
 } from '../utils/settingsManager';
 
 const SettingsGrid = styled.div`
@@ -355,11 +355,31 @@ const AdminSettings = () => {
   const [customPriceListUrl, setCustomPriceListUrl] = useState('');
 
   useEffect(() => {
-    const handleUpdate = () => {
-      const updated = getStoredSettings();
-      setSettings(updated);
-      setPriceList(updated.priceList || '');
-      setPriceListName(updated.priceListName || '');
+    const loadSettingsData = async () => {
+      const updated = await getSettingsAsync();
+      if (updated) {
+        setSettings(updated);
+        setPriceList(updated.priceList || '');
+        setPriceListName(updated.priceListName || '');
+        if (updated.shopName) setShopName(updated.shopName);
+        if (updated.logo) setLogo(updated.logo);
+        if (updated.adminUsername) setAdminUsername(updated.adminUsername);
+        if (updated.adBannerText) setAdBannerText(updated.adBannerText);
+        if (updated.phone) setPhone(updated.phone);
+        if (updated.whatsapp) setWhatsapp(updated.whatsapp);
+        if (updated.email) setEmail(updated.email);
+        if (updated.address) setAddress(updated.address);
+      }
+    };
+    loadSettingsData();
+
+    const handleUpdate = async () => {
+      const updated = await getSettingsAsync();
+      if (updated) {
+        setSettings(updated);
+        setPriceList(updated.priceList || '');
+        setPriceListName(updated.priceListName || '');
+      }
     };
     window.addEventListener('settingsUpdated', handleUpdate);
     return () => window.removeEventListener('settingsUpdated', handleUpdate);

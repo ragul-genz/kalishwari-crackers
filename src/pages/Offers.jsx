@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tag, Calendar, Copy, Check, Sparkles, Gift } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getStoredOffers } from '../utils/offerManager';
+import { getStoredOffers, getOffersAsync } from '../utils/offerManager';
 
 const PageWrapper = styled.div`
   padding: 3rem 20px 5rem 20px;
@@ -212,11 +212,6 @@ const EmptyState = styled.div`
   max-width: 600px;
   margin: 0 auto;
 
-  svg {
-    color: var(--gold-primary);
-    margin-bottom: 1rem;
-  }
-
   h3 {
     color: var(--text-main);
     margin-bottom: 0.5rem;
@@ -231,9 +226,9 @@ const Offers = () => {
   const [offers, setOffers] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
 
-  const loadOffers = () => {
-    const list = getStoredOffers();
-    setOffers(list);
+  const loadOffers = async () => {
+    const list = await getOffersAsync();
+    if (list) setOffers(list);
   };
 
   useEffect(() => {

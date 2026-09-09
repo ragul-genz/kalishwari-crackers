@@ -1,6 +1,7 @@
 import sparklersImg from '../assets/images/sparklers.jpg';
 import rocketsImg from '../assets/images/rockets.jpg';
 import { notifyDataSync } from './syncManager';
+import { fetchOffersApi, saveOfferApi, deleteOfferApi } from './api';
 
 const OFFERS_STORAGE_KEY = 'kalishwari_stored_offers';
 
@@ -32,6 +33,27 @@ export const INITIAL_OFFERS = [
   }
 ];
 
+export const getOffersAsync = async () => {
+  try {
+    const apiOffers = await fetchOffersApi();
+    if (Array.isArray(apiOffers)) {
+      if (apiOffers.length === 0) {
+        // Seed initial offers
+        for (const o of INITIAL_OFFERS) {
+          await saveOfferApi(o);
+        }
+        localStorage.setItem(OFFERS_STORAGE_KEY, JSON.stringify(INITIAL_OFFERS));
+        return INITIAL_OFFERS;
+      }
+      localStorage.setItem(OFFERS_STORAGE_KEY, JSON.stringify(apiOffers));
+      return apiOffers;
+    }
+  } catch (e) {
+    console.warn('API fetch error for offers:', e);
+  }
+  return getStoredOffers();
+};
+
 export const getStoredOffers = () => {
   try {
     const raw = localStorage.getItem(OFFERS_STORAGE_KEY);
@@ -55,7 +77,7 @@ export const saveStoredOffers = (offers) => {
   }
 };
 
-export const addOffer = (offerData) => {
+export const addOffer = async (offerData) => {
   const current = getStoredOffers();
   const newOffer = {
     id: `offer-${Date.now()}`,
@@ -69,21 +91,31 @@ export const addOffer = (offerData) => {
   };
   const updated = [newOffer, ...current];
   saveStoredOffers(updated);
+  await saveOfferApi(newOffer);
   return updated;
 };
 
-export const updateOffer = (id, updatedData) => {
+export const updateOffer = async (id, updatedData) => {
   const current = getStoredOffers();
-  const updated = current.map(offer => 
-    offer.id === id ? { ...offer, ...updatedData } : offer
-  );
+  let updatedRecord = null;
+  const updated = current.map(offer => {
+    if (offer.id === id) {
+      updatedRecord = { ...offer, ...updatedData };
+      return updatedRecord;
+    }
+    return offer;
+  });
   saveStoredOffers(updated);
+  if (updatedRecord) {
+    await saveOfferApi(updatedRecord);
+  }
   return updated;
 };
 
-export const deleteOffer = (id) => {
+export const deleteOffer = async (id) => {
   const current = getStoredOffers();
   const updated = current.filter(offer => offer.id !== id);
   saveStoredOffers(updated);
+  await deleteOfferApi(id);
   return updated;
 };

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, Tag, Search, X, BookOpen, ArrowRight } from 'lucide-react';
 import bannerBg from '../assets/images/sparklers.jpg';
-import { getStoredBlogs, BLOG_CATEGORIES } from '../utils/blogManager';
+import { getStoredBlogs, getBlogsAsync, BLOG_CATEGORIES } from '../utils/blogManager';
 
 const PageWrapper = styled.div`
   min-height: 80vh;
@@ -403,8 +403,15 @@ const Blogs = () => {
   const [activeBlogModal, setActiveBlogModal] = useState(null);
 
   useEffect(() => {
-    const handleUpdate = () => {
-      setBlogs(getStoredBlogs());
+    const loadBlogsData = async () => {
+      const data = await getBlogsAsync();
+      if (data) setBlogs(data);
+    };
+    loadBlogsData();
+
+    const handleUpdate = async () => {
+      const data = await getBlogsAsync();
+      if (data) setBlogs(data);
     };
     window.addEventListener('blogsUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);

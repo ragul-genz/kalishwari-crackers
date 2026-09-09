@@ -2,6 +2,7 @@ import bannerBg from '../assets/images/sparklers.jpg';
 import fireworks1 from '../assets/images/rockets.jpg';
 import fireworks2 from '../assets/images/fountains.jpg';
 import { notifyDataSync } from './syncManager';
+import { fetchBlogsApi, saveBlogApi, deleteBlogApi } from './api';
 
 export const INITIAL_BLOGS = [
   {
@@ -53,6 +54,26 @@ export const BLOG_CATEGORIES = [
 
 const STORAGE_KEY = 'kalishwari_blogs_db';
 
+export const getBlogsAsync = async () => {
+  try {
+    const apiBlogs = await fetchBlogsApi();
+    if (Array.isArray(apiBlogs)) {
+      if (apiBlogs.length === 0) {
+        for (const b of INITIAL_BLOGS) {
+          await saveBlogApi(b);
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_BLOGS));
+        return INITIAL_BLOGS;
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(apiBlogs));
+      return apiBlogs;
+    }
+  } catch (e) {
+    console.warn('API error fetching blogs:', e);
+  }
+  return getStoredBlogs();
+};
+
 export const getStoredBlogs = () => {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
@@ -77,7 +98,7 @@ export const saveStoredBlogs = (blogs) => {
   }
 };
 
-export const addBlog = (newBlogData) => {
+export const addBlog = async (newBlogData) => {
   const currentBlogs = getStoredBlogs();
   const newBlog = {
     id: `blog-${Date.now()}`,
@@ -88,19 +109,29 @@ export const addBlog = (newBlogData) => {
   };
   const updated = [newBlog, ...currentBlogs];
   saveStoredBlogs(updated);
+  await saveBlogApi(newBlog);
   return newBlog;
 };
 
-export const updateBlog = (id, updatedData) => {
+export const updateBlog = async (id, updatedData) => {
   const currentBlogs = getStoredBlogs();
-  const updated = currentBlogs.map(blog => 
-    blog.id === id ? { ...blog, ...updatedData } : blog
-  );
+  let updatedRecord = null;
+  const updated = currentBlogs.map(blog => {
+    if (blog.id === id) {
+      updatedRecord = { ...blog, ...updatedData };
+      return updatedRecord;
+    }
+    return blog;
+  });
   saveStoredBlogs(updated);
+  if (updatedRecord) {
+    await saveBlogApi(updatedRecord);
+  }
 };
 
-export const deleteBlog = (id) => {
+export const deleteBlog = async (id) => {
   const currentBlogs = getStoredBlogs();
   const updated = currentBlogs.filter(blog => blog.id !== id);
   saveStoredBlogs(updated);
+  await deleteBlogApi(id);
 };

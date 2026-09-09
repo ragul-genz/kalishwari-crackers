@@ -8,7 +8,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
-import { getStoredCustomers, deleteCustomerRecord } from '../utils/customerManager';
+import { getStoredCustomers, getCustomersAsync, deleteCustomerRecord } from '../utils/customerManager';
 
 const PageContainer = styled.div`
   display: flex;
@@ -801,12 +801,14 @@ const AdminCustomers = () => {
   const [deletingCustomerId, setDeletingCustomerId] = useState(null);
   const [notification, setNotification] = useState(null);
 
-  const loadCustomers = () => {
-    const list = getStoredCustomers();
-    setCustomers(list);
-    if (selectedCustomer) {
-      const match = list.find(c => c.id === selectedCustomer.id);
-      if (match) setSelectedCustomer(match);
+  const loadCustomers = async () => {
+    const list = await getCustomersAsync();
+    if (list) {
+      setCustomers(list);
+      if (selectedCustomer) {
+        const match = list.find(c => c.id === selectedCustomer.id);
+        if (match) setSelectedCustomer(match);
+      }
     }
   };
 

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
 import { 
-  getStoredProducts, saveStoredProducts, getStoredCategories, saveCategory, deleteCategory, generateNextProductId 
+  getStoredProducts, getProductsAsync, getStoredCategories, getCategoriesAsync, saveCategory, deleteCategory, generateNextProductId, saveSingleProduct, deleteSingleProduct 
 } from '../utils/productManager';
 import sparklersImg from '../assets/images/sparklers.jpg';
 
@@ -652,9 +652,19 @@ const AdminProducts = () => {
   const [standaloneCategoryInput, setStandaloneCategoryInput] = useState('');
 
   useEffect(() => {
-    const handleUpdate = () => {
-      setProductsList(getStoredProducts());
-      setCategoriesList(getStoredCategories());
+    const loadData = async () => {
+      const prods = await getProductsAsync();
+      const cats = await getCategoriesAsync();
+      if (prods) setProductsList(prods);
+      if (cats) setCategoriesList(cats);
+    };
+    loadData();
+
+    const handleUpdate = async () => {
+      const prods = await getProductsAsync();
+      const cats = await getCategoriesAsync();
+      if (prods) setProductsList(prods);
+      if (cats) setCategoriesList(cats);
     };
     window.addEventListener('productsUpdated', handleUpdate);
     return () => window.removeEventListener('productsUpdated', handleUpdate);
@@ -740,21 +750,20 @@ const AdminProducts = () => {
     });
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!confirmData) return;
 
     if (confirmData.type === 'category') {
       const cat = confirmData.target;
-      deleteCategory(cat);
+      await deleteCategory(cat);
       if (selectedCategoryFilter === cat) {
         setSelectedCategoryFilter('All');
       }
       triggerNotify('Category Deleted', `Category "${cat}" deleted successfully!`);
     } else if (confirmData.type === 'product') {
       const { id, name } = confirmData.target;
-      const updated = productsList.filter(p => p.id !== id);
-      setProductsList(updated);
-      saveStoredProducts(updated);
+      await deleteSingleProduct(id);
+      setProductsList(getStoredProducts());
       triggerNotify('Product Deleted', `Product "${name}" deleted successfully!`);
     }
 
@@ -798,27 +807,24 @@ const AdminProducts = () => {
       : (customImageInput.trim() ? customImageInput.trim() : formImage);
 
     let updatedList;
+    let targetProduct;
     if (editingProduct) {
       // Edit existing product
-      updatedList = productsList.map(p => 
-        p.id === editingProduct.id
-          ? { 
-              ...p, 
-              name: formName.trim(), 
-              category: finalCategory, 
-              price: Number(formPrice), 
-              regularPrice: Number(formRegularPrice), 
-              stock: formStock,
-              image: imageToUse,
-              isOffer: true
-            }
-          : p
-      );
+      targetProduct = { 
+        ...editingProduct, 
+        name: formName.trim(), 
+        category: finalCategory, 
+        price: Number(formPrice), 
+        regularPrice: Number(formRegularPrice), 
+        stock: formStock,
+        image: imageToUse,
+        isOffer: true
+      };
       triggerNotify('Product Updated', `${formName.trim()} details updated successfully!`);
     } else {
       // Add new product
       const generatedId = generateNextProductId(finalCategory, productsList);
-      const newProduct = {
+      targetProduct = {
         id: generatedId,
         name: formName.trim(),
         category: finalCategory,
@@ -828,16 +834,12 @@ const AdminProducts = () => {
         image: imageToUse,
         isOffer: true
       };
-      updatedList = [...productsList, newProduct].sort((a, b) => {
-        const numA = typeof a.id === 'number' ? a.id : parseInt(String(a.id).replace(/\D/g, ''), 10) || 0;
-        const numB = typeof b.id === 'number' ? b.id : parseInt(String(b.id).replace(/\D/g, ''), 10) || 0;
-        return numA - numB;
-      });
       triggerNotify('New Product Added', `${formName.trim()} added successfully! Now visible in Customer Shop Page.`);
     }
 
-    setProductsList(updatedList);
-    saveStoredProducts(updatedList);
+    saveSingleProduct(targetProduct).then(() => {
+      setProductsList(getStoredProducts());
+    });
     setIsModalOpen(false);
   };
 

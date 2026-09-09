@@ -1,5 +1,6 @@
 import { notifyDataSync } from './syncManager';
 import { getStoredProducts } from './productManager';
+import { fetchOrdersApi, saveOrderApi, deleteOrderApi } from './api';
 
 const CUSTOMERS_STORAGE_KEY = 'kalishwari_whatsapp_customers';
 
@@ -37,6 +38,26 @@ export const INITIAL_CUSTOMERS = [
   }
 ];
 
+export const getCustomersAsync = async () => {
+  try {
+    const apiOrders = await fetchOrdersApi();
+    if (Array.isArray(apiOrders)) {
+      if (apiOrders.length === 0) {
+        for (const c of INITIAL_CUSTOMERS) {
+          await saveOrderApi(c);
+        }
+        localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(INITIAL_CUSTOMERS));
+        return INITIAL_CUSTOMERS;
+      }
+      localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(apiOrders));
+      return apiOrders;
+    }
+  } catch (e) {
+    console.warn('API error fetching orders:', e);
+  }
+  return getStoredCustomers();
+};
+
 export const getStoredCustomers = () => {
   try {
     const raw = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
@@ -47,7 +68,6 @@ export const getStoredCustomers = () => {
       list = JSON.parse(raw);
     }
 
-    // Attach/fallback product images for every item in cart
     return list.map(cust => ({
       ...cust,
       cartItems: (cust.cartItems || []).map(item => {
@@ -68,7 +88,7 @@ export const getStoredCustomers = () => {
   }
 };
 
-export const saveCustomerOrder = (customerData) => {
+export const saveCustomerOrder = async (customerData) => {
   try {
     const current = getStoredCustomers();
 
@@ -95,7 +115,7 @@ export const saveCustomerOrder = (customerData) => {
     const newCustomerRecord = {
       id: `CUST-${Date.now().toString().slice(-4)}`,
       name: customerData.name.trim(),
-      phone: customerData.mobile.trim(),
+      phone: (customerData.mobile || customerData.phone || '').trim(),
       address: customerData.address.trim(),
       pincode: customerData.pincode.trim(),
       date: formattedDate,
@@ -115,6 +135,7 @@ export const saveCustomerOrder = (customerData) => {
 
     const updated = [newCustomerRecord, ...current];
     localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(updated));
+    await saveOrderApi(newCustomerRecord);
     notifyDataSync('customersUpdated');
     return newCustomerRecord;
   } catch (error) {
@@ -123,11 +144,12 @@ export const saveCustomerOrder = (customerData) => {
   }
 };
 
-export const deleteCustomerRecord = (id) => {
+export const deleteCustomerRecord = async (id) => {
   try {
     const current = getStoredCustomers();
     const updated = current.filter(c => c.id !== id);
     localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(updated));
+    await deleteOrderApi(id);
     notifyDataSync('customersUpdated');
     return updated;
   } catch (error) {

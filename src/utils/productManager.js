@@ -2,6 +2,15 @@ import sparklersImg from '../assets/images/sparklers.jpg';
 import fountainsImg from '../assets/images/fountains.jpg';
 import rocketsImg from '../assets/images/rockets.jpg';
 import { notifyDataSync } from './syncManager';
+import {
+  fetchProductsApi,
+  saveProductApi,
+  saveProductsBulkApi,
+  deleteProductApi,
+  fetchCategoriesApi,
+  saveCategoryApi,
+  deleteCategoryApi
+} from './api';
 
 export const INITIAL_PRODUCTS = [
   { id: "Sparklers-1", name: "Gold Sparklers (10cm)", category: "Sparklers", price: 15, regularPrice: 150, image: sparklersImg, stock: "In Stock", isOffer: true },
@@ -23,6 +32,7 @@ export const PRESET_IMAGES = [
 export const DEFAULT_CATEGORIES = ["Sparklers", "Fountains", "Rockets", "Night Sky", "Gift Boxes"];
 const CATEGORIES_STORAGE_KEY = 'kalishwari_categories_db';
 const DELETED_CATEGORIES_KEY = 'kalishwari_deleted_categories_db';
+const STORAGE_KEY = 'kalishwari_products_db';
 
 export const generateNextProductId = (category, currentProducts = []) => {
   const catName = (category || 'Product').trim();
@@ -47,6 +57,87 @@ export const generateNextProductId = (category, currentProducts = []) => {
   return `${catName}-${nextIndex}`;
 };
 
+/**
+ * Fetch products from database asynchronously with fallback to cache/initial data
+ */
+export const getProductsAsync = async () => {
+  try {
+    const apiProducts = await fetchProductsApi();
+    if (Array.isArray(apiProducts)) {
+      if (apiProducts.length === 0) {
+        // Seed initial products to DB if empty
+        await saveProductsBulkApi(INITIAL_PRODUCTS);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PRODUCTS));
+        return INITIAL_PRODUCTS;
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(apiProducts));
+      return apiProducts;
+    }
+  } catch (e) {
+    console.warn('API fetch error for products:', e);
+  }
+  return getStoredProducts();
+};
+
+export const getStoredProducts = () => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load products from storage', e);
+  }
+  return INITIAL_PRODUCTS;
+};
+
+export const saveSingleProduct = async (product) => {
+  try {
+    const current = getStoredProducts();
+    const idx = current.findIndex(p => p.id === product.id);
+    let updated;
+    if (idx >= 0) {
+      updated = current.map(p => p.id === product.id ? product : p);
+    } else {
+      updated = [product, ...current];
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    await saveProductApi(product);
+    notifyDataSync('productsUpdated');
+    return updated;
+  } catch (e) {
+    console.error('Failed to save product', e);
+  }
+};
+
+export const saveStoredProducts = async (products) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    await saveProductsBulkApi(products);
+    notifyDataSync('productsUpdated');
+  } catch (e) {
+    console.error('Failed to save products to storage', e);
+  }
+};
+
+export const deleteSingleProduct = async (id) => {
+  try {
+    const current = getStoredProducts();
+    const updated = current.filter(p => p.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    await deleteProductApi(id);
+    notifyDataSync('productsUpdated');
+    return updated;
+  } catch (e) {
+    console.error('Failed to delete product', e);
+  }
+};
+
+// CATEGORIES MANAGEMENT
 export const getStoredCategories = () => {
   try {
     const data = localStorage.getItem(CATEGORIES_STORAGE_KEY);
@@ -58,7 +149,7 @@ export const getStoredCategories = () => {
     const productCats = products.map(p => p.category);
 
     const allCombined = [...DEFAULT_CATEGORIES, ...customCats, ...productCats];
-    return Array.from(new Set(allCombined)).filter(c => !deletedCats.includes(c));
+    return Array.from(new Set(allCombined)).filter(c => Boolean(c) && !deletedCats.includes(c));
   } catch (e) {
     console.error('Failed to load categories', e);
   }
@@ -66,7 +157,22 @@ export const getStoredCategories = () => {
   return Array.from(new Set([...DEFAULT_CATEGORIES, ...products.map(p => p.category)]));
 };
 
-export const saveCategory = (newCat) => {
+export const getCategoriesAsync = async () => {
+  try {
+    const apiCats = await fetchCategoriesApi();
+    if (Array.isArray(apiCats)) {
+      const activeCats = apiCats.filter(c => !c.is_deleted).map(c => c.name);
+      if (activeCats.length > 0) {
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(activeCats));
+      }
+    }
+  } catch (e) {
+    console.warn('API error for categories:', e);
+  }
+  return getStoredCategories();
+};
+
+export const saveCategory = async (newCat) => {
   if (!newCat || !newCat.trim()) return;
   const trimmed = newCat.trim();
   try {
@@ -84,13 +190,14 @@ export const saveCategory = (newCat) => {
       localStorage.setItem(DELETED_CATEGORIES_KEY, JSON.stringify(deletedCats));
     }
 
+    await saveCategoryApi(trimmed);
     notifyDataSync('productsUpdated');
   } catch (e) {
     console.error('Failed to save category', e);
   }
 };
 
-export const deleteCategory = (catToDelete) => {
+export const deleteCategory = async (catToDelete) => {
   if (!catToDelete || catToDelete === 'All') return;
   try {
     const data = localStorage.getItem(CATEGORIES_STORAGE_KEY);
@@ -105,7 +212,7 @@ export const deleteCategory = (catToDelete) => {
     }
     localStorage.setItem(DELETED_CATEGORIES_KEY, JSON.stringify(deletedCats));
 
-    // Reassign products belonging to this deleted category to 'Sparklers' (or default)
+    // Reassign products belonging to this deleted category to 'Sparklers'
     const products = getStoredProducts();
     const updatedProducts = products.map(p => {
       if (p.category === catToDelete) {
@@ -113,50 +220,10 @@ export const deleteCategory = (catToDelete) => {
       }
       return p;
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProducts));
+    await saveStoredProducts(updatedProducts);
+    await deleteCategoryApi(catToDelete);
     notifyDataSync('productsUpdated');
   } catch (e) {
     console.error('Failed to delete category', e);
   }
 };
-
-const STORAGE_KEY = 'kalishwari_products_db';
-
-export const getStoredProducts = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        // Format legacy numeric or timestamp IDs to Category-Index format (e.g. Sparklers-1)
-        const categoryCounts = {};
-        const formatted = parsed.map(p => {
-          const cat = (p.category || 'General').trim();
-          categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
-          
-          if (typeof p.id === 'string' && p.id.toLowerCase().startsWith(cat.toLowerCase())) {
-            return p;
-          }
-          return {
-            ...p,
-            id: `${cat}-${categoryCounts[cat]}`
-          };
-        });
-        return formatted;
-      }
-    }
-  } catch (e) {
-    console.error('Failed to load products from storage', e);
-  }
-  return INITIAL_PRODUCTS;
-};
-
-export const saveStoredProducts = (products) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-    notifyDataSync('productsUpdated');
-  } catch (e) {
-    console.error('Failed to save products to storage', e);
-  }
-};
-

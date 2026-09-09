@@ -1,5 +1,6 @@
 import logoImg from '../assets/logo.jpg';
 import { notifyDataSync } from './syncManager';
+import { fetchSettingsApi, saveSettingsApi } from './api';
 
 const SETTINGS_STORAGE_KEY = 'kalishwari_store_settings';
 
@@ -101,13 +102,26 @@ export const DEFAULT_SETTINGS = {
   priceListName: ''
 };
 
+export const getSettingsAsync = async () => {
+  try {
+    const apiSettings = await fetchSettingsApi();
+    if (apiSettings && typeof apiSettings === 'object' && Object.keys(apiSettings).length > 0) {
+      const merged = { ...getStoredSettings(), ...apiSettings };
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+      return merged;
+    }
+  } catch (e) {
+    console.warn('API error fetching settings:', e);
+  }
+  return getStoredSettings();
+};
+
 export const getStoredSettings = () => {
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
     if (!raw) return { ...DEFAULT_SETTINGS };
     const parsed = JSON.parse(raw);
 
-    // Migration: If plain text adminPassword is in localStorage, convert to SHA-256 hash
     if (parsed.adminPassword && !parsed.adminPasswordHash) {
       parsed.adminPasswordHash = sha256(parsed.adminPassword);
       delete parsed.adminPassword;
@@ -126,11 +140,10 @@ export const getStoredSettings = () => {
   }
 };
 
-export const saveStoredSettings = (newSettings) => {
+export const saveStoredSettings = async (newSettings) => {
   try {
     const current = getStoredSettings();
     
-    // If adminPassword plain text is passed in payload, hash it immediately
     const payload = { ...newSettings };
     if (payload.adminPassword) {
       payload.adminPasswordHash = sha256(payload.adminPassword);
@@ -142,10 +155,10 @@ export const saveStoredSettings = (newSettings) => {
       ...payload
     };
 
-    // Guarantee plain text password is never stored
     delete updated.adminPassword;
 
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
+    await saveSettingsApi(updated);
     notifyDataSync('settingsUpdated');
     return updated;
   } catch (error) {
@@ -163,12 +176,12 @@ export const verifyAdminCredentials = (username, password) => {
   return username === validUsername && inputPasswordHash === validPasswordHash;
 };
 
-export const updateAdminCredentials = (newUsername, newPassword) => {
+export const updateAdminCredentials = async (newUsername, newPassword) => {
   const payload = { adminUsername: newUsername };
   if (newPassword) {
     payload.adminPasswordHash = sha256(newPassword);
   }
-  return saveStoredSettings(payload);
+  return await saveStoredSettings(payload);
 };
 
 export const resetAllStoreData = () => {

@@ -527,7 +527,7 @@ const SideFloatingIcons = styled.div`
   }
 `;
 
-import { getStoredProducts, getStoredCategories } from '../utils/productManager';
+import { getStoredProducts, getStoredCategories, getProductsAsync, getCategoriesAsync } from '../utils/productManager';
 
 const Shop = ({ cartItems, addToCart, updateQuantity }) => {
   const [productsList, setProductsList] = useState(getStoredProducts());
@@ -538,9 +538,19 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
   const [showCheckout, setShowCheckout] = useState(false);
 
   useEffect(() => {
-    const handleUpdate = () => {
-      setProductsList(getStoredProducts());
-      setCategoriesList(getStoredCategories());
+    const loadData = async () => {
+      const prods = await getProductsAsync();
+      const cats = await getCategoriesAsync();
+      if (prods) setProductsList(prods);
+      if (cats) setCategoriesList(cats);
+    };
+    loadData();
+
+    const handleUpdate = async () => {
+      const prods = await getProductsAsync();
+      const cats = await getCategoriesAsync();
+      if (prods) setProductsList(prods);
+      if (cats) setCategoriesList(cats);
     };
     window.addEventListener('productsUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);

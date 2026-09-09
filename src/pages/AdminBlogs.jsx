@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
 import { 
-  getStoredBlogs, addBlog, updateBlog, deleteBlog, PRESET_BLOG_IMAGES, BLOG_CATEGORIES 
+  getStoredBlogs, getBlogsAsync, addBlog, updateBlog, deleteBlog, PRESET_BLOG_IMAGES, BLOG_CATEGORIES 
 } from '../utils/blogManager';
 
 const PageCardContainer = styled.div`
@@ -642,10 +642,15 @@ const AdminBlogs = () => {
       navigate('/admin/login');
       return;
     }
-    setBlogs(getStoredBlogs());
+    const loadBlogs = async () => {
+      const data = await getBlogsAsync();
+      if (data) setBlogs(data);
+    };
+    loadBlogs();
 
-    const handleUpdate = () => {
-      setBlogs(getStoredBlogs());
+    const handleUpdate = async () => {
+      const data = await getBlogsAsync();
+      if (data) setBlogs(data);
     };
     window.addEventListener('blogsUpdated', handleUpdate);
     return () => window.removeEventListener('blogsUpdated', handleUpdate);

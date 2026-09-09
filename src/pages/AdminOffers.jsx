@@ -9,7 +9,7 @@ import {
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
 import { 
-  getStoredOffers, addOffer, updateOffer, deleteOffer, PRESET_OFFER_IMAGES 
+  getStoredOffers, getOffersAsync, addOffer, updateOffer, deleteOffer, PRESET_OFFER_IMAGES 
 } from '../utils/offerManager';
 
 const HeaderActions = styled.div`
@@ -653,10 +653,15 @@ const AdminOffers = () => {
       navigate('/admin/login');
       return;
     }
-    setOffers(getStoredOffers());
+    const loadOffers = async () => {
+      const data = await getOffersAsync();
+      if (data) setOffers(data);
+    };
+    loadOffers();
 
-    const handleUpdate = () => {
-      setOffers(getStoredOffers());
+    const handleUpdate = async () => {
+      const data = await getOffersAsync();
+      if (data) setOffers(data);
     };
 
     window.addEventListener('offersUpdated', handleUpdate);
