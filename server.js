@@ -255,7 +255,9 @@ app.get('/api/health', (req, res) => {
 // --- SEO: Dynamic XML Sitemap (/sitemap.xml) for Google Search Console ---
 app.get('/sitemap.xml', async (req, res) => {
   try {
-    const baseUrl = 'https://kalishwaricrackers.com';
+    const protocol = req.headers['x-forwarded-proto'] || 'https';
+    const host = req.headers.host || 'kalishwari-crackers.vercel.app';
+    const baseUrl = `${protocol}://${host}`;
     const staticPages = [
       '',
       '/shop',
