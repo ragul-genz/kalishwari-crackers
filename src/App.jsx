@@ -1,27 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { createGlobalStyle } from 'styled-components';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import Cart from './pages/Cart';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Blogs from './pages/Blogs';
-import Offers from './pages/Offers';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminProducts from './pages/AdminProducts';
-import AdminOffers from './pages/AdminOffers';
-import AdminCustomers from './pages/AdminCustomers';
-import AdminBlogs from './pages/AdminBlogs';
-import AdminSettings from './pages/AdminSettings';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from './components/ProtectedRoute';
+import SEOHead from './components/SEOHead';
+import { PageSkeleton } from './components/Skeleton';
 import './utils/syncManager';
+
+// Lazy-loaded page components for optimal code splitting
+const Home = lazy(() => import('./pages/Home'));
+const Shop = lazy(() => import('./pages/Shop'));
+const Cart = lazy(() => import('./pages/Cart'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Blogs = lazy(() => import('./pages/Blogs'));
+const Offers = lazy(() => import('./pages/Offers'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminProducts = lazy(() => import('./pages/AdminProducts'));
+const AdminOffers = lazy(() => import('./pages/AdminOffers'));
+const AdminCustomers = lazy(() => import('./pages/AdminCustomers'));
+const AdminBlogs = lazy(() => import('./pages/AdminBlogs'));
+const AdminSettings = lazy(() => import('./pages/AdminSettings'));
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -166,8 +171,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-import ProtectedRoute from './components/ProtectedRoute';
-
 const PageWrapper = ({ children }) => {
   return (
     <motion.div
@@ -184,27 +187,29 @@ const PageWrapper = ({ children }) => {
 const AnimatedRoutes = ({ cartItems, addToCart, updateQuantity, removeFromCart }) => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-        <Route path="/shop" element={<PageWrapper><Shop cartItems={cartItems} addToCart={addToCart} updateQuantity={updateQuantity} /></PageWrapper>} />
-        <Route path="/cart" element={<PageWrapper><Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} /></PageWrapper>} />
-        <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
-        <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
-        <Route path="/blogs" element={<PageWrapper><Blogs /></PageWrapper>} />
-        <Route path="/offers" element={<PageWrapper><Offers /></PageWrapper>} />
+    <Suspense fallback={<PageSkeleton />}>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path="/shop" element={<PageWrapper><Shop cartItems={cartItems} addToCart={addToCart} updateQuantity={updateQuantity} /></PageWrapper>} />
+          <Route path="/cart" element={<PageWrapper><Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} /></PageWrapper>} />
+          <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+          <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+          <Route path="/blogs" element={<PageWrapper><Blogs /></PageWrapper>} />
+          <Route path="/offers" element={<PageWrapper><Offers /></PageWrapper>} />
 
-        {/* Dedicated Admin Routes */}
-        <Route path="/admin" element={<PageWrapper><AdminLogin /></PageWrapper>} />
-        <Route path="/admin/login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
-        <Route path="/admin/dashboard" element={<ProtectedRoute><PageWrapper><AdminDashboard /></PageWrapper></ProtectedRoute>} />
-        <Route path="/admin/customers" element={<ProtectedRoute><PageWrapper><AdminCustomers /></PageWrapper></ProtectedRoute>} />
-        <Route path="/admin/products" element={<ProtectedRoute><PageWrapper><AdminProducts /></PageWrapper></ProtectedRoute>} />
-        <Route path="/admin/offers" element={<ProtectedRoute><PageWrapper><AdminOffers /></PageWrapper></ProtectedRoute>} />
-        <Route path="/admin/blogs" element={<ProtectedRoute><PageWrapper><AdminBlogs /></PageWrapper></ProtectedRoute>} />
-        <Route path="/admin/settings" element={<ProtectedRoute><PageWrapper><AdminSettings /></PageWrapper></ProtectedRoute>} />
-      </Routes>
-    </AnimatePresence>
+          {/* Dedicated Admin Routes */}
+          <Route path="/admin" element={<PageWrapper><AdminLogin /></PageWrapper>} />
+          <Route path="/admin/login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
+          <Route path="/admin/dashboard" element={<ProtectedRoute><PageWrapper><AdminDashboard /></PageWrapper></ProtectedRoute>} />
+          <Route path="/admin/customers" element={<ProtectedRoute><PageWrapper><AdminCustomers /></PageWrapper></ProtectedRoute>} />
+          <Route path="/admin/products" element={<ProtectedRoute><PageWrapper><AdminProducts /></PageWrapper></ProtectedRoute>} />
+          <Route path="/admin/offers" element={<ProtectedRoute><PageWrapper><AdminOffers /></PageWrapper></ProtectedRoute>} />
+          <Route path="/admin/blogs" element={<ProtectedRoute><PageWrapper><AdminBlogs /></PageWrapper></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute><PageWrapper><AdminSettings /></PageWrapper></ProtectedRoute>} />
+        </Routes>
+      </AnimatePresence>
+    </Suspense>
   );
 };
 
@@ -283,6 +288,7 @@ function App() {
 
   return (
     <Router>
+      <SEOHead />
       <GlobalStyle />
       <Toaster position="bottom-right" />
       <MainLayout 

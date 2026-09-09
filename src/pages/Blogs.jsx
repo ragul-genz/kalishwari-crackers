@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, Tag, Search, X, BookOpen, ArrowRight } from 'lucide-react';
 import bannerBg from '../assets/images/sparklers.jpg';
 import { getStoredBlogs, getBlogsAsync, BLOG_CATEGORIES } from '../utils/blogManager';
+import { BlogSkeletonGrid } from '../components/Skeleton';
 
 const PageWrapper = styled.div`
   min-height: 80vh;
@@ -398,6 +399,7 @@ const ModalBody = styled.div`
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState(getStoredBlogs());
+  const [isLoading, setIsLoading] = useState(blogs.length === 0);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeBlogModal, setActiveBlogModal] = useState(null);
@@ -406,12 +408,14 @@ const Blogs = () => {
     const loadBlogsData = async () => {
       const data = await getBlogsAsync();
       if (data) setBlogs(data);
+      setIsLoading(false);
     };
     loadBlogsData();
 
     const handleUpdate = async () => {
       const data = await getBlogsAsync();
       if (data) setBlogs(data);
+      setIsLoading(false);
     };
     window.addEventListener('blogsUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
@@ -470,7 +474,9 @@ const Blogs = () => {
           </SearchBox>
         </FilterSection>
 
-        {filteredBlogs.length === 0 ? (
+        {isLoading ? (
+          <BlogSkeletonGrid count={3} />
+        ) : filteredBlogs.length === 0 ? (
           <EmptyState>
             <BookOpen size={48} />
             <h3>No blog posts found</h3>

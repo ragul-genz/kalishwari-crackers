@@ -68,19 +68,41 @@ export function compressImage(source, maxWidth = 1000, quality = 0.7) {
   });
 }
 
-// --- PRODUCTS API ---
-export async function fetchProductsApi() {
+// Client-side Memory Cache for instant rendering (30-second TTL)
+const clientCache = new Map();
+
+async function fetchWithCache(url, ttlMs = 30000) {
+  const cached = clientCache.get(url);
+  const now = Date.now();
+  if (cached && (now - cached.timestamp < ttlMs)) {
+    return cached.data;
+  }
   try {
-    const res = await fetch(`${API_BASE}/products`);
-    if (!res.ok) throw new Error('API Error');
-    return await res.json();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Network response failed');
+    const data = await res.json();
+    clientCache.set(url, { data, timestamp: now });
+    return data;
   } catch (e) {
+    if (cached) return cached.data;
     return null;
   }
 }
 
+export function invalidateClientCache(urlPrefix) {
+  for (const key of clientCache.keys()) {
+    if (key.includes(urlPrefix)) clientCache.delete(key);
+  }
+}
+
+// --- PRODUCTS API ---
+export async function fetchProductsApi() {
+  return fetchWithCache(`${API_BASE}/products`);
+}
+
 export async function saveProductApi(product) {
   try {
+    invalidateClientCache('/products');
     // Compress image before saving to DB
     if (product.image && product.image.startsWith('data:image')) {
       product.image = await compressImage(product.image, 800, 0.7);
@@ -101,6 +123,7 @@ export async function saveProductApi(product) {
 
 export async function saveProductsBulkApi(products) {
   try {
+    invalidateClientCache('/products');
     const res = await fetch(`${API_BASE}/products/bulk`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -115,6 +138,7 @@ export async function saveProductsBulkApi(products) {
 
 export async function deleteProductApi(id) {
   try {
+    invalidateClientCache('/products');
     const res = await fetch(`${API_BASE}/products/${id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Failed to delete product');
     return await res.json();
@@ -125,17 +149,12 @@ export async function deleteProductApi(id) {
 
 // --- CATEGORIES API ---
 export async function fetchCategoriesApi() {
-  try {
-    const res = await fetch(`${API_BASE}/categories`);
-    if (!res.ok) throw new Error('API Error');
-    return await res.json();
-  } catch (e) {
-    return null;
-  }
+  return fetchWithCache(`${API_BASE}/categories`);
 }
 
 export async function saveCategoryApi(name) {
   try {
+    invalidateClientCache('/categories');
     const res = await fetch(`${API_BASE}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -149,6 +168,7 @@ export async function saveCategoryApi(name) {
 
 export async function deleteCategoryApi(name) {
   try {
+    invalidateClientCache('/categories');
     const res = await fetch(`${API_BASE}/categories/${encodeURIComponent(name)}`, { method: 'DELETE' });
     return await res.json();
   } catch (e) {
@@ -158,17 +178,12 @@ export async function deleteCategoryApi(name) {
 
 // --- OFFERS API ---
 export async function fetchOffersApi() {
-  try {
-    const res = await fetch(`${API_BASE}/offers`);
-    if (!res.ok) throw new Error('API Error');
-    return await res.json();
-  } catch (e) {
-    return null;
-  }
+  return fetchWithCache(`${API_BASE}/offers`);
 }
 
 export async function saveOfferApi(offer) {
   try {
+    invalidateClientCache('/offers');
     if (offer.image && offer.image.startsWith('data:image')) {
       offer.image = await compressImage(offer.image, 1000, 0.7);
     }
@@ -185,6 +200,7 @@ export async function saveOfferApi(offer) {
 
 export async function deleteOfferApi(id) {
   try {
+    invalidateClientCache('/offers');
     const res = await fetch(`${API_BASE}/offers/${id}`, { method: 'DELETE' });
     return await res.json();
   } catch (e) {
@@ -194,17 +210,12 @@ export async function deleteOfferApi(id) {
 
 // --- BLOGS API ---
 export async function fetchBlogsApi() {
-  try {
-    const res = await fetch(`${API_BASE}/blogs`);
-    if (!res.ok) throw new Error('API Error');
-    return await res.json();
-  } catch (e) {
-    return null;
-  }
+  return fetchWithCache(`${API_BASE}/blogs`);
 }
 
 export async function saveBlogApi(blog) {
   try {
+    invalidateClientCache('/blogs');
     if (blog.image && blog.image.startsWith('data:image')) {
       blog.image = await compressImage(blog.image, 1000, 0.7);
     }
@@ -221,6 +232,7 @@ export async function saveBlogApi(blog) {
 
 export async function deleteBlogApi(id) {
   try {
+    invalidateClientCache('/blogs');
     const res = await fetch(`${API_BASE}/blogs/${id}`, { method: 'DELETE' });
     return await res.json();
   } catch (e) {
@@ -230,17 +242,12 @@ export async function deleteBlogApi(id) {
 
 // --- ORDERS API ---
 export async function fetchOrdersApi() {
-  try {
-    const res = await fetch(`${API_BASE}/orders`);
-    if (!res.ok) throw new Error('API Error');
-    return await res.json();
-  } catch (e) {
-    return null;
-  }
+  return fetchWithCache(`${API_BASE}/orders`, 15000);
 }
 
 export async function saveOrderApi(order) {
   try {
+    invalidateClientCache('/orders');
     const res = await fetch(`${API_BASE}/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -254,6 +261,7 @@ export async function saveOrderApi(order) {
 
 export async function deleteOrderApi(id) {
   try {
+    invalidateClientCache('/orders');
     const res = await fetch(`${API_BASE}/orders/${id}`, { method: 'DELETE' });
     return await res.json();
   } catch (e) {
@@ -263,17 +271,12 @@ export async function deleteOrderApi(id) {
 
 // --- SETTINGS API ---
 export async function fetchSettingsApi() {
-  try {
-    const res = await fetch(`${API_BASE}/settings`);
-    if (!res.ok) throw new Error('API Error');
-    return await res.json();
-  } catch (e) {
-    return null;
-  }
+  return fetchWithCache(`${API_BASE}/settings`);
 }
 
 export async function saveSettingsApi(settings) {
   try {
+    invalidateClientCache('/settings');
     if (settings.logo && settings.logo.startsWith('data:image')) {
       settings.logo = await compressImage(settings.logo, 500, 0.8);
     }

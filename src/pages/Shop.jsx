@@ -528,10 +528,12 @@ const SideFloatingIcons = styled.div`
 `;
 
 import { getStoredProducts, getStoredCategories, getProductsAsync, getCategoriesAsync } from '../utils/productManager';
+import { ProductSkeletonGrid } from '../components/Skeleton';
 
 const Shop = ({ cartItems, addToCart, updateQuantity }) => {
   const [productsList, setProductsList] = useState(getStoredProducts());
   const [categoriesList, setCategoriesList] = useState(getStoredCategories());
+  const [isLoading, setIsLoading] = useState(productsList.length === 0);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('default');
   const [searchQuery, setSearchQuery] = useState('');
@@ -543,6 +545,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
       const cats = await getCategoriesAsync();
       if (prods) setProductsList(prods);
       if (cats) setCategoriesList(cats);
+      setIsLoading(false);
     };
     loadData();
 
@@ -551,6 +554,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
       const cats = await getCategoriesAsync();
       if (prods) setProductsList(prods);
       if (cats) setCategoriesList(cats);
+      setIsLoading(false);
     };
     window.addEventListener('productsUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
@@ -640,135 +644,139 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
           </ToolbarControls>
         </Toolbar>
 
-        {(selectedCategory === 'All' ? availableCategories : [selectedCategory]).map(category => {
-          let categoryProducts = productsList.filter(p => 
-            p.category === category && p.name.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-          if (categoryProducts.length === 0) return null;
 
-          if (sortBy === 'price_low') {
-            categoryProducts.sort((a, b) => a.price - b.price);
-          } else if (sortBy === 'price_high') {
-            categoryProducts.sort((a, b) => b.price - a.price);
-          }
+        {isLoading ? (
+          <ProductSkeletonGrid count={8} />
+        ) : (
+          (selectedCategory === 'All' ? availableCategories : [selectedCategory]).map(category => {
+            let categoryProducts = productsList.filter(p => 
+              p.category === category && p.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            if (categoryProducts.length === 0) return null;
 
-          return (
-            <CategorySection key={category} id={`category-${category.replace(/\\s+/g, '-')}`}>
-              <CategoryHeader>{category}</CategoryHeader>
-              <ProductsGrid>
-                {categoryProducts.map(product => {
-                  const cartItem = cartItems.find(item => item.id === product.id);
-                  const qty = cartItem ? cartItem.quantity : 0;
-                  
-                  // Stock status check
-                  const stockStatus = (product.stock || 'In Stock').toLowerCase();
-                  const isOutOfStock = stockStatus === 'out of stock';
-                  const isLowStock = stockStatus === 'low stock';
+            if (sortBy === 'price_low') {
+              categoryProducts.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'price_high') {
+              categoryProducts.sort((a, b) => b.price - a.price);
+            }
 
-                  // Calculate discount percentage
-                  const discount = Math.round(((product.regularPrice - product.price) / product.regularPrice) * 100);
+            return (
+              <CategorySection key={category} id={`category-${category.replace(/\s+/g, '-')}`}>
+                <CategoryHeader>{category}</CategoryHeader>
+                <ProductsGrid>
+                  {categoryProducts.map(product => {
+                    const cartItem = cartItems.find(item => item.id === product.id);
+                    const qty = cartItem ? cartItem.quantity : 0;
+                    
+                    const stockStatus = (product.stock || 'In Stock').toLowerCase();
+                    const isOutOfStock = stockStatus === 'out of stock';
+                    const isLowStock = stockStatus === 'low stock';
+                    const discount = Math.round(((product.regularPrice - product.price) / product.regularPrice) * 100);
 
-                  return (
-                    <ProductCard 
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-30px" }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      <ImageContainer style={{ filter: isOutOfStock ? 'grayscale(0.4)' : 'none', opacity: isOutOfStock ? 0.8 : 1 }}>
-                        <DiscountBadge>{discount}%</DiscountBadge>
-                        <WishlistBtn><Heart size={16} /></WishlistBtn>
-                        
-                        {isOutOfStock ? (
-                          <StockBadge className="out-of-stock">Out of Stock</StockBadge>
-                        ) : isLowStock ? (
-                          <StockBadge className="low-stock">Low Stock</StockBadge>
-                        ) : (
-                          <StockBadge className="in-stock">In Stock</StockBadge>
-                        )}
-
-                        <img src={product.image} alt={product.name} />
-                      </ImageContainer>
-                      <ProductDetails>
-                        <TitlePriceRow>
-                          <ProductName>{product.name}</ProductName>
-                          <PriceContainer>
-                            <CurrentPrice>₹{product.price}</CurrentPrice>
-                            {/* <RegularPrice>₹{product.regularPrice}</RegularPrice> */}
-                          </PriceContainer>
-                        </TitlePriceRow>
-                        
-                        <ProductDesc>
-                          Premium quality crackers from Sivakasi. Safe & Sound.
-                        </ProductDesc>
-
-                        <RatingRow>
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} size={14} fill="#2ecc71" color="#2ecc71" />
-                          ))}
-                        </RatingRow>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 600, margin: '6px 0 10px 0' }}>
+                    return (
+                      <ProductCard 
+                        key={product.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-30px" }}
+                        transition={{ duration: 0.4 }}
+                        itemScope
+                        itemType="https://schema.org/Product"
+                      >
+                        <ImageContainer style={{ filter: isOutOfStock ? 'grayscale(0.4)' : 'none', opacity: isOutOfStock ? 0.8 : 1 }}>
+                          <DiscountBadge>{discount}%</DiscountBadge>
+                          <WishlistBtn><Heart size={16} /></WishlistBtn>
+                          
                           {isOutOfStock ? (
-                            <span style={{ color: '#d32f2f', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <XCircle size={14} /> Out of Stock
-                            </span>
+                            <StockBadge className="out-of-stock">Out of Stock</StockBadge>
                           ) : isLowStock ? (
-                            <span style={{ color: '#e65100', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <AlertTriangle size={14} /> Low Stock - Order Soon!
-                            </span>
+                            <StockBadge className="low-stock">Low Stock</StockBadge>
                           ) : (
-                            <span style={{ color: '#2e7d32', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <CheckCircle size={14} /> In Stock (Ready to Ship)
-                            </span>
+                            <StockBadge className="in-stock">In Stock</StockBadge>
                           )}
-                        </div>
-                        
-                        <ActionRow>
-                          {isOutOfStock ? (
-                            <OrderBtn 
-                              disabled 
-                              style={{ 
-                                background: '#e0e0e0', 
-                                color: '#868e96', 
-                                borderColor: '#ced4da', 
-                                cursor: 'not-allowed',
-                                opacity: 0.8
-                              }}
-                            >
-                              Out of Stock
-                            </OrderBtn>
-                          ) : qty > 0 ? (
-                            <QtyControl>
-                              <button onClick={() => updateQuantity(product.id, qty - 1)}>-</button>
-                              <input 
-                                type="number" 
-                                min="0" 
-                                value={qty} 
-                                onChange={(e) => {
-                                  const val = parseInt(e.target.value);
-                                  if (!isNaN(val) && val >= 0) {
-                                    updateQuantity(product.id, val);
-                                  } else if (e.target.value === '') {
-                                    updateQuantity(product.id, 0);
-                                  }
-                                }} 
-                              />
-                              <button onClick={() => updateQuantity(product.id, qty + 1)}>+</button>
-                            </QtyControl>
-                          ) : (
-                            <OrderBtn onClick={() => addToCart(product)}>Add to Cart</OrderBtn>
-                          )}
-                        </ActionRow>
-                      </ProductDetails>
-                    </ProductCard>
-                  );
-                })}
-              </ProductsGrid>
-            </CategorySection>
-          );
-        })}
+
+                          <img src={product.image} alt={product.name} itemProp="image" />
+                        </ImageContainer>
+                        <ProductDetails itemProp="offers" itemScope itemType="https://schema.org/Offer">
+                          <TitlePriceRow>
+                            <ProductName itemProp="name">{product.name}</ProductName>
+                            <PriceContainer>
+                              <meta itemProp="priceCurrency" content="INR" />
+                              <CurrentPrice itemProp="price" content={product.price}>₹{product.price}</CurrentPrice>
+                            </PriceContainer>
+                          </TitlePriceRow>
+                          
+                          <ProductDesc itemProp="description">
+                            Premium quality green crackers from Sivakasi. Safe & Sound.
+                          </ProductDesc>
+
+                          <RatingRow>
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} size={14} fill="#2ecc71" color="#2ecc71" />
+                            ))}
+                          </RatingRow>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 600, margin: '6px 0 10px 0' }}>
+                            {isOutOfStock ? (
+                              <span style={{ color: '#d32f2f', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <XCircle size={14} /> Out of Stock
+                              </span>
+                            ) : isLowStock ? (
+                              <span style={{ color: '#e65100', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <AlertTriangle size={14} /> Low Stock - Order Soon!
+                              </span>
+                            ) : (
+                              <span style={{ color: '#2e7d32', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <CheckCircle size={14} /> In Stock (Ready to Ship)
+                              </span>
+                            )}
+                          </div>
+                          
+                          <ActionRow>
+                            {isOutOfStock ? (
+                              <OrderBtn 
+                                disabled 
+                                style={{ 
+                                  background: '#e0e0e0', 
+                                  color: '#868e96', 
+                                  borderColor: '#ced4da', 
+                                  cursor: 'not-allowed',
+                                  opacity: 0.8
+                                }}
+                              >
+                                Out of Stock
+                              </OrderBtn>
+                            ) : qty > 0 ? (
+                              <QtyControl>
+                                <button onClick={() => updateQuantity(product.id, qty - 1)}>-</button>
+                                <input 
+                                  type="number" 
+                                  min="0" 
+                                  value={qty} 
+                                  onChange={(e) => {
+                                    const val = parseInt(e.target.value);
+                                    if (!isNaN(val) && val >= 0) {
+                                      updateQuantity(product.id, val);
+                                    } else if (e.target.value === '') {
+                                      updateQuantity(product.id, 0);
+                                    }
+                                  }} 
+                                />
+                                <button onClick={() => updateQuantity(product.id, qty + 1)}>+</button>
+                              </QtyControl>
+                            ) : (
+                              <OrderBtn onClick={() => addToCart(product)}>Add to Cart</OrderBtn>
+                            )}
+                          </ActionRow>
+                        </ProductDetails>
+                      </ProductCard>
+                    );
+                  })}
+                </ProductsGrid>
+              </CategorySection>
+            );
+          })
+        )}
       </div>
 
       <SideFloatingIcons>
