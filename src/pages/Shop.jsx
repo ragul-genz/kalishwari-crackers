@@ -8,6 +8,7 @@ import rocketsImg from '../assets/images/rockets.webp';
 import CheckoutModal from '../components/CheckoutModal';
 import { motion } from 'framer-motion';
 import { downloadPriceListPdf } from '../utils/pdfGenerator';
+import { resolveProductImage } from '../utils/productManager';
 
 const ShopWrapper = styled.div`
   background-color: #f5f5f5;
@@ -696,7 +697,15 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
                             <StockBadge className="in-stock">In Stock</StockBadge>
                           )}
 
-                          <img src={product.image} alt={product.name} itemProp="image" />
+                          <img 
+                            src={resolveProductImage(product.image, product.category)} 
+                            alt={product.name} 
+                            itemProp="image" 
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = resolveProductImage('', product.category);
+                            }}
+                          />
                         </ImageContainer>
                         <ProductDetails itemProp="offers" itemScope itemType="https://schema.org/Offer">
                           <TitlePriceRow>

@@ -12,6 +12,22 @@ import {
   deleteCategoryApi
 } from './api';
 
+export function resolveProductImage(image, category = '') {
+  if (image && typeof image === 'string') {
+    if (image.startsWith('data:image') || image.startsWith('http://') || image.startsWith('https://')) {
+      return image;
+    }
+    if (image.includes('/assets/') && !image.includes('/assets/images/') && !image.includes('/src/assets/')) {
+      return image;
+    }
+  }
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('sparkler') || cat.includes('box') || cat.includes('gift')) return sparklersImg;
+  if (cat.includes('fountain') || cat.includes('chackkar') || cat.includes('pot')) return fountainsImg;
+  if (cat.includes('rocket') || cat.includes('sky')) return rocketsImg;
+  return sparklersImg;
+}
+
 export const INITIAL_PRODUCTS = [
   { id: "Sparklers-1", name: "Gold Sparklers (10cm)", category: "Sparklers", price: 15, regularPrice: 150, image: sparklersImg, stock: "In Stock", isOffer: true },
   { id: "Sparklers-2", name: "Color Sparklers (15cm)", category: "Sparklers", price: 20, regularPrice: 200, image: sparklersImg, stock: "In Stock", isOffer: true },
@@ -65,13 +81,16 @@ export const getProductsAsync = async () => {
     const apiProducts = await fetchProductsApi();
     if (Array.isArray(apiProducts)) {
       if (apiProducts.length === 0) {
-        // Seed initial products to DB if empty
         await saveProductsBulkApi(INITIAL_PRODUCTS);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PRODUCTS));
         return INITIAL_PRODUCTS;
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(apiProducts));
-      return apiProducts;
+      const sanitized = apiProducts.map(p => ({
+        ...p,
+        image: resolveProductImage(p.image, p.category)
+      }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
+      return sanitized;
     }
   } catch (e) {
     console.warn('API fetch error for products:', e);
@@ -85,7 +104,10 @@ export const getStoredProducts = () => {
     if (data) {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return parsed.map(p => ({
+          ...p,
+          image: resolveProductImage(p.image, p.category)
+        }));
       }
     }
   } catch (e) {

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
 import { 
-  getStoredProducts, getProductsAsync, getStoredCategories, getCategoriesAsync, saveCategory, deleteCategory, generateNextProductId, saveSingleProduct, deleteSingleProduct 
+  getStoredProducts, getProductsAsync, getStoredCategories, getCategoriesAsync, saveCategory, deleteCategory, generateNextProductId, saveSingleProduct, deleteSingleProduct, resolveProductImage 
 } from '../utils/productManager';
 import sparklersImg from '../assets/images/sparklers.webp';
 
@@ -937,9 +937,13 @@ const AdminProducts = () => {
                   <tr key={product.id} style={{ borderBottom: '1px solid #f1f3f5' }}>
                     <td style={{ padding: '10px' }}>
                       <img 
-                        src={product.image} 
+                        src={resolveProductImage(product.image, product.category)} 
                         alt={product.name} 
                         style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #dee2e6', background: '#f8f9fa' }} 
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = resolveProductImage('', product.category);
+                        }}
                       />
                     </td>
                     <td style={{ padding: '10px', fontWeight: '600', color: '#212529' }}>

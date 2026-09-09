@@ -4,51 +4,12 @@ import { fetchOrdersApi, saveOrderApi, deleteOrderApi } from './api';
 
 const CUSTOMERS_STORAGE_KEY = 'kalishwari_whatsapp_customers';
 
-export const INITIAL_CUSTOMERS = [
-  {
-    id: 'CUST-1001',
-    name: 'Ramesh Kumar',
-    phone: '9876543210',
-    address: '12, M.G. Road, Near Anna Statue',
-    pincode: '625001',
-    city: 'Madurai',
-    date: 'Sep 08, 2026 10:30 AM',
-    itemsCount: 12,
-    totalAmount: 3400,
-    cartItems: [
-      { id: 'Sparklers-1', name: 'Gold Sparklers (10cm)', price: 15, quantity: 10, totalItemPrice: 150 },
-      { id: 'Fountains-1', name: 'Flower Pot Big', price: 35, quantity: 4, totalItemPrice: 140 },
-      { id: 'Rockets-1', name: 'Sky Rocket (Pack of 10)', price: 40, quantity: 5, totalItemPrice: 200 }
-    ]
-  },
-  {
-    id: 'CUST-1002',
-    name: 'Priya Sundaram',
-    phone: '9443312345',
-    address: '45, Gandhi Nagar, 2nd Cross Street',
-    pincode: '600028',
-    city: 'Chennai',
-    date: 'Sep 08, 2026 11:15 AM',
-    itemsCount: 8,
-    totalAmount: 5200,
-    cartItems: [
-      { id: 'Night Sky-1', name: '12 Shots Night Sky', price: 80, quantity: 2, totalItemPrice: 160 },
-      { id: 'Gift Boxes-1', name: 'Kalishwary Special Gift Box', price: 250, quantity: 2, totalItemPrice: 500 }
-    ]
-  }
-];
+export const INITIAL_CUSTOMERS = [];
 
 export const getCustomersAsync = async () => {
   try {
     const apiOrders = await fetchOrdersApi();
     if (Array.isArray(apiOrders)) {
-      if (apiOrders.length === 0) {
-        for (const c of INITIAL_CUSTOMERS) {
-          await saveOrderApi(c);
-        }
-        localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(INITIAL_CUSTOMERS));
-        return INITIAL_CUSTOMERS;
-      }
       localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(apiOrders));
       return apiOrders;
     }
@@ -68,7 +29,19 @@ export const getStoredCustomers = () => {
       list = JSON.parse(raw);
     }
 
-    return list.map(cust => ({
+    // Filter out old sample customers (Ramesh Kumar & Priya Sundaram)
+    const filtered = list.filter(cust => 
+      cust.name !== 'Ramesh Kumar' && 
+      cust.name !== 'Priya Sundaram' && 
+      cust.id !== 'CUST-1001' && 
+      cust.id !== 'CUST-1002'
+    );
+
+    if (filtered.length !== list.length) {
+      localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(filtered));
+    }
+
+    return filtered.map(cust => ({
       ...cust,
       cartItems: (cust.cartItems || []).map(item => {
         let img = item.image;
