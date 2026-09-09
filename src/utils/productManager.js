@@ -1,6 +1,6 @@
-import sparklersImg from '../assets/images/sparklers.jpg';
-import fountainsImg from '../assets/images/fountains.jpg';
-import rocketsImg from '../assets/images/rockets.jpg';
+import sparklersImg from '../assets/images/sparklers.webp';
+import fountainsImg from '../assets/images/fountains.webp';
+import rocketsImg from '../assets/images/rockets.webp';
 import { notifyDataSync } from './syncManager';
 import {
   fetchProductsApi,

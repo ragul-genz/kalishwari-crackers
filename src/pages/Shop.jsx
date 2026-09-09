@@ -2,11 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, CheckCircle, XCircle, AlertTriangle, FileText, Gift, MapPin, Phone, MessageCircle, Heart, Star, Flame } from 'lucide-react';
 import styled from 'styled-components';
-import sparklersImg from '../assets/images/sparklers.jpg';
-import fountainsImg from '../assets/images/fountains.jpg';
-import rocketsImg from '../assets/images/rockets.jpg';
+import sparklersImg from '../assets/images/sparklers.webp';
+import fountainsImg from '../assets/images/fountains.webp';
+import rocketsImg from '../assets/images/rockets.webp';
 import CheckoutModal from '../components/CheckoutModal';
 import { motion } from 'framer-motion';
+import { downloadPriceListPdf } from '../utils/pdfGenerator';
 
 const ShopWrapper = styled.div`
   background-color: #f5f5f5;
@@ -780,7 +781,7 @@ const Shop = ({ cartItems, addToCart, updateQuantity }) => {
       </div>
 
       <SideFloatingIcons>
-        <a href="/pricelist.pdf" target="_blank" title="Pricelist" rel="noreferrer" style={{ background: '#9b59b6' }}><FileText size={20} /></a>
+        <button onClick={() => downloadPriceListPdf(productsList)} title="Download 2026 Price List PDF" style={{ background: '#9b59b6', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={20} color="#ffffff" /></button>
         <Link to="/offers" title="Offers" style={{ background: '#f1c40f' }}><Gift size={20} /></Link>
         <Link to="/contact" title="Location" style={{ background: '#3498db' }}><MapPin size={20} /></Link>
         <a href="tel:+916380116372" title="Call Us" style={{ background: '#e74c3c' }}><Phone size={20} /></a>

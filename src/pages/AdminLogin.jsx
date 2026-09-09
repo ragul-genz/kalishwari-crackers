@@ -5,7 +5,7 @@ import { User, Lock, Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle } from 'lu
 import { toast } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logoImg from '../assets/logo.jpg';
-import sparklersBg from '../assets/images/sparklers.jpg';
+import sparklersBg from '../assets/images/sparklers.webp';
 import { isAdminAuthenticated, setAdminAuthenticated } from '../utils/authManager';
 import { getStoredSettings, verifyAdminCredentials } from '../utils/settingsManager';
 

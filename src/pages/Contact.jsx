@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { MapPin, PhoneCall, Mail, Clock } from 'lucide-react';
-import bannerBg from '../assets/images/rockets.jpg';
+import bannerBg from '../assets/images/rockets.webp';
 import { getStoredSettings } from '../utils/settingsManager';
 
 const PageWrapper = styled.div`

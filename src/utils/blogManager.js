@@ -1,6 +1,6 @@
-import bannerBg from '../assets/images/sparklers.jpg';
-import fireworks1 from '../assets/images/rockets.jpg';
-import fireworks2 from '../assets/images/fountains.jpg';
+import bannerBg from '../assets/images/sparklers.webp';
+import fireworks1 from '../assets/images/rockets.webp';
+import fireworks2 from '../assets/images/fountains.webp';
 import { notifyDataSync } from './syncManager';
 import { fetchBlogsApi, saveBlogApi, deleteBlogApi } from './api';
 

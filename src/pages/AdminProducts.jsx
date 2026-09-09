@@ -11,7 +11,7 @@ import { isAdminAuthenticated } from '../utils/authManager';
 import { 
   getStoredProducts, getProductsAsync, getStoredCategories, getCategoriesAsync, saveCategory, deleteCategory, generateNextProductId, saveSingleProduct, deleteSingleProduct 
 } from '../utils/productManager';
-import sparklersImg from '../assets/images/sparklers.jpg';
+import sparklersImg from '../assets/images/sparklers.webp';
 
 const PageCardContainer = styled.div`
   background: #ffffff;

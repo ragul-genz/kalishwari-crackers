@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import sparklersImg from '../assets/images/sparklers.jpg';
-import fountainsImg from '../assets/images/fountains.jpg';
+import sparklersImg from '../assets/images/sparklers.webp';
+import fountainsImg from '../assets/images/fountains.webp';
 import { Link } from 'react-router-dom';
 
 const PageWrapper = styled.div`

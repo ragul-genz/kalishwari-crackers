@@ -1,5 +1,5 @@
-import sparklersImg from '../assets/images/sparklers.jpg';
-import rocketsImg from '../assets/images/rockets.jpg';
+import sparklersImg from '../assets/images/sparklers.webp';
+import rocketsImg from '../assets/images/rockets.webp';
 import { notifyDataSync } from './syncManager';
 import { fetchOffersApi, saveOfferApi, deleteOfferApi } from './api';
 

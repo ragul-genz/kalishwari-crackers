@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, Tag, Search, X, BookOpen, ArrowRight } from 'lucide-react';
-import bannerBg from '../assets/images/sparklers.jpg';
+import bannerBg from '../assets/images/sparklers.webp';
 import { getStoredBlogs, getBlogsAsync, BLOG_CATEGORIES } from '../utils/blogManager';
 import { BlogSkeletonGrid } from '../components/Skeleton';
 
