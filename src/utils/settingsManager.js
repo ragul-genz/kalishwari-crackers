@@ -87,8 +87,8 @@ export function sha256(ascii) {
   return result;
 }
 
-const DEFAULT_PLAIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
-const DEFAULT_PASSWORD_HASH = sha256(DEFAULT_PLAIN_PASSWORD);
+const DEFAULT_PLAIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '';
+const DEFAULT_PASSWORD_HASH = DEFAULT_PLAIN_PASSWORD ? sha256(DEFAULT_PLAIN_PASSWORD) : '';
 
 export const DEFAULT_SETTINGS = {
   shopName: 'Kalishwari Crackers',
@@ -98,7 +98,7 @@ export const DEFAULT_SETTINGS = {
   whatsapp: '+91 98765 43210',
   email: 'info@kalishwaricrackers.com',
   address: '123 Fireworks Lane, Sivakasi, Tamil Nadu 626123, India',
-  adminUsername: import.meta.env.VITE_ADMIN_USERNAME || 'admin',
+  adminUsername: import.meta.env.VITE_ADMIN_USERNAME || '',
   adminPasswordHash: DEFAULT_PASSWORD_HASH,
   priceList: '',
   priceListName: ''
@@ -176,23 +176,20 @@ export const verifyAdminCredentials = (username, password) => {
 
   if (!u || !p) return false;
 
-  const validUsername = (settings.adminUsername || DEFAULT_SETTINGS.adminUsername || 'admin').trim();
-  const validPasswordHash = settings.adminPasswordHash || DEFAULT_PASSWORD_HASH;
+  const validUsername = (settings.adminUsername || import.meta.env.VITE_ADMIN_USERNAME || 'admin').trim();
+  const validPasswordHash = settings.adminPasswordHash || (import.meta.env.VITE_ADMIN_PASSWORD ? sha256(import.meta.env.VITE_ADMIN_PASSWORD) : '');
+
   const inputPasswordHash = sha256(p);
 
   const isUserMatch = 
     u.toLowerCase() === validUsername.toLowerCase() ||
-    u.toLowerCase() === (settings.email || '').trim().toLowerCase();
+    (settings.email && u.toLowerCase() === settings.email.trim().toLowerCase());
 
   const isPassMatch = 
-    inputPasswordHash === validPasswordHash ||
+    (validPasswordHash && inputPasswordHash === validPasswordHash) ||
     (settings.adminPassword && p === settings.adminPassword);
 
-  if (isUserMatch && isPassMatch) {
-    return true;
-  }
-
-  return false;
+  return isUserMatch && isPassMatch;
 };
 
 export const updateAdminCredentials = async (newUsername, newPassword) => {
