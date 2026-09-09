@@ -136,14 +136,14 @@ const NavBackdrop = styled.div`
   @media (max-width: 768px) {
     display: ${props => (props.$isOpen ? 'block' : 'none')};
     position: fixed;
-    top: 80px;
+    top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100vh - 80px);
-    background: rgba(0, 0, 0, 0.5);
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    z-index: 998;
+    z-index: 1001;
   }
 `;
 
@@ -154,22 +154,61 @@ const NavMenu = styled.ul`
 
   @media (max-width: 768px) {
     flex-direction: column;
-    width: 270px;
-    max-width: 80vw;
-    height: calc(100vh - 80px);
+    width: 280px;
+    max-width: 85vw;
+    height: 100vh;
     position: fixed;
-    top: 80px;
+    top: 0;
     left: ${props => (props.$isOpen ? '0' : '-100%')};
     opacity: ${props => (props.$isOpen ? '1' : '0')};
-    transition: all 0.35s ease;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--bg-card);
-    padding: 1.5rem 1rem;
+    padding: 1.2rem 1rem;
     align-items: flex-start;
     gap: 0.5rem;
     border-right: 1px solid rgba(212, 175, 55, 0.2);
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
-    z-index: 999;
+    box-shadow: 6px 0 25px rgba(0, 0, 0, 0.4);
+    z-index: 1002;
     overflow-y: auto;
+  }
+`;
+
+const DrawerHeader = styled.div`
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  }
+`;
+
+const DrawerTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gold-primary);
+`;
+
+const DrawerCloseBtn = styled.button`
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(198, 40, 40, 0.2);
+    color: var(--brand-red);
   }
 `;
 
@@ -309,7 +348,7 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
         <NavContainer>
           <NavLeftGroup>
             <MenuIcon onClick={toggleMenu}>
-              {isOpen ? <X size={26} /> : <Menu size={26} />}
+              <Menu size={26} />
             </MenuIcon>
 
             <NavLogo to="/">
@@ -323,6 +362,18 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
           <NavBackdrop $isOpen={isOpen} onClick={() => setIsOpen(false)} />
 
           <NavMenu $isOpen={isOpen}>
+            <DrawerHeader>
+              <DrawerTitle>
+                <LogoWrapper style={{ width: '32px', height: '32px' }}>
+                  <LogoImage src={storeSettings.logo} alt={storeSettings.shopName} />
+                </LogoWrapper>
+                <span>Menu</span>
+              </DrawerTitle>
+              <DrawerCloseBtn onClick={toggleMenu} aria-label="Close menu">
+                <X size={22} />
+              </DrawerCloseBtn>
+            </DrawerHeader>
+
             <NavItem>
               <NavLink to="/" $active={location.pathname === '/'} onClick={toggleMenu}>Home</NavLink>
             </NavItem>
