@@ -37,7 +37,7 @@ const MarqueeItem = styled.span`
 const HeaderWrapper = styled.div`
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: ${props => (props.$isOpen ? 999999 : 1000)};
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   background: ${props => props.$isDarkMode ? 'rgba(18, 18, 18, 0.7)' : 'rgba(255, 255, 255, 0.7)'};
   backdrop-filter: blur(10px);
@@ -366,7 +366,7 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
   };
 
   return (
-    <HeaderWrapper $isDarkMode={isDarkMode}>
+    <HeaderWrapper $isDarkMode={isDarkMode} $isOpen={isOpen}>
       <TopBar>
         <Marquee>
           <MarqueeItem><Zap size={16} fill="yellow" color="yellow"/> {storeSettings.adBannerText}</MarqueeItem>
