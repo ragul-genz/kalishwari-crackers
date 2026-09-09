@@ -157,19 +157,36 @@ const NavMenu = styled.ul`
     width: 280px;
     max-width: 85vw;
     height: 100vh;
+    max-height: 100vh;
     position: fixed;
     top: 0;
     left: ${props => (props.$isOpen ? '0' : '-100%')};
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--bg-card);
-    padding: 1.2rem 1rem;
+    padding: 1.2rem 1rem 2rem 1rem;
     align-items: flex-start;
     gap: 0.5rem;
     border-right: 1px solid rgba(212, 175, 55, 0.2);
     box-shadow: 6px 0 25px rgba(0, 0, 0, 0.4);
     z-index: 1002;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--gold-primary, #D4AF37);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--gold-dark, #AA8222);
+    }
   }
 `;
 
