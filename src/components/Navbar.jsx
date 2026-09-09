@@ -180,9 +180,10 @@ const DrawerHeader = styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     margin-bottom: 8px;
     border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    gap: 8px;
   }
 `;
 
@@ -192,12 +193,19 @@ const DrawerTitle = styled.div`
   gap: 8px;
   font-family: var(--font-serif);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   color: var(--gold-primary);
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 190px;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
 `;
 
 const DrawerCloseBtn = styled.button`

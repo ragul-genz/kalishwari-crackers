@@ -171,45 +171,24 @@ export const saveStoredSettings = async (newSettings) => {
 
 export const verifyAdminCredentials = (username, password) => {
   const settings = getStoredSettings();
-  const u = (username || '').trim().toLowerCase();
+  const u = (username || '').trim();
   const p = (password || '').trim();
 
   if (!u || !p) return false;
 
-  const validUsername = (settings.adminUsername || DEFAULT_SETTINGS.adminUsername || 'admin').trim().toLowerCase();
-  const shopEmail = (settings.email || DEFAULT_SETTINGS.email || '').trim().toLowerCase();
+  const validUsername = (settings.adminUsername || DEFAULT_SETTINGS.adminUsername || 'admin').trim();
+  const validPasswordHash = settings.adminPasswordHash || DEFAULT_PASSWORD_HASH;
+  const inputPasswordHash = sha256(p);
 
   const isUserMatch = 
-    u === validUsername ||
-    u === 'admin' ||
-    u === 'kalishwari' ||
-    u === 'kalishwaricrackers' ||
-    u === shopEmail ||
-    u === 'admin@gmail.com' ||
-    u === 'admin@kalishwaricrackers.com' ||
-    u === 'info@kalishwaricrackers.com';
-
-  const inputPasswordHash = sha256(p);
-  const validPasswordHash = settings.adminPasswordHash || DEFAULT_PASSWORD_HASH;
+    u.toLowerCase() === validUsername.toLowerCase() ||
+    u.toLowerCase() === (settings.email || '').trim().toLowerCase();
 
   const isPassMatch = 
     inputPasswordHash === validPasswordHash ||
-    p === 'admin123' ||
-    p === 'kalishwari123' ||
-    p === 'kalishwari' ||
-    p === 'admin' ||
-    (settings.adminPassword && p === settings.adminPassword) ||
-    (import.meta.env.VITE_ADMIN_PASSWORD && p === import.meta.env.VITE_ADMIN_PASSWORD);
+    (settings.adminPassword && p === settings.adminPassword);
 
   if (isUserMatch && isPassMatch) {
-    if (settings.adminPasswordHash !== inputPasswordHash && p !== 'admin123' && p !== 'kalishwari123' && p !== 'admin') {
-      saveStoredSettings({ adminPasswordHash: inputPasswordHash });
-    }
-    return true;
-  }
-
-  // Fallback: If password matches any valid master/admin password, grant login
-  if (isPassMatch && (u.length >= 3 || isUserMatch)) {
     return true;
   }
 
