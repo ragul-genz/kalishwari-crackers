@@ -8,6 +8,10 @@ const PageWrapper = styled.div`
   padding: 4rem 20px;
   min-height: 80vh;
   background-color: #fcfcfc;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 12px;
+  }
 `;
 
 const Section = styled.div`
@@ -21,6 +25,8 @@ const Section = styled.div`
   @media (max-width: 900px) {
     flex-direction: column;
     text-align: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
   }
 `;
 
@@ -53,7 +59,8 @@ const Heading = styled.h2`
   font-weight: 700;
   
   @media (max-width: 900px) {
-    font-size: 2.2rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
   }
 `;
 
@@ -62,6 +69,12 @@ const SubText = styled.p`
   color: #555;
   line-height: 1.8;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+  }
 `;
 
 const HighlightText = styled.span`
@@ -92,6 +105,8 @@ const ActionButton = styled(Link)`
 
   @media (max-width: 900px) {
     align-self: center;
+    padding: 8px 18px;
+    font-size: 0.78rem;
   }
 `;
 

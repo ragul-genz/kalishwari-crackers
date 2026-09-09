@@ -44,9 +44,15 @@ const TopBanner = styled.div`
   }
 
   @media (max-width: 600px) {
-    height: 220px;
+    height: 130px;
+    padding: 0 10px;
     h1 {
-      font-size: 2rem;
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    p {
+      font-size: 0.78rem;
     }
   }
 `;
@@ -55,6 +61,11 @@ const BlogContainer = styled.div`
   max-width: 1200px;
   margin: 3rem auto 0;
   padding: 0 20px;
+
+  @media (max-width: 768px) {
+    margin: 1.2rem auto 0;
+    padding: 0 10px;
+  }
 `;
 
 const FilterSection = styled.div`
@@ -69,12 +80,22 @@ const FilterSection = styled.div`
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   border: 1px solid #e9ecef;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    gap: 8px;
+    margin-bottom: 1.2rem;
+  }
 `;
 
 const CategoriesList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    gap: 4px;
+  }
 `;
 
 const CategoryChip = styled.button`
@@ -91,6 +112,11 @@ const CategoryChip = styled.button`
   &:hover {
     background: ${props => props.$active ? 'var(--brand-red, #c62828)' : '#f1f3f5'};
     border-color: var(--brand-red, #c62828);
+  }
+
+  @media (max-width: 768px) {
+    padding: 4px 10px;
+    font-size: 0.72rem;
   }
 `;
 
@@ -116,6 +142,15 @@ const SearchBox = styled.div`
   svg {
     color: #868e96;
   }
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    width: 100%;
+    padding: 4px 10px;
+    input {
+      font-size: 0.78rem;
+    }
+  }
 `;
 
 const BlogGrid = styled.div`
@@ -123,8 +158,9 @@ const BlogGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 2rem;
 
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
   }
 `;
 
@@ -142,12 +178,20 @@ const BlogCard = styled(motion.div)`
     transform: translateY(-6px);
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
   }
+
+  @media (max-width: 768px) {
+    border-radius: 8px;
+  }
 `;
 
 const BlogImage = styled.div`
   height: 210px;
   overflow: hidden;
   position: relative;
+
+  @media (max-width: 768px) {
+    height: 100px;
+  }
 
   img {
     width: 100%;

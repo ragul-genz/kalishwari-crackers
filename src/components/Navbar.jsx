@@ -430,11 +430,6 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
           </NavMenu>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            {location.pathname !== '/' && (
-              <ThemeToggle onClick={() => setIsDarkMode(!isDarkMode)}>
-                {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
-              </ThemeToggle>
-            )}
             <DownloadBtn 
               href={storeSettings.priceList || "/pricelist.pdf"} 
               target="_blank" 

@@ -367,30 +367,20 @@ const AdminLayout = ({ children, title }) => {
                 </NavItem>
               );
             })}
+
+            <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #e9ecef', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <NavItem onClick={() => navigate('/')}>
+                <ArrowLeft size={18} />
+                <span>Return to Store</span>
+              </NavItem>
+
+              <LogoutSideBtn onClick={handleLogout}>
+                <LogOut size={18} />
+                <span>Logout</span>
+              </LogoutSideBtn>
+            </div>
           </SidebarNav>
         </div>
-
-        <SidebarFooter>
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              width: '100%',
-              padding: '10px 14px',
-              borderRadius: '8px',
-              color: '#495057',
-              fontSize: '0.85rem',
-              fontWeight: '500'
-            }}
-          >
-            <ArrowLeft size={16} /> Return to Store
-          </button>
-          <LogoutSideBtn onClick={handleLogout}>
-            <LogOut size={16} /> Logout
-          </LogoutSideBtn>
-        </SidebarFooter>
       </Sidebar>
 
       <MainContent>

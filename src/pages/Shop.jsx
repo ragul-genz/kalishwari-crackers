@@ -25,6 +25,10 @@ const TopBanner = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    height: 100px;
+  }
 `;
 
 const Toolbar = styled.div`
@@ -38,7 +42,8 @@ const Toolbar = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: 15px;
+    gap: 10px;
+    padding: 10px 0;
   }
 `;
 
@@ -54,6 +59,7 @@ const ToolbarControls = styled.div`
     width: 100%;
     flex-direction: column;
     align-items: stretch;
+    gap: 6px;
   }
 `;
 
@@ -63,6 +69,10 @@ const Breadcrumbs = styled.div`
   span {
     color: var(--text-main);
     font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.78rem;
   }
 `;
 
@@ -84,6 +94,11 @@ const SelectBox = styled.select`
   border: 1px solid #ddd;
   background: white;
   outline: none;
+
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
 `;
 
 const SearchContainer = styled.div`
@@ -106,6 +121,10 @@ const SearchContainer = styled.div`
   @media (max-width: 768px) {
     min-width: 0;
     width: 100%;
+    padding: 4px 10px;
+    input {
+      font-size: 0.82rem;
+    }
   }
 `;
 
@@ -125,6 +144,10 @@ const PillsContainer = styled.div`
     background-color: #ddd;
     border-radius: 4px;
   }
+
+  @media (max-width: 768px) {
+    gap: 6px;
+  }
 `;
 
 const Pill = styled.button`
@@ -141,10 +164,18 @@ const Pill = styled.button`
   &:hover {
     background: ${props => props.$active ? '#27ae60' : '#f5f5f5'};
   }
+
+  @media (max-width: 768px) {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+  }
 `;
 
 const CategorySection = styled.div`
   margin-bottom: 3rem;
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const CategoryHeader = styled.div`
@@ -157,12 +188,23 @@ const CategoryHeader = styled.div`
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
   border-radius: 4px;
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
 `;
 
 const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 `;
 
 const ProductCard = styled(motion.div)`
@@ -178,6 +220,10 @@ const ProductCard = styled(motion.div)`
   &:hover {
     box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     transform: translateY(-5px);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 8px;
   }
 `;
 
@@ -196,6 +242,11 @@ const ImageContainer = styled.div`
     max-height: 100%;
     object-fit: contain;
     mix-blend-mode: multiply;
+  }
+
+  @media (max-width: 768px) {
+    height: 110px;
+    padding: 6px;
   }
 `;
 
@@ -221,6 +272,17 @@ const WishlistBtn = styled.button`
     color: #e74c3c;
     transform: scale(1.1);
   }
+
+  @media (max-width: 768px) {
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    svg {
+      width: 13px;
+      height: 13px;
+    }
+  }
 `;
 
 const DiscountBadge = styled.div`
@@ -234,6 +296,14 @@ const DiscountBadge = styled.div`
   padding: 4px 8px;
   border-radius: 4px;
   z-index: 10;
+
+  @media (max-width: 768px) {
+    top: 6px;
+    left: 6px;
+    font-size: 0.65rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
 `;
 
 const StockBadge = styled.span`
@@ -263,6 +333,13 @@ const StockBadge = styled.span`
     background: #2e7d32;
     color: #ffffff;
   }
+
+  @media (max-width: 768px) {
+    bottom: 6px;
+    left: 6px;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
 `;
 
 const ProductDetails = styled.div`
@@ -270,6 +347,10 @@ const ProductDetails = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 8px 6px;
+  }
 `;
 
 const TitlePriceRow = styled.div`
@@ -278,6 +359,11 @@ const TitlePriceRow = styled.div`
   align-items: flex-start;
   margin-bottom: 8px;
   gap: 10px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 4px;
+    gap: 4px;
+  }
 `;
 
 const ProductName = styled.h3`
@@ -287,6 +373,11 @@ const ProductName = styled.h3`
   margin: 0;
   line-height: 1.3;
   flex: 1;
+
+  @media (max-width: 768px) {
+    font-size: 0.78rem;
+    line-height: 1.2;
+  }
 `;
 
 const PriceContainer = styled.div`
@@ -299,6 +390,10 @@ const CurrentPrice = styled.span`
   font-weight: 700;
   font-size: 1.15rem;
   color: #222;
+
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const RegularPrice = styled.span`

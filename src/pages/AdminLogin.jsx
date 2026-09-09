@@ -538,8 +538,7 @@ const AdminLogin = () => {
       setAdminAuthenticated(true);
       triggerLoginNotify('Login Successful', 'Welcome back, Admin! Access granted', false);
       setTimeout(() => {
-        const destination = location.state?.from?.pathname || '/admin/dashboard';
-        navigate(destination, { replace: true });
+        navigate('/admin/dashboard', { replace: true });
       }, 1500);
     }, 400);
   };

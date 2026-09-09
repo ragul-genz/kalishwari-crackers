@@ -9,6 +9,10 @@ const PageWrapper = styled.div`
   padding: 3rem 20px 5rem 20px;
   min-height: 75vh;
   background-color: var(--bg-main, #ffffff);
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 10px 3rem 10px;
+  }
 `;
 
 const HeroBanner = styled.div`
@@ -22,7 +26,8 @@ const HeroBanner = styled.div`
     font-family: var(--font-serif, 'Cinzel', serif);
 
     @media (max-width: 600px) {
-      font-size: 1.8rem;
+      font-size: 1.4rem;
+      margin-bottom: 0.4rem;
     }
   }
 
@@ -33,8 +38,12 @@ const HeroBanner = styled.div`
     margin: 0 auto;
 
     @media (max-width: 600px) {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
   }
 `;
 
@@ -45,9 +54,9 @@ const OffersGrid = styled.div`
   max-width: 1100px;
   margin: 0 auto;
 
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
   }
 `;
 
@@ -65,6 +74,10 @@ const OfferCard = styled(motion.div)`
     transform: translateY(-6px);
     box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
     border-color: var(--gold-primary, #D4AF37);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 10px;
   }
 `;
 
@@ -86,6 +99,10 @@ const ImageContainer = styled.div`
     transform: scale(1.05);
   }
 
+  @media (max-width: 768px) {
+    height: 100px;
+  }
+
   .discount-tag {
     position: absolute;
     top: 14px;
@@ -99,6 +116,13 @@ const ImageContainer = styled.div`
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+
+    @media (max-width: 768px) {
+      top: 6px;
+      left: 6px;
+      font-size: 0.62rem;
+      padding: 3px 8px;
+    }
   }
 
   .status-tag {
@@ -127,6 +151,13 @@ const ImageContainer = styled.div`
       background: rgba(117, 117, 117, 0.9);
       color: #ffffff;
     }
+
+    @media (max-width: 768px) {
+      top: 6px;
+      right: 6px;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+    }
   }
 
   .expiry-tag {
@@ -142,6 +173,17 @@ const ImageContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 4px;
+
+    @media (max-width: 768px) {
+      bottom: 6px;
+      right: 6px;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
   }
 `;
 
@@ -150,6 +192,10 @@ const CardContent = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 0.7rem 0.5rem;
+  }
 
   h3 {
     font-size: 1.3rem;

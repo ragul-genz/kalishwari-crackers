@@ -35,6 +35,18 @@ const TopBanner = styled.div`
       color: var(--brand-red, #c62828);
     }
   }
+
+  @media (max-width: 768px) {
+    height: 130px;
+    padding: 0 10px;
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+    p {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -47,6 +59,9 @@ const ContentContainer = styled.div`
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
+    margin: 1.5rem auto;
+    padding: 0 12px;
+    gap: 1.5rem;
   }
 `;
 
@@ -58,12 +73,22 @@ const FormTitle = styled.h2`
   margin-bottom: 1rem;
   font-weight: 600;
   text-transform: uppercase;
+
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+  }
 `;
 
 const FormDescription = styled.p`
   color: #555;
   line-height: 1.6;
   margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ContactForm = styled.form`
