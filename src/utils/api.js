@@ -152,13 +152,17 @@ export async function fetchCategoriesApi() {
   return fetchWithCache(`${API_BASE}/categories`);
 }
 
-export async function saveCategoryApi(name) {
+export async function saveCategoryApi(name, image = '') {
   try {
     invalidateClientCache('/categories');
+    let imageToSave = image;
+    if (imageToSave && imageToSave.startsWith('data:image')) {
+      imageToSave = await compressImage(imageToSave, 1000, 0.7);
+    }
     const res = await fetch(`${API_BASE}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name, image: imageToSave })
     });
     return await res.json();
   } catch (e) {

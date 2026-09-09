@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Sparkles, ArrowRight, ShieldCheck, Truck, Clock } from 'lucide-react';
 import { Fireworks } from '@fireworks-js/react';
 import logoImg from '../assets/logo.jpg';
+import { getStoredCategoriesObjects, getCategoriesAsync } from '../utils/productManager';
 
 const HomeWrapper = styled.div`
   display: flex;
@@ -372,6 +373,22 @@ const CtaContent = styled.div`
 `;
 
 const Home = () => {
+  const [categories, setCategories] = useState(getStoredCategoriesObjects());
+
+  useEffect(() => {
+    const loadCats = async () => {
+      await getCategoriesAsync();
+      setCategories(getStoredCategoriesObjects());
+    };
+    loadCats();
+
+    const handleUpdate = () => {
+      setCategories(getStoredCategoriesObjects());
+    };
+    window.addEventListener('productsUpdated', handleUpdate);
+    return () => window.removeEventListener('productsUpdated', handleUpdate);
+  }, []);
+
   return (
     <HomeWrapper>
       <HeroSection>
@@ -452,13 +469,25 @@ const Home = () => {
       <CategoriesSection id="categories" className="container">
         <SectionTitle>Shop by <span className="gold-text">Category</span></SectionTitle>
         <CategoriesGrid>
-          {['Sparklers', 'Fountains', 'Rockets', 'Night Sky', 'Gift Boxes', 'Bomb'].map((category, index) => (
+          {categories.map((catObj, index) => (
             <CategoryCard to="/shop" key={index}>
               <CategoryImagePlaceholder>
-                <Sparkles className="gold-text" size={48} />
+                {catObj.image ? (
+                  <img 
+                    src={catObj.image} 
+                    alt={catObj.name} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <Sparkles className="gold-text" size={48} />
+                )}
               </CategoryImagePlaceholder>
               <CategoryInfo>
-                <h3>{category}</h3>
+                <h3>{catObj.name}</h3>
                 <CategoryLink>View Products <ArrowRight size={14} /></CategoryLink>
               </CategoryInfo>
             </CategoryCard>

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { isAdminAuthenticated } from '../utils/authManager';
 import { 
-  getStoredProducts, getProductsAsync, getStoredCategories, getCategoriesAsync, saveCategory, deleteCategory, generateNextProductId, saveSingleProduct, deleteSingleProduct, resolveProductImage 
+  getStoredProducts, getProductsAsync, getStoredCategories, getCategoriesAsync, getCategoryImagesMap, getStoredCategoriesObjects, saveCategory, deleteCategory, generateNextProductId, saveSingleProduct, deleteSingleProduct, resolveProductImage 
 } from '../utils/productManager';
 import sparklersImg from '../assets/images/sparklers.webp';
 
@@ -650,6 +650,26 @@ const AdminProducts = () => {
   const [customImageInput, setCustomImageInput] = useState('');
   const [uploadedImage, setUploadedImage] = useState('');
   const [standaloneCategoryInput, setStandaloneCategoryInput] = useState('');
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [categoryUploadedImage, setCategoryUploadedImage] = useState('');
+  const [categoryCustomImageInput, setCategoryCustomImageInput] = useState('');
+
+  const handleCategoryFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCategoryUploadedImage(reader.result);
+        setCategoryCustomImageInput('');
+        triggerNotify('Image Uploaded', 'Category image loaded!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -770,6 +790,25 @@ const AdminProducts = () => {
     setConfirmData(null);
   };
 
+  const openAddCategoryModal = () => {
+    setEditingCategory(null);
+    setStandaloneCategoryInput('');
+    setCategoryUploadedImage('');
+    setCategoryCustomImageInput('');
+    setIsCategoryModalOpen(true);
+  };
+
+  const openEditCategoryModal = (catName, e) => {
+    e.stopPropagation();
+    setEditingCategory(catName);
+    setStandaloneCategoryInput(catName);
+    const imgMap = getCategoryImagesMap();
+    const existingImg = imgMap[catName] || '';
+    setCategoryUploadedImage(existingImg.startsWith('data:image') ? existingImg : '');
+    setCategoryCustomImageInput(existingImg.startsWith('http') ? existingImg : '');
+    setIsCategoryModalOpen(true);
+  };
+
   const handleCreateCategorySubmit = (e) => {
     e.preventDefault();
     if (!standaloneCategoryInput.trim()) {
@@ -777,10 +816,14 @@ const AdminProducts = () => {
       return;
     }
     const newCat = standaloneCategoryInput.trim();
-    saveCategory(newCat);
+    const categoryImage = categoryUploadedImage || categoryCustomImageInput.trim() || resolveProductImage('', newCat);
+    
+    saveCategory(newCat, categoryImage);
     setStandaloneCategoryInput('');
+    setCategoryUploadedImage('');
+    setCategoryCustomImageInput('');
     setIsCategoryModalOpen(false);
-    triggerNotify('Category Created', `Category "${newCat}" created successfully!`);
+    triggerNotify(editingCategory ? 'Category Updated' : 'Category Created', `Category "${newCat}" saved successfully!`);
   };
 
   const handleSaveProduct = (e) => {
@@ -871,7 +914,7 @@ const AdminProducts = () => {
             <p>Manage all shop products, categories & store integrations</p>
           </HeaderTitleBox>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <HeaderAddCategoryBtn onClick={() => setIsCategoryModalOpen(true)}>
+            <HeaderAddCategoryBtn onClick={openAddCategoryModal}>
               <FolderPlus size={16} /> Add Category
             </HeaderAddCategoryBtn>
             <HeaderAddProductBtn onClick={openAddModal}>
@@ -898,6 +941,16 @@ const AdminProducts = () => {
                 onClick={() => setSelectedCategoryFilter(cat)}
               >
                 <span>{cat} ({count})</span>
+                <Edit3
+                  size={13}
+                  style={{
+                    cursor: 'pointer',
+                    opacity: 0.85,
+                    color: isSelected ? '#ffffff' : '#c62828'
+                  }}
+                  onClick={(e) => openEditCategoryModal(cat, e)}
+                  title={`Edit ${cat} category image & details`}
+                />
                 <Trash2 
                   size={13} 
                   style={{ 
@@ -987,13 +1040,13 @@ const AdminProducts = () => {
           </table>
         </div>
 
-        {/* Standalone Add Category Modal */}
+        {/* Standalone Add/Edit Category Modal */}
         <AnimatePresence>
           {isCategoryModalOpen && (
             <ModalBackdrop initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <ModalCard initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}>
                 <h3>
-                  Create New Category
+                  {editingCategory ? `Edit Category: ${editingCategory}` : 'Create New Category'}
                   <X size={20} style={{ cursor: 'pointer', color: '#6c757d' }} onClick={() => setIsCategoryModalOpen(false)} />
                 </h3>
                 <ModalForm onSubmit={handleCreateCategorySubmit}>
@@ -1007,12 +1060,49 @@ const AdminProducts = () => {
                       required 
                     />
                   </div>
+
+                  <div className="field-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Upload size={14} color="var(--brand-red, #c62828)" /> Upload Category Image (Device)
+                    </label>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleCategoryFileUpload} 
+                      style={{ background: '#ffffff', cursor: 'pointer', padding: '6px' }}
+                    />
+                    {categoryUploadedImage && (
+                      <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <img 
+                          src={categoryUploadedImage} 
+                          alt="Category Preview" 
+                          style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '6px', border: '2px solid var(--brand-red, #c62828)' }} 
+                        />
+                        <span style={{ fontSize: '0.8rem', color: '#2e7d32', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CheckCircle size={14} color="#2e7d32" /> Custom Image Ready
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="field-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <LinkIcon size={14} color="var(--brand-red, #c62828)" /> Or Enter Category Image URL (Optional)
+                    </label>
+                    <input 
+                      type="url" 
+                      placeholder="https://example.com/category-image.jpg" 
+                      value={categoryCustomImageInput} 
+                      onChange={(e) => { setCategoryCustomImageInput(e.target.value); if(e.target.value) setCategoryUploadedImage(''); }}
+                    />
+                  </div>
+
                   <ModalActions>
                     <button type="button" className="cancel" onClick={() => setIsCategoryModalOpen(false)}>
                       Cancel
                     </button>
                     <button type="submit" className="save">
-                      Create Category
+                      {editingCategory ? 'Save Category Changes' : 'Create Category'}
                     </button>
                   </ModalActions>
                 </ModalForm>

@@ -161,9 +161,15 @@ async function setupTablesAndSeed() {
     await query(`
       CREATE TABLE IF NOT EXISTS categories (
         name VARCHAR(100) PRIMARY KEY,
+        image LONGTEXT,
         is_deleted TINYINT(1) DEFAULT 0
       );
     `);
+    try {
+      await query(`ALTER TABLE categories ADD COLUMN image LONGTEXT;`);
+    } catch (e) {
+      // Column may already exist
+    }
 
     // 3. Offers Table
     await query(`
@@ -501,9 +507,9 @@ app.get('/api/categories', async (req, res) => {
     }
     let data;
     if (isConnected) {
-      data = await query('SELECT name, is_deleted FROM categories');
+      data = await query('SELECT name, image, is_deleted FROM categories');
     } else {
-      data = memoryStore.categories.map(c => ({ name: c, is_deleted: 0 }));
+      data = memoryStore.categories.map(c => typeof c === 'string' ? { name: c, image: '', is_deleted: 0 } : c);
     }
     setCached('categories', data, 60000);
     res.setHeader('X-Cache', 'MISS');
@@ -516,18 +522,23 @@ app.get('/api/categories', async (req, res) => {
 
 app.post('/api/categories', async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, image } = req.body;
     if (!name) return res.status(400).json({ error: 'Category name required' });
     clearCachePrefix('categories');
     if (isConnected) {
       await query(
-        'INSERT INTO categories (name, is_deleted) VALUES (?, 0) ON DUPLICATE KEY UPDATE is_deleted=0',
-        [name.trim()]
+        'INSERT INTO categories (name, image, is_deleted) VALUES (?, ?, 0) ON DUPLICATE KEY UPDATE image=IF(VALUES(image) != "", VALUES(image), image), is_deleted=0',
+        [name.trim(), image || '']
       );
-      return res.json({ success: true, name: name.trim() });
+      return res.json({ success: true, name: name.trim(), image: image || '' });
     }
-    if (!memoryStore.categories.includes(name.trim())) memoryStore.categories.push(name.trim());
-    res.json({ success: true, name: name.trim() });
+    const idx = memoryStore.categories.findIndex(c => (typeof c === 'string' ? c : c.name) === name.trim());
+    if (idx >= 0) {
+      memoryStore.categories[idx] = { name: name.trim(), image: image || '', is_deleted: 0 };
+    } else {
+      memoryStore.categories.push({ name: name.trim(), image: image || '', is_deleted: 0 });
+    }
+    res.json({ success: true, name: name.trim(), image: image || '' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

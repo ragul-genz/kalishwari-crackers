@@ -159,33 +159,62 @@ export const deleteSingleProduct = async (id) => {
   }
 };
 
-// CATEGORIES MANAGEMENT
-export const getStoredCategories = () => {
+const CATEGORIES_IMAGES_STORAGE_KEY = 'kalishwari_categories_images_db';
+
+export const getCategoryImagesMap = () => {
+  try {
+    const data = localStorage.getItem(CATEGORIES_IMAGES_STORAGE_KEY);
+    return data ? JSON.parse(data) : {};
+  } catch (e) {
+    return {};
+  }
+};
+
+export const getStoredCategoriesObjects = () => {
   try {
     const data = localStorage.getItem(CATEGORIES_STORAGE_KEY);
     const customCats = data ? JSON.parse(data) : [];
     const deletedData = localStorage.getItem(DELETED_CATEGORIES_KEY);
     const deletedCats = deletedData ? JSON.parse(deletedData) : [];
+    const imgMap = getCategoryImagesMap();
 
     const products = getStoredProducts();
     const productCats = products.map(p => p.category);
 
-    const allCombined = [...DEFAULT_CATEGORIES, ...customCats, ...productCats];
-    return Array.from(new Set(allCombined)).filter(c => Boolean(c) && !deletedCats.includes(c));
+    const allCombinedNames = Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats, ...productCats]))
+      .filter(c => Boolean(c) && !deletedCats.includes(c));
+
+    return allCombinedNames.map(name => {
+      let image = imgMap[name] || '';
+      if (!image) {
+        image = resolveProductImage('', name);
+      }
+      return { name, image };
+    });
   } catch (e) {
-    console.error('Failed to load categories', e);
+    console.error('Failed to load categories objects', e);
+    return DEFAULT_CATEGORIES.map(name => ({ name, image: resolveProductImage('', name) }));
   }
-  const products = getStoredProducts();
-  return Array.from(new Set([...DEFAULT_CATEGORIES, ...products.map(p => p.category)]));
+};
+
+export const getStoredCategories = () => {
+  return getStoredCategoriesObjects().map(c => c.name);
 };
 
 export const getCategoriesAsync = async () => {
   try {
     const apiCats = await fetchCategoriesApi();
     if (Array.isArray(apiCats)) {
-      const activeCats = apiCats.filter(c => !c.is_deleted).map(c => c.name);
+      const activeCats = apiCats.filter(c => !c.is_deleted);
       if (activeCats.length > 0) {
-        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(activeCats));
+        const catNames = activeCats.map(c => c.name);
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(catNames));
+        
+        const imgMap = getCategoryImagesMap();
+        activeCats.forEach(c => {
+          if (c.image) imgMap[c.name] = c.image;
+        });
+        localStorage.setItem(CATEGORIES_IMAGES_STORAGE_KEY, JSON.stringify(imgMap));
       }
     }
   } catch (e) {
@@ -194,7 +223,7 @@ export const getCategoriesAsync = async () => {
   return getStoredCategories();
 };
 
-export const saveCategory = async (newCat) => {
+export const saveCategory = async (newCat, image = '') => {
   if (!newCat || !newCat.trim()) return;
   const trimmed = newCat.trim();
   try {
@@ -205,6 +234,12 @@ export const saveCategory = async (newCat) => {
       localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(customCats));
     }
 
+    if (image) {
+      const imgMap = getCategoryImagesMap();
+      imgMap[trimmed] = image;
+      localStorage.setItem(CATEGORIES_IMAGES_STORAGE_KEY, JSON.stringify(imgMap));
+    }
+
     const deletedData = localStorage.getItem(DELETED_CATEGORIES_KEY);
     let deletedCats = deletedData ? JSON.parse(deletedData) : [];
     if (deletedCats.includes(trimmed)) {
@@ -212,7 +247,7 @@ export const saveCategory = async (newCat) => {
       localStorage.setItem(DELETED_CATEGORIES_KEY, JSON.stringify(deletedCats));
     }
 
-    await saveCategoryApi(trimmed);
+    await saveCategoryApi(trimmed, image);
     notifyDataSync('productsUpdated');
   } catch (e) {
     console.error('Failed to save category', e);
