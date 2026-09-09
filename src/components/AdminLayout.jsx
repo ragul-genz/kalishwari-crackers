@@ -67,12 +67,9 @@ const Sidebar = styled.aside`
     position: fixed;
     top: 0;
     left: 0;
-    height: auto;
-    max-height: 100vh;
-    border-bottom-right-radius: 16px;
-    border-bottom: 1px solid #e9ecef;
+    bottom: 0;
     transform: ${props => props.$isOpen ? 'translateX(0)' : 'translateX(-100%)'};
-    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
   }
 `;
 

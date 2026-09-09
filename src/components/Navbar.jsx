@@ -155,21 +155,20 @@ const NavMenu = styled.ul`
   @media (max-width: 768px) {
     flex-direction: column;
     width: 280px;
-    height: auto;
+    max-width: 85vw;
+    height: 100vh;
     max-height: 100vh;
-    border-bottom-right-radius: 16px;
     position: fixed;
     top: 0;
     left: ${props => (props.$isOpen ? '0' : '-100%')};
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--bg-card);
-    padding: 1.2rem 1rem 1.5rem 1rem;
+    padding: 1.2rem 1rem 2rem 1rem;
     align-items: flex-start;
     gap: 0.5rem;
     border-right: 1px solid rgba(212, 175, 55, 0.2);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-    box-shadow: 6px 6px 25px rgba(0, 0, 0, 0.4);
+    box-shadow: 6px 0 25px rgba(0, 0, 0, 0.4);
     z-index: 999999;
   }
 `;
