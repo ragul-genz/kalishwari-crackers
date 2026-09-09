@@ -189,11 +189,15 @@ const DrawerHeader = styled.div`
 const DrawerTitle = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-serif);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--gold-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 190px;
 `;
 
 const DrawerCloseBtn = styled.button`
@@ -364,10 +368,10 @@ const Navbar = ({ cartCount, isDarkMode, setIsDarkMode }) => {
           <NavMenu $isOpen={isOpen}>
             <DrawerHeader>
               <DrawerTitle>
-                <LogoWrapper style={{ width: '32px', height: '32px' }}>
+                <LogoWrapper style={{ width: '30px', height: '30px' }}>
                   <LogoImage src={storeSettings.logo} alt={storeSettings.shopName} />
                 </LogoWrapper>
-                <span>Menu</span>
+                <span>{storeSettings.shopName}</span>
               </DrawerTitle>
               <DrawerCloseBtn onClick={toggleMenu} aria-label="Close menu">
                 <X size={22} />
