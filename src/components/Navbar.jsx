@@ -143,7 +143,7 @@ const NavBackdrop = styled.div`
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    z-index: 1001;
+    z-index: 999988;
   }
 `;
 
@@ -164,12 +164,12 @@ const NavMenu = styled.ul`
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--bg-card);
-    padding: 1.2rem 1rem 2rem 1rem;
+    padding: 1.2rem 1rem 180px 1rem;
     align-items: flex-start;
     gap: 0.5rem;
     border-right: 1px solid rgba(212, 175, 55, 0.2);
     box-shadow: 6px 0 25px rgba(0, 0, 0, 0.4);
-    z-index: 1002;
+    z-index: 999999;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
