@@ -349,6 +349,11 @@ Sitemap: https://kalishwaricrackers.com/sitemap.xml
 });
 
 // --- Google Search Console Verification File Handler ---
+app.get('/google44d0b5e867233eb2.html', (req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.send('google-site-verification: google44d0b5e867233eb2.html');
+});
+
 app.get('/google:code.html', (req, res) => {
   const code = req.params.code;
   res.setHeader('Content-Type', 'text/html');
